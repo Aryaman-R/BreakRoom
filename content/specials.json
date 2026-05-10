@@ -1,0 +1,25 @@
+{
+  "specials": [
+    {
+      "id": "sp-1",
+      "name": "Honey-Lavender Latte",
+      "description": "Warm milk, espresso, a whisper of lavender, a drop of local honey.",
+      "price": 6.5,
+      "icon": "cup"
+    },
+    {
+      "id": "sp-2",
+      "name": "Roasted Tomato Soup",
+      "description": "Slow-roasted tomatoes, basil oil, a slice of buttered sourdough on the side.",
+      "price": 9.0,
+      "icon": "bowl"
+    },
+    {
+      "id": "sp-3",
+      "name": "Olive-Oil Cake",
+      "description": "Citrus zest, lightly glazed, somehow better the second day.",
+      "price": 5.0,
+      "icon": "cake"
+    }
+  ]
+}

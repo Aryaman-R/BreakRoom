@@ -1,0 +1,308 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   1. TOKENS
+   ========================================================= */
+:root {
+  /* Mode A — Quiet Hours */
+  --qh-bg: #f4efe6;
+  --qh-bg-elevated: #fbf7f0;
+  --qh-ink: #2a2520;
+  --qh-ink-soft: #6b6258;
+  --qh-accent: #8b5e3c;
+  --qh-accent-soft: #c9a57b;
+  --qh-sage: #7e8c6e;
+  --qh-line: #e5ddcf;
+
+  /* Mode B — After Hours */
+  --ah-bg: #1a0f2e;
+  --ah-bg-2: #2b1450;
+  --ah-magenta: #ff3d8a;
+  --ah-tangerine: #ff8c42;
+  --ah-electric: #ffe066;
+  --ah-mint: #6ee7b7;
+  --ah-violet: #a78bfa;
+  --ah-cream: #fff8e7;
+
+  /* Surfaces (interpolated by IntersectionObserver on the home transition section) */
+  --surface-bg: var(--qh-bg);
+  --surface-ink: var(--qh-ink);
+
+  /* Fonts — set in app/layout.tsx via next/font */
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-body: "Geist Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font-party: "Bagel Fat One", var(--font-display);
+}
+
+/* =========================================================
+   2. BASE
+   ========================================================= */
+html,
+body {
+  background: var(--surface-bg);
+  color: var(--surface-ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  letter-spacing: 0.005em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--qh-accent-soft);
+  color: var(--qh-ink);
+}
+
+/* Subtle paper-grain noise overlay — layered above bg, below content */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url("/noise.svg");
+  background-size: 240px 240px;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+}
+
+body[data-mode="after-hours"]::before {
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--surface-ink);
+}
+
+h1 { font-size: clamp(2.4rem, 5.8vw, 4.6rem); line-height: 1.02; }
+h2 { font-size: clamp(1.9rem, 3.6vw, 2.962rem); line-height: 1.1; }
+h3 { font-size: clamp(1.4rem, 2.4vw, 1.9rem); }
+h4 { font-size: 1.4rem; }
+
+/* Drop cap utility for editorial paragraphs */
+.dropcap::first-letter {
+  font-family: var(--font-display);
+  font-size: 4.4em;
+  float: left;
+  line-height: 0.85;
+  padding: 0.08em 0.12em 0 0;
+  color: var(--qh-accent);
+  font-style: italic;
+}
+
+/* Hand-drawn divider */
+.hand-divider {
+  display: block;
+  width: 100%;
+  height: 22px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 22' fill='none'><path d='M2 11 C 30 4, 60 18, 100 11 S 170 4, 198 11' stroke='%23C9A57B' stroke-width='1.4' stroke-linecap='round' fill='none' opacity='0.7'/></svg>");
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+/* =========================================================
+   3. MODE B (After Hours) BODY MODIFIER
+   ========================================================= */
+body[data-mode="after-hours"] {
+  --surface-bg: var(--ah-bg);
+  --surface-ink: var(--ah-cream);
+  background: radial-gradient(at 20% 10%, rgba(255, 61, 138, 0.18), transparent 50%),
+              radial-gradient(at 80% 30%, rgba(255, 140, 66, 0.14), transparent 55%),
+              radial-gradient(at 60% 90%, rgba(167, 139, 250, 0.16), transparent 50%),
+              var(--ah-bg);
+  background-size: 200% 200%, 200% 200%, 200% 200%, 100% 100%;
+  animation: meshShift 22s ease-in-out infinite;
+}
+
+body[data-mode="after-hours"] h1,
+body[data-mode="after-hours"] h2,
+body[data-mode="after-hours"] h3 {
+  color: var(--ah-cream);
+}
+
+@keyframes meshShift {
+  0%, 100% { background-position: 0% 0%, 100% 0%, 50% 100%, 0 0; }
+  50% { background-position: 30% 20%, 70% 40%, 60% 80%, 0 0; }
+}
+
+/* =========================================================
+   4. SIGNATURE BOOK A PARTY BUTTON
+   ========================================================= */
+.book-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--qh-ink);
+  color: var(--qh-bg);
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--qh-ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 280ms cubic-bezier(0.2, 0.7, 0.2, 1),
+              box-shadow 280ms ease, color 220ms ease;
+  will-change: transform;
+}
+
+.book-btn--sm { padding: 8px 18px;  font-size: 0.85rem; }
+.book-btn--md { padding: 14px 28px; font-size: 0.95rem; }
+.book-btn--lg { padding: 18px 38px; font-size: 1.05rem; }
+
+/* Conic gradient flood pseudo-element */
+.book-btn__bg {
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 320ms ease;
+  background: conic-gradient(
+    from 0deg,
+    var(--ah-magenta),
+    var(--ah-tangerine),
+    var(--ah-electric),
+    var(--ah-mint),
+    var(--ah-violet),
+    var(--ah-magenta)
+  );
+  animation: rotateConic 4s linear infinite;
+  animation-play-state: paused;
+}
+
+.book-btn:hover .book-btn__bg,
+.book-btn:focus-visible .book-btn__bg {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+.book-btn:hover,
+.book-btn:focus-visible {
+  color: var(--ah-cream);
+  transform: scale(1.04) rotate(-1deg);
+  box-shadow: var(--tw-shadow, 0 0 24px rgba(255, 61, 138, 0.4),
+              0 0 48px rgba(255, 140, 66, 0.3));
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'><text y='20' font-size='20'>%E2%9C%A8</text></svg>") 6 6, pointer;
+}
+
+.book-btn:focus-visible {
+  outline: 3px solid var(--ah-electric);
+  outline-offset: 2px;
+}
+
+.book-btn:active { transform: scale(0.96); }
+
+.book-btn__label {
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+/* Decorative micro-particles */
+.book-btn__sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.book-btn__sparkles span {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  opacity: 0;
+}
+.book-btn__sparkles span:nth-child(1) { left: 12%; bottom: 4px; background: var(--ah-magenta);   --dx: -8px;  }
+.book-btn__sparkles span:nth-child(2) { left: 30%; bottom: 4px; background: var(--ah-tangerine); --dx: 4px;   }
+.book-btn__sparkles span:nth-child(3) { left: 50%; bottom: 4px; background: var(--ah-electric);  --dx: 0;     }
+.book-btn__sparkles span:nth-child(4) { left: 70%; bottom: 4px; background: var(--ah-mint);      --dx: -2px;  }
+.book-btn__sparkles span:nth-child(5) { left: 88%; bottom: 4px; background: var(--ah-violet);    --dx: 6px;   }
+
+.book-btn:hover .book-btn__sparkles span {
+  animation: sparkleUp 800ms ease-out forwards;
+}
+.book-btn:hover .book-btn__sparkles span:nth-child(2) { animation-delay: 60ms; }
+.book-btn:hover .book-btn__sparkles span:nth-child(3) { animation-delay: 120ms; }
+.book-btn:hover .book-btn__sparkles span:nth-child(4) { animation-delay: 180ms; }
+.book-btn:hover .book-btn__sparkles span:nth-child(5) { animation-delay: 240ms; }
+
+@keyframes sparkleUp {
+  0%   { transform: translate(0, 0) scale(0.6); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translate(var(--dx, 0), -28px) scale(1); opacity: 0; }
+}
+
+@keyframes rotateConic {
+  to { transform: rotate(360deg); }
+}
+
+/* When the button sits inside Mode B, invert default colors so it always reads */
+body[data-mode="after-hours"] .book-btn {
+  background: var(--ah-cream);
+  color: var(--ah-bg);
+  border-color: var(--ah-cream);
+}
+
+/* =========================================================
+   5. PAGE/SECTION HELPERS
+   ========================================================= */
+.container-prose { max-width: 64ch; margin-inline: auto; }
+.container-page  { max-width: 1200px; margin-inline: auto; padding-inline: 24px; }
+
+.dotted-leader {
+  flex: 1;
+  border-bottom: 2px dotted var(--qh-line);
+  margin: 0 12px 6px 12px;
+  min-width: 24px;
+}
+
+/* Magnetic CTA pulse for nav assistant icon */
+.nav-bean-pulse {
+  animation: beanPulse 1.6s ease-in-out infinite;
+}
+@keyframes beanPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.1); }
+}
+
+/* Floating decorative shapes (Mode B) */
+.float-shape {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.85;
+  animation: drift var(--dur, 18s) ease-in-out infinite;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0,0) rotate(0deg); }
+  50%      { transform: translate(var(--dx, 12px), var(--dy, -10px)) rotate(8deg); }
+}
+
+/* =========================================================
+   6. REDUCED MOTION
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .book-btn:hover { transform: none; }
+  body[data-mode="after-hours"] { animation: none; }
+}

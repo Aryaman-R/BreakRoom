@@ -1,0 +1,30 @@
+{
+  "story": [
+    "We opened The Break Room in the spring of 2022, in a storefront that had been a dry cleaner, a flower shop, and — at one strange point in the late 90s — a karaoke bar. The bones were good. The light was better.",
+    "We had two ideas, and they didn&#8217;t fit neatly together. The first was a quiet daytime cafe — the kind where you can think, where the music is low and the coffee is real. The second was a place that knew how to throw a party.",
+    "We tried to choose one. We couldn&#8217;t. So we did both, on different schedules, in the same room. By day, it&#8217;s a calm refuge. After 5 PM and on weekends, the lights warm up, the music gets louder, and the room becomes whatever you need it to be — birthday, baby shower, trivia night, board meeting in disguise.",
+    "We don&#8217;t think these two things are in conflict. The same care goes into a 7 AM cortado and a 9 PM toast. We just dress for the occasion."
+  ],
+  "values": [
+    { "title": "Slow, then fast.",       "body": "Mornings are slow on purpose. Evenings can be loud — also on purpose." },
+    { "title": "Sourced honestly.",       "body": "We pay our roaster, baker, and farmers what their work is worth. It costs a little more. It&#8217;s worth it." },
+    { "title": "Good to staff.",          "body": "Living wages, predictable schedules, real time off. The vibe starts here." },
+    { "title": "Welcoming by default.",   "body": "Strollers, laptops, dogs at the door, parties of one. All of you." }
+  ],
+  "team": [
+    { "name": "Maya R.",   "role": "Founder &amp; baker",  "drinking": "Today: cold brew, two ice cubes." },
+    { "name": "Devon P.",  "role": "Lead barista",         "drinking": "A double cortado, always." },
+    { "name": "Aïsha K.",  "role": "Events &amp; bookings","drinking": "Matcha. Don&#8217;t ask why." },
+    { "name": "Theo M.",   "role": "Kitchen",              "drinking": "Whatever&#8217;s on the pour-over." },
+    { "name": "Sara L.",   "role": "Weekend host",         "drinking": "Strong tea, gentle smile." },
+    { "name": "Jules N.",  "role": "Sound &amp; lights",   "drinking": "Espresso, then water." }
+  ],
+  "timeline": [
+    { "year": "2021", "label": "We sign the lease and start sketching." },
+    { "year": "2022", "label": "Opening week. We undercount muffins by half." },
+    { "year": "2023", "label": "First wedding-rehearsal dinner. We cry." },
+    { "year": "2024", "label": "Trivia becomes a regular Thursday." },
+    { "year": "2025", "label": "Open Mic Night — week one, two performers; week ten, twelve." },
+    { "year": "2026", "label": "You&#8217;re here." }
+  ]
+}

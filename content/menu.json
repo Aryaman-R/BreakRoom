@@ -1,0 +1,65 @@
+{
+  "categories": [
+    {
+      "id": "coffee",
+      "name": "Coffee",
+      "blurb": "Single origin from a roaster a few blocks south. Pulled with patience.",
+      "items": [
+        { "id": "espresso",     "name": "Espresso",            "price": 3.5, "description": "A short, dense pour. The way it should be." , "tags": ["V","GF","DF"] },
+        { "id": "macchiato",    "name": "Macchiato",           "price": 4.0, "description": "Espresso, a small spoon of foam.",            "tags": ["V","GF"] },
+        { "id": "cortado",      "name": "Cortado",             "price": 4.5, "description": "Equal parts espresso and warm milk.",         "tags": ["V","GF"] },
+        { "id": "latte",        "name": "Latte",               "price": 5.5, "description": "12oz, lightly textured milk.",                "tags": ["V","GF"] },
+        { "id": "oat-latte",    "name": "Oat Latte",           "price": 6.0, "description": "House oat blend, creamy without trying.",     "tags": ["V","GF","DF"] },
+        { "id": "filter",       "name": "Pour-over of the day","price": 5.0, "description": "Ask the barista. They&#8217;ll be honest.",   "tags": ["V","GF","DF"] },
+        { "id": "cold-brew",    "name": "Cold Brew",           "price": 5.5, "description": "Slow-steeped 18 hours. Smooth, low acid.",     "tags": ["V","GF","DF"] }
+      ]
+    },
+    {
+      "id": "tea",
+      "name": "Tea & Other",
+      "blurb": "Loose-leaf, brewed by the cup.",
+      "items": [
+        { "id": "earl-grey",    "name": "Earl Grey",           "price": 4.5, "description": "Bergamot, a touch of orange peel.",            "tags": ["V","GF","DF"] },
+        { "id": "matcha",       "name": "Matcha Latte",        "price": 6.0, "description": "Ceremonial-grade, whisked, lightly sweetened.","tags": ["V","GF"] },
+        { "id": "chai",         "name": "House Chai",          "price": 5.5, "description": "Cardamom-forward. Steeped with whole spices.", "tags": ["V","GF"] },
+        { "id": "hot-choc",     "name": "Drinking Chocolate",  "price": 6.0, "description": "70% cacao, melted slowly into milk.",         "tags": ["V","GF"] }
+      ]
+    },
+    {
+      "id": "pastries",
+      "name": "Pastries",
+      "blurb": "Baked nearby, delivered before sunrise.",
+      "items": [
+        { "id": "croissant",    "name": "Butter Croissant",    "price": 4.5, "description": "Honest, laminated, audibly flaky.",            "tags": ["V"] },
+        { "id": "almond-cr",    "name": "Almond Croissant",    "price": 5.5, "description": "Twice-baked, almond cream, a snowdrift of sugar.", "tags": ["V","N"] },
+        { "id": "scone",        "name": "Brown-Butter Scone",  "price": 4.5, "description": "Tender. Pairs with everything.",               "tags": ["V"] },
+        { "id": "banana-br",    "name": "Banana Bread",        "price": 4.0, "description": "Olive oil, walnuts, a little flake salt.",     "tags": ["V","N"] },
+        { "id": "gf-cookie",    "name": "GF Chocolate Chip",   "price": 4.5, "description": "Almond flour, dark chocolate, sea salt.",      "tags": ["V","GF","N"] }
+      ]
+    },
+    {
+      "id": "lunch",
+      "name": "Lunch",
+      "blurb": "Available 11 AM – 3 PM weekdays.",
+      "items": [
+        { "id": "grain-bowl",   "name": "Grain Bowl",          "price": 14.0, "description": "Farro, roast squash, kale, tahini, soft egg.","tags": ["V"] },
+        { "id": "tartine",      "name": "Avocado Tartine",     "price": 12.0, "description": "Sourdough, smashed avocado, chili crisp.",   "tags": ["V","DF"] },
+        { "id": "soup",         "name": "Soup of the Day",     "price": 9.0,  "description": "Ask. It changes with what looked good at the market.","tags": ["V","GF","DF"] },
+        { "id": "turkey",       "name": "Turkey & Brie",       "price": 13.0, "description": "Roast turkey, brie, fig jam, baguette.",     "tags": [] },
+        { "id": "salad",        "name": "Little Gem Salad",    "price": 11.0, "description": "Anchovy dressing, parmesan, sourdough crumbs.","tags": ["GF"] }
+      ]
+    },
+    {
+      "id": "specials",
+      "name": "Today&#8217;s Specials",
+      "blurb": "Three things, fresh today.",
+      "items": []
+    }
+  ],
+  "tagDefinitions": {
+    "V":  "Vegetarian",
+    "GF": "Gluten-free",
+    "DF": "Dairy-free",
+    "N":  "Contains nuts"
+  }
+}

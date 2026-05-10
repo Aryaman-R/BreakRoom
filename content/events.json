@@ -1,0 +1,32 @@
+{
+  "upcoming": [
+    {
+      "id": "ev-trivia-may",
+      "title": "Pub Trivia (no pub)",
+      "date": "2026-05-22",
+      "time": "7:00 PM",
+      "description": "Six rounds, three teams of bragging rights, one absurd lightning round about pastries.",
+      "host": "Beans & friends"
+    },
+    {
+      "id": "ev-openmic-may",
+      "title": "Open Mic Night",
+      "date": "2026-05-29",
+      "time": "8:00 PM",
+      "description": "Sign up at the counter or just come listen. The mic is forgiving.",
+      "host": "Maya R."
+    },
+    {
+      "id": "ev-cuptasting-jun",
+      "title": "Coffee Cupping",
+      "date": "2026-06-05",
+      "time": "10:30 AM",
+      "description": "Three single origins side-by-side. Learn what you like.",
+      "host": "Marco from the roaster"
+    }
+  ],
+  "past": [
+    { "id": "ev-past-1", "title": "Spring Print Fair", "date": "2026-04-12", "time": "12:00 PM", "description": "Local printmakers selling prints and zines.", "host": "Linden Street Press" },
+    { "id": "ev-past-2", "title": "Open Mic Night",   "date": "2026-04-18", "time": "8:00 PM",  "description": "Standing room only.",                       "host": "Maya R." }
+  ]
+}
