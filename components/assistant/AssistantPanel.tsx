@@ -93,7 +93,7 @@ export function AssistantPanel({ onClose }: Props) {
       exit={{ x: "100%", opacity: 0 }}
       transition={{ type: "spring", stiffness: 320, damping: 32 }}
       className="fixed bottom-0 right-0 z-[70] flex flex-col bg-qh-bg-elevated border border-qh-line shadow-lifted
-                 w-full sm:w-[400px] h-[80vh] sm:h-[600px] sm:bottom-24 sm:right-5 sm:rounded-2xl"
+                 w-full sm:w-[400px] sm:max-w-[calc(100vw-2.5rem)] h-[85dvh] max-h-[85dvh] sm:h-[600px] sm:max-h-[calc(100dvh-7rem)] sm:bottom-24 sm:right-5 sm:rounded-2xl"
     >
       <header className="flex items-center justify-between px-4 py-3 border-b border-qh-line">
         <div className="flex items-center gap-2">
@@ -145,7 +145,7 @@ export function AssistantPanel({ onClose }: Props) {
           }}
           rows={1}
           placeholder="Ask about the menu, hours, or a booking…"
-          className="flex-1 resize-none rounded-lg border border-qh-line bg-qh-bg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-qh-accent max-h-32"
+          className="flex-1 min-w-0 resize-none rounded-lg border border-qh-line bg-qh-bg px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-qh-accent max-h-24 sm:max-h-32"
         />
         <button
           type="submit"

@@ -25,13 +25,13 @@ export function TheSpace() {
         </div>
 
         <div
-          className="mt-10 -mx-6 px-6 overflow-x-auto snap-x snap-mandatory flex gap-5 pb-4"
+          className="mt-10 -mx-4 px-4 sm:-mx-6 sm:px-6 overflow-x-auto snap-x snap-mandatory flex gap-5 pb-4"
           style={{ scrollbarWidth: "thin" }}
         >
           {PHOTOS.map((p, i) => (
             <div
               key={i}
-              className="snap-start shrink-0 w-[78%] sm:w-[420px] aspect-[4/5] rounded-3xl overflow-hidden shadow-lifted"
+              className="snap-start shrink-0 w-[82%] sm:w-[420px] aspect-[4/5] rounded-3xl overflow-hidden shadow-lifted"
               style={{ border: `4px solid ${p.color}` }}
             >
               <SpacePhoto color={p.color} swatch={p.swatch} index={i} />

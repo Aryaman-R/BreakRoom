@@ -176,11 +176,11 @@ function MobileSheet({ pathname, dark }: { pathname: string; dark: boolean }) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
       className={clsx(
-        "md:hidden fixed inset-0 top-[68px] z-40",
+        "md:hidden fixed inset-0 top-[68px] z-40 overflow-y-auto overscroll-contain",
         dark ? "bg-ah-bg" : "bg-qh-bg"
       )}
     >
-      <nav className="container-page flex flex-col py-10 gap-2">
+      <nav className="container-page flex flex-col py-6 sm:py-10 gap-1 sm:gap-2">
         {TABS.map((tab, i) => {
           const active = pathname.startsWith(tab.href);
           return (

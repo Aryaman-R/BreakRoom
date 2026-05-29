@@ -43,7 +43,7 @@ function LiveStatusCard() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ delay: 0.4, duration: 0.6 }}
-      className="absolute -bottom-6 -left-4 sm:left-6 bg-qh-bg-elevated border border-qh-line rounded-2xl shadow-lifted p-4 max-w-[280px]"
+      className="absolute -bottom-6 left-3 right-3 sm:left-6 sm:right-auto bg-qh-bg-elevated border border-qh-line rounded-2xl shadow-lifted p-4 sm:max-w-[280px]"
     >
       <div className="flex items-center gap-2 text-sm">
         <span className="h-2.5 w-2.5 rounded-full bg-qh-sage animate-pulse" aria-hidden />

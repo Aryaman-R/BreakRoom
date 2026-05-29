@@ -82,9 +82,9 @@ export function BookHero() {
 function Blobs() {
   return (
     <>
-      <div aria-hidden className="absolute -top-32 -left-20 w-[520px] h-[520px] rounded-full blur-3xl bg-ah-magenta/30" />
-      <div aria-hidden className="absolute top-1/3 right-0 w-[480px] h-[480px] rounded-full blur-3xl bg-ah-tangerine/25" />
-      <div aria-hidden className="absolute bottom-0 left-1/3 w-[440px] h-[440px] rounded-full blur-3xl bg-ah-violet/30" />
+      <div aria-hidden className="absolute -top-32 -left-20 w-[300px] h-[300px] sm:w-[520px] sm:h-[520px] rounded-full blur-3xl bg-ah-magenta/30" />
+      <div aria-hidden className="absolute top-1/3 right-0 w-[280px] h-[280px] sm:w-[480px] sm:h-[480px] rounded-full blur-3xl bg-ah-tangerine/25" />
+      <div aria-hidden className="absolute bottom-0 left-1/3 w-[260px] h-[260px] sm:w-[440px] sm:h-[440px] rounded-full blur-3xl bg-ah-violet/30" />
     </>
   );
 }

@@ -28,7 +28,7 @@ export function WhatYouCanDo() {
               whileHover={{ rotate: 0, scale: 1.03 }}
               transition={{ type: "spring", stiffness: 240, damping: 20 }}
               style={{ background: card.color, color: card.text }}
-              className="rounded-3xl p-6 h-56 flex flex-col justify-between shadow-lifted"
+              className="rounded-3xl p-6 min-h-56 flex flex-col justify-between gap-4 shadow-lifted"
             >
               <h3
                 className="font-display text-xl tracking-tightish"

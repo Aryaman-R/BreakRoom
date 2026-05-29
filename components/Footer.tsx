@@ -86,7 +86,7 @@ function Newsletter() {
       <label htmlFor="newsletter-email" className="text-sm text-qh-ink-soft block mb-2">
         Slow newsletter — once a month, no noise.
       </label>
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <input
           id="newsletter-email"
           type="email"
@@ -94,11 +94,11 @@ function Newsletter() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@inbox.com"
-          className="flex-1 rounded-full border border-qh-line bg-qh-bg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-qh-accent"
+          className="flex-1 min-w-0 rounded-full border border-qh-line bg-qh-bg px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-qh-accent"
         />
         <button
           type="submit"
-          className="rounded-full bg-qh-ink text-qh-bg px-5 py-2.5 text-sm font-medium hover:bg-qh-accent transition-colors"
+          className="w-full sm:w-auto shrink-0 rounded-full bg-qh-ink text-qh-bg px-5 py-2.5 text-sm font-medium hover:bg-qh-accent transition-colors"
         >
           {done ? "Thanks ✓" : "Subscribe"}
         </button>

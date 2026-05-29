@@ -27,7 +27,7 @@ export function StickyJumpBar() {
           transition={{ type: "spring", stiffness: 300, damping: 28 }}
           className="md:hidden fixed bottom-0 left-0 right-0 z-40"
         >
-          <div className="mx-3 mb-3 rounded-full px-3 py-2 flex items-center justify-between gap-3 bg-ah-cream text-ah-bg shadow-lifted"
+          <div className="ml-3 mr-3 mb-3 rounded-full pl-3 pr-20 py-2 flex items-center justify-between gap-3 bg-ah-cream text-ah-bg shadow-lifted"
                style={{
                  backgroundImage:
                    "linear-gradient(90deg, #FF3D8A 0%, #FF8C42 30%, #FFE066 55%, #6EE7B7 80%, #A78BFA 100%)",
