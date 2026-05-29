@@ -24,6 +24,8 @@ import type {
   Booking,
   BookingInput,
   MenuCategory,
+  MenuItem,
+  Order,
   PublicEvent,
   Special,
 } from "./types";
@@ -36,10 +38,20 @@ export interface Repo {
   getPastEvents(): Promise<PublicEvent[]>;
   getEvent(id: string): Promise<PublicEvent | null>;
   getAvailability(dateISO: string): Promise<AvailabilitySlot[]>;
+  /** Flat map of orderable menu items by id — the source of truth for prices. */
+  getMenuItemMap(): Promise<Map<string, MenuItem>>;
 
   // Writes
   createBooking(input: BookingInput): Promise<Booking>;
   listBookings(): Promise<Booking[]>;
+
+  // Orders
+  createOrder(order: Order): Promise<Order>;
+  getOrder(id: string): Promise<Order | null>;
+  getOrderByPaymentIntent(paymentIntentId: string): Promise<Order | null>;
+  /** Idempotently mark an order paid. Returns the order, or null if unknown. */
+  markOrderPaid(paymentIntentId: string, paidAtISO: string): Promise<Order | null>;
+  listOrders(): Promise<Order[]>;
 }
 
 /** All slots the cafe could offer for a private booking. */
@@ -50,6 +62,7 @@ const SLOT_TEMPLATE = [
 
 class InMemoryRepo implements Repo {
   private bookings: Booking[] = [];
+  private orders: Order[] = [];
 
   async getMenu() {
     // Fold today's specials into the "Specials" category.
@@ -114,6 +127,45 @@ class InMemoryRepo implements Repo {
 
   async listBookings() {
     return [...this.bookings].sort((a, b) =>
+      a.createdAt < b.createdAt ? 1 : -1
+    );
+  }
+
+  async getMenuItemMap() {
+    const cats = await this.getMenu();
+    const map = new Map<string, MenuItem>();
+    for (const cat of cats) {
+      for (const item of cat.items) map.set(item.id, item);
+    }
+    return map;
+  }
+
+  async createOrder(order: Order) {
+    this.orders.push(order);
+    return order;
+  }
+
+  async getOrder(id: string) {
+    return this.orders.find((o) => o.id === id) ?? null;
+  }
+
+  async getOrderByPaymentIntent(paymentIntentId: string) {
+    return this.orders.find((o) => o.paymentIntentId === paymentIntentId) ?? null;
+  }
+
+  async markOrderPaid(paymentIntentId: string, paidAtISO: string) {
+    const order = this.orders.find((o) => o.paymentIntentId === paymentIntentId);
+    if (!order) return null;
+    // Idempotent: webhooks can be delivered more than once.
+    if (order.status !== "paid") {
+      order.status = "paid";
+      order.paidAt = paidAtISO;
+    }
+    return order;
+  }
+
+  async listOrders() {
+    return [...this.orders].sort((a, b) =>
       a.createdAt < b.createdAt ? 1 : -1
     );
   }

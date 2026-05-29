@@ -8,7 +8,14 @@
  *   await resend.emails.send({ from, to, subject, html });
  */
 
-import type { Booking } from "./types";
+import type { Booking, Order } from "./types";
+
+function formatMoney(cents: number, currency = "usd"): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency.toUpperCase(),
+  }).format(cents / 100);
+}
 
 export interface EmailMessage {
   to: string;
@@ -50,5 +57,38 @@ export function bookingNotification(b: Booking): EmailMessage {
     to: process.env.BOOKING_NOTIFY_EMAIL ?? "hello@thebreakroom.cafe",
     subject: `New booking request: ${b.name} — ${b.date} ${b.timeSlot}`,
     text: JSON.stringify(b, null, 2),
+  };
+}
+
+export function orderConfirmation(o: Order): EmailMessage {
+  const lines = o.items.map(
+    (i) => `  ${i.quantity}× ${i.name.replace(/&#8217;/g, "'")}` +
+      `  ${formatMoney(Math.round(i.price * 100) * i.quantity, o.currency)}`
+  );
+  return {
+    to: o.email,
+    subject: "Your order is paid — The Break Room",
+    text: [
+      `Hi ${o.name},`,
+      ``,
+      `Thanks for ordering ahead. We're on it.`,
+      ``,
+      ...lines,
+      ``,
+      `  Total:   ${formatMoney(o.amountTotal, o.currency)}`,
+      `  Pickup:  ${o.pickupTime}`,
+      ``,
+      `Show this email (or just your name) at the counter.`,
+      ``,
+      `— The Break Room`,
+    ].join("\n"),
+  };
+}
+
+export function orderNotification(o: Order): EmailMessage {
+  return {
+    to: process.env.BOOKING_NOTIFY_EMAIL ?? "hello@thebreakroom.cafe",
+    subject: `New paid order: ${o.name} — pickup ${o.pickupTime}`,
+    text: JSON.stringify(o, null, 2),
   };
 }

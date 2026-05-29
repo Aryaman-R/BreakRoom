@@ -65,3 +65,46 @@ export interface AvailabilitySlot {
   time: string;
   available: boolean;
 }
+
+/* ---------------------------------------------------------------------------
+ * Advance menu ordering (pay-ahead pickup)
+ * ------------------------------------------------------------------------- */
+
+/** What the client sends — only an id and a quantity. Prices are never
+ *  trusted from the client; the server resolves them from the menu. */
+export interface OrderItemInput {
+  id: string;
+  quantity: number;
+}
+
+/** A line item once the server has resolved its name and price. */
+export interface OrderItem {
+  id: string;
+  name: string;
+  price: number; // unit price in dollars (matches menu.json)
+  quantity: number;
+}
+
+export interface OrderInput {
+  items: OrderItemInput[];
+  name: string;
+  email: string;
+  /** Human-readable pickup time, e.g. "Today, 3:15 PM". */
+  pickupTime: string;
+}
+
+export interface Order {
+  id: string;
+  items: OrderItem[];
+  name: string;
+  email: string;
+  pickupTime: string;
+  /** Total charge in the smallest currency unit (cents). */
+  amountTotal: number;
+  currency: string;
+  status: "pending" | "paid" | "cancelled";
+  /** Stripe PaymentIntent id this order is tied to. */
+  paymentIntentId: string;
+  createdAt: string;   // ISO timestamp
+  paidAt?: string;     // ISO timestamp, set when the webhook confirms payment
+}

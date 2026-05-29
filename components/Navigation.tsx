@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { BookPartyButton } from "./BookPartyButton";
 import { AssistantTrigger } from "./assistant/AssistantTrigger";
+import { CartButton } from "./cart/CartButton";
 import { useNavBackdrop } from "./useNavBackdrop";
 import clsx from "clsx";
 
@@ -101,6 +102,7 @@ export function Navigation() {
         </LayoutGroup>
 
         <div className="flex items-center gap-3">
+          <CartButton dark={dark} />
           <AssistantTrigger dark={dark} />
           <div className="hidden sm:block">
             <BookPartyButton size="md" />

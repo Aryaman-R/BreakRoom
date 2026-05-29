@@ -6,6 +6,8 @@ import { Footer } from "@/components/Footer";
 import { AssistantWidget } from "@/components/assistant/AssistantWidget";
 import { ModeProvider } from "@/components/ModeProvider";
 import { AssistantProvider } from "@/components/assistant/AssistantContext";
+import { CartProvider } from "@/lib/cart";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -64,18 +66,21 @@ export default function RootLayout({
       <body>
         <ModeProvider>
           <AssistantProvider>
-            <a
-              href="#main"
-              className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-qh-ink focus:text-qh-bg focus:px-3 focus:py-2 focus:rounded-md"
-            >
-              Skip to content
-            </a>
-            <Navigation />
-            <main id="main" className="relative z-[2]">
-              {children}
-            </main>
-            <Footer />
-            <AssistantWidget />
+            <CartProvider>
+              <a
+                href="#main"
+                className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-qh-ink focus:text-qh-bg focus:px-3 focus:py-2 focus:rounded-md"
+              >
+                Skip to content
+              </a>
+              <Navigation />
+              <main id="main" className="relative z-[2]">
+                {children}
+              </main>
+              <Footer />
+              <AssistantWidget />
+              <CartDrawer />
+            </CartProvider>
           </AssistantProvider>
         </ModeProvider>
       </body>

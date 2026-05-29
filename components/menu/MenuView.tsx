@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import clsx from "clsx";
 import type { MenuCategory, MenuItem } from "@/lib/types";
+import { AddToOrderButton } from "@/components/cart/AddToOrderButton";
 
 type Filter = "all" | "V" | "GF" | "DF" | "under10";
 
@@ -112,6 +113,9 @@ function ItemRow({ item }: { item: MenuItem }) {
             dangerouslySetInnerHTML={{ __html: item.description }}
           />
         )}
+      </div>
+      <div className="self-center">
+        <AddToOrderButton id={item.id} name={item.name} price={item.price} />
       </div>
     </motion.li>
   );

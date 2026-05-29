@@ -27,3 +27,31 @@ export const bookingSchema = z.object({
 });
 
 export type BookingFormValues = z.infer<typeof bookingSchema>;
+
+/* ---------------------------------------------------------------------------
+ * Advance menu ordering
+ * ------------------------------------------------------------------------- */
+
+export const orderSchema = z.object({
+  items: z
+    .array(
+      z.object({
+        id: z.string().min(1),
+        quantity: z
+          .number()
+          .int()
+          .min(1)
+          .max(20, "That&#8217;s a lot of one thing — call us for big orders."),
+      })
+    )
+    .min(1, "Your order is empty — add something from the menu first."),
+  name: z
+    .string()
+    .min(2, "Please tell us your name so we can call it out."),
+  email: z
+    .string()
+    .email("We need a valid email to send your receipt."),
+  pickupTime: z.string().min(1, "Pick a pickup time."),
+});
+
+export type OrderFormValues = z.infer<typeof orderSchema>;
