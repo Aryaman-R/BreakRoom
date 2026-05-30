@@ -48,6 +48,14 @@ export const metadata: Metadata = {
     description:
       "Somewhere between the office and home — a quiet workspace by day, an event space by night.",
     type: "website",
+    images: [
+      {
+        url: "/photos/lounge-wide.jpg",
+        width: 640,
+        height: 480,
+        alt: "Inside The Break Room — the lounge with sofas and big windows.",
+      },
+    ],
   },
 };
 

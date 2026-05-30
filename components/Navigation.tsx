@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -138,12 +139,19 @@ function Wordmark() {
     <Link
       href="/"
       // Inherits color from the nav header — no need to hard-code here.
-      className="group font-display italic text-2xl tracking-tightish"
+      className="group flex items-center gap-2.5"
       aria-label="The Break Room — home"
     >
-      The Break Room
-      <span className="inline-block transition-transform duration-300 group-hover:rotate-12 group-hover:translate-x-0.5">
-        .
+      {/* Logo has a solid (white) background, so keep it in a self-contained
+          rounded tile that reads intentionally on both light and dark nav. */}
+      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white shadow-soft ring-1 ring-qh-ink/10 overflow-hidden shrink-0">
+        <Image src="/logo-mark.png" alt="" width={32} height={28} className="h-6 w-auto" />
+      </span>
+      <span className="font-display italic text-2xl tracking-tightish">
+        The Break Room
+        <span className="inline-block transition-transform duration-300 group-hover:rotate-12 group-hover:translate-x-0.5">
+          .
+        </span>
       </span>
     </Link>
   );

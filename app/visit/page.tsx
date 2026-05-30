@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { ContactForm } from "@/components/visit/ContactForm";
 import { MapEmbed } from "@/components/visit/MapEmbed";
 
@@ -103,9 +104,9 @@ export default function VisitPage() {
         <div>
           <MapEmbed />
           <div className="mt-6 grid grid-cols-3 gap-3">
-            <PhotoTile aspect="aspect-[4/5]" />
-            <PhotoTile aspect="aspect-[4/5]" tone="b" />
-            <PhotoTile aspect="aspect-[4/5]" tone="c" />
+            <PhotoTile src="/photos/exterior.jpg" alt="The Break Room storefront and unit sign." />
+            <PhotoTile src="/photos/patio.jpg" alt="Patio seating outside The Break Room." />
+            <PhotoTile src="/photos/dining.jpg" alt="Marble-top dining tables inside." />
           </div>
         </div>
       </section>
@@ -125,21 +126,16 @@ export default function VisitPage() {
   );
 }
 
-function PhotoTile({ aspect, tone = "a" }: { aspect: string; tone?: "a" | "b" | "c" }) {
-  const palettes = {
-    a: ["#F4D6B5", "#9C7A55", "#FFF8E7"],
-    b: ["#E8BD93", "#7E8C6E", "#FBF7F0"],
-    c: ["#F2E6D2", "#8B5E3C", "#FFEAC4"],
-  } as const;
-  const [bg, mid, top] = palettes[tone];
+function PhotoTile({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className={`${aspect} rounded-2xl overflow-hidden border border-qh-line shadow-soft`}>
-      <svg viewBox="0 0 100 125" className="w-full h-full" aria-hidden>
-        <rect width="100" height="125" fill={bg} />
-        <rect y="80" width="100" height="45" fill={mid} />
-        <circle cx="35" cy="60" r="22" fill={top} stroke="#3F2A18" strokeWidth="1" />
-        <rect x="62" y="44" width="30" height="30" fill={top} stroke="#3F2A18" strokeWidth="1" />
-      </svg>
+    <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-qh-line shadow-soft">
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="(max-width: 1024px) 30vw, 160px"
+        className="object-cover"
+      />
     </div>
   );
 }

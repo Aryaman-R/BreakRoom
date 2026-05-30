@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
 import { defaultRepo } from "@/lib/db";
 import { MenuView } from "@/components/menu/MenuView";
+import { PhotoGallery } from "@/components/ui/PhotoGallery";
+
+const PRINTED_MENU = [
+  { src: "/menu/printed-1.png", alt: "Printed menu — sandwiches, sides, and specials.", w: 2000, h: 1545 },
+  { src: "/menu/printed-2.png", alt: "Printed menu — rice bowls, breakfast, bubble tea, and beverages.", w: 2000, h: 1545 },
+  { src: "/photos/menu-board-1.jpg", alt: "In-store menu board — sandwiches, sides, beverages.", w: 640, h: 480 },
+  { src: "/photos/menu-board-2.jpg", alt: "In-store menu board — specials, burgers, rice bowls.", w: 640, h: 480 },
+  { src: "/photos/bubble-tea.jpg", alt: "Bubble tea flavors and toppings sign.", w: 480, h: 640, fit: "contain" as const },
+];
 
 export const metadata: Metadata = {
   title: "Menu",
@@ -23,6 +32,16 @@ export default async function MenuPage() {
       </header>
       <div className="hand-divider mt-10" />
       <MenuView categories={categories} />
+
+      <section className="mt-20">
+        <h2 className="font-display text-3xl tracking-tightish">The full menu, in print</h2>
+        <p className="mt-2 text-qh-ink-soft max-w-2xl">
+          Photos of our in-store menu boards and the printed takeaway card. Tap any to enlarge.
+        </p>
+        <div className="mt-8">
+          <PhotoGallery photos={PRINTED_MENU} className="grid-cols-2 sm:grid-cols-3 lg:grid-cols-5" />
+        </div>
+      </section>
     </div>
   );
 }

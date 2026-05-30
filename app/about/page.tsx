@@ -1,6 +1,16 @@
 import type { Metadata } from "next";
 import about from "@/content/about.json";
 import { Reveal } from "@/components/ui/Reveal";
+import { PhotoGallery } from "@/components/ui/PhotoGallery";
+
+const ROOM_PHOTOS = [
+  { src: "/photos/lounge-wide.jpg", alt: "The lounge with grey sofas and big windows.", w: 640, h: 480 },
+  { src: "/photos/counter.jpg", alt: "The service counter and overhead menu boards.", w: 640, h: 480 },
+  { src: "/photos/dining.jpg", alt: "Marble-top dining tables and black chairs.", w: 480, h: 640 },
+  { src: "/photos/seating.jpg", alt: "Lounge seating along the wall.", w: 480, h: 640 },
+  { src: "/photos/prep.jpg", alt: "Behind the counter — the prep area.", w: 480, h: 640 },
+  { src: "/photos/counter-side.jpg", alt: "The counter from the side, with the menu screens.", w: 480, h: 640 },
+];
 
 export const metadata: Metadata = {
   title: "About",
@@ -28,6 +38,16 @@ export default function AboutPage() {
               />
             </Reveal>
           ))}
+        </div>
+      </section>
+
+      <section className="mt-24">
+        <Reveal>
+          <h2 className="font-display text-3xl tracking-tightish">Inside the room</h2>
+          <p className="mt-2 text-qh-ink-soft">The actual space — tap any photo to enlarge.</p>
+        </Reveal>
+        <div className="mt-8">
+          <PhotoGallery photos={ROOM_PHOTOS} className="grid-cols-2 sm:grid-cols-3" />
         </div>
       </section>
 

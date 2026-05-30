@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
@@ -88,68 +89,16 @@ export function Hero() {
           style={{ y: yImage }}
           className="lg:col-span-6 relative aspect-[4/5] rounded-3xl overflow-hidden shadow-soft border border-qh-line"
         >
-          <HeroIllustration />
+          <Image
+            src="/photos/lounge.jpg"
+            alt="The lounge at The Break Room — soft grey sofas, plants, and big windows letting in morning light."
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-cover"
+            priority
+          />
         </motion.div>
       </div>
     </section>
-  );
-}
-
-/**
- * SVG illustration in lieu of a real photo. Warm morning palette.
- * Replace with a real `next/image` of the cafe when photography lands.
- */
-function HeroIllustration() {
-  return (
-    <svg
-      viewBox="0 0 800 1000"
-      className="w-full h-full block"
-      preserveAspectRatio="xMidYMid slice"
-      aria-hidden
-    >
-      <defs>
-        <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#FBE6CC" />
-          <stop offset="60%" stopColor="#F4D6B5" />
-          <stop offset="100%" stopColor="#E8BD93" />
-        </linearGradient>
-        <linearGradient id="table" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#9C7A55" />
-          <stop offset="100%" stopColor="#6E4E32" />
-        </linearGradient>
-      </defs>
-      <rect width="800" height="1000" fill="url(#sky)" />
-      {/* Window light streaks */}
-      <g opacity="0.45">
-        <polygon points="0,0 320,0 80,1000 -240,1000" fill="#FFF1D8" />
-        <polygon points="380,0 460,0 240,1000 140,1000" fill="#FFEAC4" />
-      </g>
-      {/* Table */}
-      <rect x="0" y="640" width="800" height="360" fill="url(#table)" />
-      <rect x="0" y="640" width="800" height="6" fill="#3F2A18" opacity="0.5" />
-      {/* Notebook */}
-      <g transform="translate(120 660)">
-        <rect width="320" height="240" rx="8" fill="#FFF8E7" stroke="#3F2A18" strokeWidth="2" />
-        <line x1="20" y1="40" x2="300" y2="40" stroke="#C9A57B" strokeWidth="1" />
-        <line x1="20" y1="80" x2="300" y2="80" stroke="#C9A57B" strokeWidth="1" />
-        <line x1="20" y1="120" x2="300" y2="120" stroke="#C9A57B" strokeWidth="1" />
-        <line x1="20" y1="160" x2="220" y2="160" stroke="#C9A57B" strokeWidth="1" />
-        <path d="M20 200 q 40 -8 80 0 t 80 0" stroke="#2A2520" fill="none" strokeWidth="1.5" />
-      </g>
-      {/* Coffee cup */}
-      <g transform="translate(520 700)">
-        <ellipse cx="80" cy="20" rx="80" ry="20" fill="#3F2A18" />
-        <path d="M0 20 v 130 a 80 24 0 0 0 160 0 V 20 Z" fill="#FBF7F0" stroke="#3F2A18" strokeWidth="3" />
-        <path d="M160 50 q 40 0 40 40 t -40 40" fill="none" stroke="#FBF7F0" strokeWidth="10" />
-        <path d="M160 50 q 40 0 40 40 t -40 40" fill="none" stroke="#3F2A18" strokeWidth="3" />
-        <ellipse cx="80" cy="22" rx="68" ry="14" fill="#5C3A1F" />
-        <ellipse cx="80" cy="22" rx="40" ry="6" fill="#B58A6A" opacity="0.6" />
-      </g>
-      {/* Steam */}
-      <g opacity="0.5" stroke="#FBF7F0" strokeWidth="3" fill="none" strokeLinecap="round">
-        <path d="M580 690 q 6 -20 -4 -36 q -10 -16 4 -32" />
-        <path d="M610 690 q 6 -16 -4 -32 q -10 -16 4 -32" />
-      </g>
-    </svg>
   );
 }

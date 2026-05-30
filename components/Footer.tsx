@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -14,9 +15,14 @@ export function Footer() {
     <footer className="relative z-[2] mt-32 border-t border-qh-line bg-qh-bg-elevated">
       <div className="container-page py-16 grid gap-12 md:grid-cols-4">
         <div className="md:col-span-2">
-          <p className="font-display italic text-2xl text-qh-ink">
-            The Break Room.
-          </p>
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-soft ring-1 ring-qh-ink/10 overflow-hidden shrink-0">
+              <Image src="/logo-mark.png" alt="" width={32} height={28} className="h-8 w-auto" />
+            </span>
+            <p className="font-display italic text-2xl text-qh-ink">
+              The Break Room.
+            </p>
+          </div>
           <p className="mt-3 max-w-sm text-qh-ink-soft">
             Coffee and quiet by day. Color and noise by night.
             We&apos;re here for both.
