@@ -32,3 +32,8 @@ yarn-error.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local-only reference notes (not tracked)
+# DigitalOcean deployment guide for the Stripe ordering flow (env vars,
+# webhook setup, in-memory storage caveats, pre-launch checklist).
+DIGITALOCEAN_DEPLOYMENT.md
