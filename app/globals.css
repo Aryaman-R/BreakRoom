@@ -6,25 +6,25 @@
    1. TOKENS
    ========================================================= */
 :root {
-  /* Mode A — Quiet Hours */
-  --qh-bg: #f4efe6;
-  --qh-bg-elevated: #fbf7f0;
-  --qh-ink: #2a2520;
-  --qh-ink-soft: #6b6258;
-  --qh-accent: #8b5e3c;
-  --qh-accent-soft: #c9a57b;
-  --qh-sage: #7e8c6e;
-  --qh-line: #e5ddcf;
+  /* Mode A — Quiet Hours (daytime: pistachio + brand pink, forest accents) */
+  --qh-bg: #eaf1dc;
+  --qh-bg-elevated: #f5f9ec;
+  --qh-ink: #20271e;
+  --qh-ink-soft: #5c6657;
+  --qh-accent: #d62e7d;
+  --qh-accent-soft: #f6b8d3;
+  --qh-sage: #3c6b4a;
+  --qh-line: #d3dec0;
 
-  /* Mode B — After Hours */
-  --ah-bg: #1a0f2e;
-  --ah-bg-2: #2b1450;
-  --ah-magenta: #ff3d8a;
-  --ah-tangerine: #ff8c42;
-  --ah-electric: #ffe066;
+  /* Mode B — After Hours (night: deep forest green + neon pops) */
+  --ah-bg: #16271b;
+  --ah-bg-2: #1f3a28;
+  --ah-magenta: #ff4d9e;
+  --ah-tangerine: #ff9f45;
+  --ah-electric: #d7f25a;
   --ah-mint: #6ee7b7;
   --ah-violet: #a78bfa;
-  --ah-cream: #fff8e7;
+  --ah-cream: #eff6e2;
 
   /* Surfaces (interpolated by IntersectionObserver on the home transition section) */
   --surface-bg: var(--qh-bg);
@@ -104,7 +104,7 @@ h4 { font-size: 1.4rem; }
   display: block;
   width: 100%;
   height: 22px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 22' fill='none'><path d='M2 11 C 30 4, 60 18, 100 11 S 170 4, 198 11' stroke='%23C9A57B' stroke-width='1.4' stroke-linecap='round' fill='none' opacity='0.7'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 22' fill='none'><path d='M2 11 C 30 4, 60 18, 100 11 S 170 4, 198 11' stroke='%233c6b4a' stroke-width='1.4' stroke-linecap='round' fill='none' opacity='0.7'/></svg>");
   background-repeat: repeat-x;
   background-position: center;
 }
@@ -115,8 +115,8 @@ h4 { font-size: 1.4rem; }
 body[data-mode="after-hours"] {
   --surface-bg: var(--ah-bg);
   --surface-ink: var(--ah-cream);
-  background: radial-gradient(at 20% 10%, rgba(255, 61, 138, 0.18), transparent 50%),
-              radial-gradient(at 80% 30%, rgba(255, 140, 66, 0.14), transparent 55%),
+  background: radial-gradient(at 20% 10%, rgba(255, 77, 158, 0.18), transparent 50%),
+              radial-gradient(at 80% 30%, rgba(215, 242, 90, 0.12), transparent 55%),
               radial-gradient(at 60% 90%, rgba(167, 139, 250, 0.16), transparent 50%),
               var(--ah-bg);
   background-size: 200% 200%, 200% 200%, 200% 200%, 100% 100%;

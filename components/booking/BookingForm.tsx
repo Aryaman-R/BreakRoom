@@ -69,7 +69,7 @@ export function BookingForm() {
             startVelocity: 40,
             ticks: 100,
             origin,
-            colors: ["#FF3D8A", "#FF8C42", "#FFE066", "#6EE7B7", "#A78BFA"],
+            colors: ["#ff4d9e", "#ff9f45", "#d7f25a", "#6EE7B7", "#A78BFA"],
           });
         fire({ x: 0.2, y: 0.6 });
         fire({ x: 0.5, y: 0.5 });
@@ -270,7 +270,7 @@ function SubmitButton({
       className="relative w-full rounded-2xl px-6 py-4 text-base font-medium text-ah-bg overflow-hidden disabled:opacity-60"
       style={{
         backgroundImage:
-          "conic-gradient(from 0deg, #FF3D8A, #FF8C42, #FFE066, #6EE7B7, #A78BFA, #FF3D8A)",
+          "conic-gradient(from 0deg, #ff4d9e, #ff9f45, #d7f25a, #6EE7B7, #A78BFA, #ff4d9e)",
       }}
     >
       <span className="relative z-[1]">

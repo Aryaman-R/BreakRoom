@@ -14,7 +14,7 @@ const PRINTED_MENU = [
 export const metadata: Metadata = {
   title: "Menu",
   description:
-    "Coffee, tea, pastries, and lunch from The Break Room. Sourced honestly, made with care.",
+    "Sandwiches, rice bowls, wings & yakisoba, burgers, bubble tea, shakes, and coffee from The Break Room.",
 };
 
 export default async function MenuPage() {
@@ -24,10 +24,10 @@ export default async function MenuPage() {
       <header className="max-w-2xl">
         <p className="text-sm uppercase tracking-[0.18em] text-qh-accent">The menu</p>
         <h1 className="mt-3 font-display tracking-tighter2">
-          What we&#8217;re pouring &amp; baking, today.
+          What we&#8217;re cooking &amp; pouring, today.
         </h1>
         <p className="mt-5 text-qh-ink-soft text-lg">
-          Read it like a magazine, not a database. Allergens are marked. The specials change.
+          Sandwiches to rice bowls, wings to bubble tea. Read it like a magazine, not a database &mdash; allergens are marked.
         </p>
       </header>
       <div className="hand-divider mt-10" />

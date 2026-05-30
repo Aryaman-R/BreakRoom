@@ -18,7 +18,7 @@ export function BookHero() {
         startVelocity: 38,
         ticks: 90,
         origin: { x: 0.5, y: 0.35 },
-        colors: ["#FF3D8A", "#FF8C42", "#FFE066", "#6EE7B7", "#A78BFA"],
+        colors: ["#ff4d9e", "#ff9f45", "#d7f25a", "#6EE7B7", "#A78BFA"],
       });
     })();
     return () => {
@@ -108,7 +108,7 @@ function Star({ style }: { style: React.CSSProperties }) {
     >
       <path
         d="M28 4 L33 22 L52 24 L37 36 L42 54 L28 44 L14 54 L19 36 L4 24 L23 22 Z"
-        fill="#FFE066"
+        fill="#d7f25a"
       />
     </svg>
   );

@@ -29,7 +29,7 @@ export function GuestSlider({ value, onChange, min = 5, max = 60 }: Props) {
             style={{
               width: `${pct}%`,
               backgroundImage:
-                "linear-gradient(90deg, #FF3D8A, #FF8C42, #FFE066, #6EE7B7, #A78BFA)",
+                "linear-gradient(90deg, #ff4d9e, #ff9f45, #d7f25a, #6EE7B7, #A78BFA)",
             }}
           />
         </div>

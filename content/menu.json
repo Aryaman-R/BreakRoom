@@ -1,58 +1,155 @@
 {
   "categories": [
     {
-      "id": "coffee",
-      "name": "Coffee",
-      "blurb": "Single origin from a roaster a few blocks south. Pulled with patience.",
+      "id": "sandwiches",
+      "name": "Sandwiches",
+      "blurb": "On whole wheat, sourdough, or white. Make it a combo — drink +$1.50, drink & fries +$4.49.",
       "items": [
-        { "id": "espresso",     "name": "Espresso",            "price": 3.5, "description": "A short, dense pour. The way it should be." , "tags": ["V","GF","DF"] },
-        { "id": "macchiato",    "name": "Macchiato",           "price": 4.0, "description": "Espresso, a small spoon of foam.",            "tags": ["V","GF"] },
-        { "id": "cortado",      "name": "Cortado",             "price": 4.5, "description": "Equal parts espresso and warm milk.",         "tags": ["V","GF"] },
-        { "id": "latte",        "name": "Latte",               "price": 5.5, "description": "12oz, lightly textured milk.",                "tags": ["V","GF"] },
-        { "id": "oat-latte",    "name": "Oat Latte",           "price": 6.0, "description": "House oat blend, creamy without trying.",     "tags": ["V","GF","DF"] },
-        { "id": "filter",       "name": "Pour-over of the day","price": 5.0, "description": "Ask the barista. They&#8217;ll be honest.",   "tags": ["V","GF","DF"] },
-        { "id": "cold-brew",    "name": "Cold Brew",           "price": 5.5, "description": "Slow-steeped 18 hours. Smooth, low acid.",     "tags": ["V","GF","DF"] }
+        { "id": "grilled-cheese", "name": "Grilled Cheese",  "price": 6.99,  "description": "Swiss, cheddar, provolone, or American — your call.", "tags": ["V"] },
+        { "id": "cold-cucumber",  "name": "Cold Cucumber",   "price": 7.99,  "description": "Cool, crisp, and light.",                            "tags": ["V"] },
+        { "id": "ham",            "name": "Ham",             "price": 10.99, "description": "Simple and done right.",                              "tags": [] },
+        { "id": "blt",            "name": "BLT",             "price": 10.99, "description": "Bacon, lettuce, tomato, toasted.",                    "tags": [] },
+        { "id": "turkey",         "name": "Turkey",          "price": 10.99, "description": "Roast turkey, stacked.",                              "tags": [] },
+        { "id": "egg-salad",      "name": "Egg Salad",       "price": 11.99, "description": "Creamy, classic.",                                   "tags": ["V"] },
+        { "id": "bombay",         "name": "Bombay",          "price": 11.99, "description": "Spiced and bright.",                                  "tags": ["V"] },
+        { "id": "club",           "name": "Club",            "price": 12.99, "description": "The triple-decker.",                                  "tags": [] },
+        { "id": "roast-beef",     "name": "Roast Beef",      "price": 12.99, "description": "Thin-sliced, tender.",                                "tags": [] },
+        { "id": "french-dip",     "name": "French Dip",      "price": 13.99, "description": "With a side of jus.",                                 "tags": [] },
+        { "id": "potato",         "name": "Potato",          "price": 9.99,  "description": "Hearty and filling.",                                 "tags": ["V"] }
+      ]
+    },
+    {
+      "id": "rice-bowls",
+      "name": "Rice Bowls",
+      "blurb": "Served with rice or quinoa, kimchi, green salad, and potato fritters or gyoza.",
+      "items": [
+        { "id": "chicken-curry",   "name": "Chicken Curry",                          "price": 14.99, "description": "Slow-simmered, warming.",                  "tags": [] },
+        { "id": "tempura-special", "name": "Tempura Special",                        "price": 14.99, "description": "Chicken gyoza, eggroll, butterfly shrimp.","tags": ["N"] },
+        { "id": "kung-pao-tofu",   "name": "Kung Pao Tofu",                          "price": 15.49, "description": "Peanuts, chili, scallion.",               "tags": ["V","N"] },
+        { "id": "paneer-butter",   "name": "Paneer Butter",                          "price": 15.99, "description": "Creamy tomato, soft paneer.",             "tags": ["V"] },
+        { "id": "orange-chicken",  "name": "Orange Chicken",                         "price": 16.49, "description": "Crispy, sweet, sticky.",                  "tags": [] },
+        { "id": "kung-pao-chicken","name": "Kung Pao Chicken",                       "price": 16.49, "description": "Peanuts, chili, scallion.",               "tags": ["N"] },
+        { "id": "spicy-pork",      "name": "Spicy Pork",                             "price": 16.49, "description": "Bold and fiery.",                         "tags": [] },
+        { "id": "chicken-katsu",   "name": "Chicken Katsu",                          "price": 16.99, "description": "Panko-crusted cutlet, curry.",            "tags": [] },
+        { "id": "butter-chicken",  "name": "Butter Chicken <em>(Chef’s Special)</em>", "price": 16.99, "description": "Rich, buttery — our signature.",        "tags": [] },
+        { "id": "beef-bulgogi",    "name": "Beef Bulgogi",                           "price": 17.49, "description": "Marinated, grilled, savory-sweet.",       "tags": [] },
+        { "id": "lamb-curry",      "name": "Lamb Curry <em>(Chef’s Special)</em>",   "price": 17.99, "description": "Tender lamb, deep spice.",                "tags": [] }
+      ]
+    },
+    {
+      "id": "wings-noodles",
+      "name": "Wings & Yakisoba",
+      "blurb": "Wings in plain, BBQ, Korean, or sweet chili. Yakisoba your way.",
+      "items": [
+        { "id": "wings",       "name": "Fried Chicken Wings", "price": 8.99,  "description": "Plain, BBQ, Korean, or sweet chili — 4 / 8 / 12 pcs ($8.99 / $12.99 / $17.99).", "tags": [] },
+        { "id": "pao-platter", "name": "Pao Platter",         "price": 11.99, "description": "Veggie, paneer, or minced chicken ($11.99 / $12.99 / $13.99).",                "tags": ["V"] },
+        { "id": "yakisoba",    "name": "Yakisoba",            "price": 13.99, "description": "Veggie, chicken, beef, shrimp, tofu, or pork ($13.99–$16.99).",                "tags": ["V"] }
+      ]
+    },
+    {
+      "id": "burgers",
+      "name": "Burgers",
+      "blurb": "Make it a meal. Extras: avocado +$1, bacon +$1.99.",
+      "items": [
+        { "id": "hamburger",       "name": "Hamburger",            "price": 9.99,  "description": "The original.",                "tags": [] },
+        { "id": "cheeseburger",    "name": "Cheeseburger",         "price": 10.99, "description": "With your choice of cheese.",   "tags": [] },
+        { "id": "fried-chk-burger","name": "Fried Chicken Burger", "price": 10.99, "description": "Crispy fillet, stacked.",      "tags": [] },
+        { "id": "bacon-cheese",    "name": "Bacon Cheeseburger",   "price": 11.99, "description": "Cheese and crispy bacon.",     "tags": [] },
+        { "id": "hawaiian",        "name": "Hawaiian Burger",      "price": 11.99, "description": "Grilled pineapple, teriyaki.", "tags": [] },
+        { "id": "salmon-burger",   "name": "Salmon Burger",        "price": 11.99, "description": "Pan-seared salmon patty.",     "tags": [] },
+        { "id": "veggie-burger",   "name": "Veggie Burger",        "price": 11.99, "description": "Hearty, meat-free.",           "tags": ["V"] },
+        { "id": "korean-chk",      "name": "Korean Chicken Burger","price": 11.99, "description": "Gochujang glaze, slaw.",       "tags": [] },
+        { "id": "california",      "name": "California Burger",     "price": 12.99, "description": "Avocado, the works.",          "tags": [] },
+        { "id": "bbq-burger",      "name": "BBQ Burger",           "price": 12.99, "description": "Smoky barbecue sauce.",        "tags": [] }
+      ]
+    },
+    {
+      "id": "sides",
+      "name": "Sides",
+      "blurb": "Small plates and add-ons.",
+      "items": [
+        { "id": "steamed-rice",    "name": "Steamed Rice",            "price": 2.49,  "description": "A simple base.",            "tags": ["V","GF","DF"] },
+        { "id": "pork-eggroll",    "name": "Pork Egg Roll",           "price": 2.99,  "description": "Crispy and golden.",        "tags": [] },
+        { "id": "quinoa",          "name": "Quinoa",                  "price": 2.99,  "description": "Nutty and light.",          "tags": ["V","GF","DF"] },
+        { "id": "fries",           "name": "French Fries",            "price": 4.99,  "description": "Hot, salted, classic.",     "tags": ["V"] },
+        { "id": "steamed-veggies", "name": "Steamed Veggies",         "price": 4.99,  "description": "Seasonal and simple.",      "tags": ["V","GF","DF"] },
+        { "id": "chicken-gyoza",   "name": "Chicken Gyoza (6)",       "price": 5.99,  "description": "Pan-fried dumplings.",      "tags": [] },
+        { "id": "veggie-spring",   "name": "Veggie Spring Roll (4)",  "price": 5.99,  "description": "Light and crunchy.",        "tags": ["V"] },
+        { "id": "veggie-fritters", "name": "Veggie Fritters",         "price": 9.99,  "description": "Crisp outside, tender in.", "tags": ["V"] },
+        { "id": "potato-puffs",    "name": "Potato Puffs",            "price": 9.99,  "description": "Golden bite-sized.",        "tags": ["V"] },
+        { "id": "chk-strips",      "name": "Chicken Strips & Fries (4)", "price": 11.99, "description": "Tenders with a side of fries.", "tags": [] },
+        { "id": "fish-chips",      "name": "Fish & Chips (3)",        "price": 12.99, "description": "Battered fish, fries.",     "tags": [] }
+      ]
+    },
+    {
+      "id": "breakfast",
+      "name": "Breakfast Plate",
+      "blurb": "Build your plate — one base, two proteins or sides, one extra.",
+      "items": [
+        { "id": "breakfast-plate", "name": "Breakfast Plate", "price": 18.99, "description": "Croissant, bagel, or English muffin; eggs your way; sausage, bacon, or grilled paneer; plus potato bites, avocado, butter corn, salad, or sautéed mushrooms.", "tags": [] }
+      ]
+    },
+    {
+      "id": "bubble-tea",
+      "name": "Bubble Tea",
+      "blurb": "All $6.99. Add boba, popping boba, rainbow jelly, or lychee jelly +$0.50.",
+      "items": [
+        { "id": "bt-taro",        "name": "Taro",                "price": 6.99, "description": "Nutty, sweet, purple.",    "tags": ["V"] },
+        { "id": "bt-milk-tea",    "name": "Milk Tea",            "price": 6.99, "description": "The classic.",            "tags": ["V"] },
+        { "id": "bt-thai",        "name": "Thai Milk Tea",       "price": 6.99, "description": "Bold and spiced.",        "tags": ["V"] },
+        { "id": "bt-matcha",      "name": "Matcha",              "price": 6.99, "description": "Stone-ground green tea.", "tags": ["V"] },
+        { "id": "bt-strawberry",  "name": "Strawberry",          "price": 6.99, "description": "Bright and fruity.",      "tags": ["V"] },
+        { "id": "bt-mango",       "name": "Mango Slush",         "price": 6.99, "description": "Frozen and tropical.",    "tags": ["V"] },
+        { "id": "bt-brown-sugar", "name": "Brown Sugar Milk",    "price": 6.99, "description": "Caramelized and rich.",   "tags": ["V"] },
+        { "id": "bt-passion",     "name": "Passion Fruit Slush", "price": 6.99, "description": "Tart and refreshing.",    "tags": ["V"] },
+        { "id": "bt-honeydew",    "name": "Honey Dew",           "price": 6.99, "description": "Mellow melon.",           "tags": ["V"] },
+        { "id": "bt-coconut",     "name": "Coconut",             "price": 6.99, "description": "Creamy and smooth.",      "tags": ["V"] }
+      ]
+    },
+    {
+      "id": "shakes",
+      "name": "Shakes",
+      "blurb": "Thick, cold, and blended to order.",
+      "items": [
+        { "id": "shake-vanilla",    "name": "Vanilla Shake",    "price": 6.99, "description": "Simple and creamy.",   "tags": ["V"] },
+        { "id": "shake-chocolate",  "name": "Chocolate Shake",  "price": 6.99, "description": "Deep and rich.",       "tags": ["V"] },
+        { "id": "shake-coffee",     "name": "Coffee Shake",     "price": 6.99, "description": "A caffeinated treat.", "tags": ["V"] },
+        { "id": "shake-strawberry", "name": "Strawberry Shake", "price": 6.99, "description": "Fresh and fruity.",    "tags": ["V"] },
+        { "id": "shake-mango",      "name": "Mango Shake",      "price": 8.49, "description": "Tropical and thick.",  "tags": ["V"] }
+      ]
+    },
+    {
+      "id": "coffee",
+      "name": "Coffee & Espresso",
+      "blurb": "Hot or iced. Prices shown for 12oz; 16oz a touch more. Oat or almond milk +$0.75.",
+      "items": [
+        { "id": "americano",      "name": "Americano",             "price": 2.99, "description": "Espresso and hot water. 16oz $3.25.",      "tags": ["V","GF","DF"] },
+        { "id": "cappuccino",     "name": "Cappuccino",            "price": 3.99, "description": "Espresso, steamed milk, foam. 16oz $4.49.", "tags": ["V"] },
+        { "id": "whipped-coffee", "name": "Whipped Coffee",        "price": 3.99, "description": "A cloud of whipped espresso. 16oz $4.49.",  "tags": ["V"] },
+        { "id": "latte",          "name": "Latte",                 "price": 4.49, "description": "Espresso and silky milk. 16oz $4.99.",      "tags": ["V"] },
+        { "id": "chai-latte",     "name": "Chai Latte",            "price": 4.49, "description": "Spiced chai and milk. 16oz $4.99.",         "tags": ["V"] },
+        { "id": "mocha",          "name": "Mocha",                 "price": 4.99, "description": "Espresso, chocolate, milk. 16oz $5.49.",    "tags": ["V"] },
+        { "id": "caramel-macc",   "name": "Caramel Macchiato",     "price": 4.99, "description": "Vanilla, caramel, espresso. 16oz $5.49.",   "tags": ["V"] },
+        { "id": "dirty-chai",     "name": "Dirty Chai Latte",      "price": 4.49, "description": "Chai with a shot. 16oz $5.49.",             "tags": ["V"] },
+        { "id": "espresso-tonic", "name": "Espresso Tonic",        "price": 6.49, "description": "Espresso over sparkling tonic.",            "tags": ["V","GF","DF"] },
+        { "id": "pom-sparkling",  "name": "Pomegranate Sparkling", "price": 6.49, "description": "Bright, fizzy, fruity.",                    "tags": ["V","GF","DF"] }
       ]
     },
     {
       "id": "tea",
-      "name": "Tea & Other",
-      "blurb": "Loose-leaf, brewed by the cup.",
+      "name": "Tea",
+      "blurb": "Steeped by the cup.",
       "items": [
-        { "id": "earl-grey",    "name": "Earl Grey",           "price": 4.5, "description": "Bergamot, a touch of orange peel.",            "tags": ["V","GF","DF"] },
-        { "id": "matcha",       "name": "Matcha Latte",        "price": 6.0, "description": "Ceremonial-grade, whisked, lightly sweetened.","tags": ["V","GF"] },
-        { "id": "chai",         "name": "House Chai",          "price": 5.5, "description": "Cardamom-forward. Steeped with whole spices.", "tags": ["V","GF"] },
-        { "id": "hot-choc",     "name": "Drinking Chocolate",  "price": 6.0, "description": "70% cacao, melted slowly into milk.",         "tags": ["V","GF"] }
-      ]
-    },
-    {
-      "id": "pastries",
-      "name": "Pastries",
-      "blurb": "Baked nearby, delivered before sunrise.",
-      "items": [
-        { "id": "croissant",    "name": "Butter Croissant",    "price": 4.5, "description": "Honest, laminated, audibly flaky.",            "tags": ["V"] },
-        { "id": "almond-cr",    "name": "Almond Croissant",    "price": 5.5, "description": "Twice-baked, almond cream, a snowdrift of sugar.", "tags": ["V","N"] },
-        { "id": "scone",        "name": "Brown-Butter Scone",  "price": 4.5, "description": "Tender. Pairs with everything.",               "tags": ["V"] },
-        { "id": "banana-br",    "name": "Banana Bread",        "price": 4.0, "description": "Olive oil, walnuts, a little flake salt.",     "tags": ["V","N"] },
-        { "id": "gf-cookie",    "name": "GF Chocolate Chip",   "price": 4.5, "description": "Almond flour, dark chocolate, sea salt.",      "tags": ["V","GF","N"] }
-      ]
-    },
-    {
-      "id": "lunch",
-      "name": "Lunch",
-      "blurb": "Available 11 AM – 3 PM weekdays.",
-      "items": [
-        { "id": "grain-bowl",   "name": "Grain Bowl",          "price": 14.0, "description": "Farro, roast squash, kale, tahini, soft egg.","tags": ["V"] },
-        { "id": "tartine",      "name": "Avocado Tartine",     "price": 12.0, "description": "Sourdough, smashed avocado, chili crisp.",   "tags": ["V","DF"] },
-        { "id": "soup",         "name": "Soup of the Day",     "price": 9.0,  "description": "Ask. It changes with what looked good at the market.","tags": ["V","GF","DF"] },
-        { "id": "turkey",       "name": "Turkey & Brie",       "price": 13.0, "description": "Roast turkey, brie, fig jam, baguette.",     "tags": [] },
-        { "id": "salad",        "name": "Little Gem Salad",    "price": 11.0, "description": "Anchovy dressing, parmesan, sourdough crumbs.","tags": ["GF"] }
+        { "id": "chamomile", "name": "Chamomile",     "price": 2.49, "description": "Soft and floral.",    "tags": ["V","GF","DF"] },
+        { "id": "herbal",    "name": "Herbal Tea",    "price": 2.99, "description": "Caffeine-free blend.", "tags": ["V","GF","DF"] },
+        { "id": "masala",    "name": "Indian Masala", "price": 3.99, "description": "Spiced and milky.",    "tags": ["V"] },
+        { "id": "ginger",    "name": "Indian Ginger", "price": 3.99, "description": "Warming and sharp.",   "tags": ["V"] }
       ]
     },
     {
       "id": "specials",
-      "name": "Today&#8217;s Specials",
-      "blurb": "Three things, fresh today.",
+      "name": "Today’s Specials",
+      "blurb": "Rotating plates, fresh today.",
       "items": []
     }
   ],

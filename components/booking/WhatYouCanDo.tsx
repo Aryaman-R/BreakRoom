@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 
 const CARDS = [
-  { title: "Birthday parties",         body: "Cake, candles, the works. We&#8217;ll dim the lights at the right moment.",                color: "#FF3D8A", text: "#1A0F2E", tilt: -2 },
-  { title: "Team offsites",            body: "Better than a hotel ballroom. Quieter than a karaoke bar.",                                color: "#FF8C42", text: "#1A0F2E", tilt: 2 },
-  { title: "Showers &amp; celebrations", body: "Baby, bridal, graduation, divorce — we don&#8217;t judge, we host.",                       color: "#FFE066", text: "#1A0F2E", tilt: -1.5 },
-  { title: "Whatever you can imagine", body: "Listening parties, board game nights, midnight book clubs. Tell us.",                       color: "#6EE7B7", text: "#1A0F2E", tilt: 1.5 },
+  { title: "Birthday parties",         body: "Cake, candles, the works. We&#8217;ll dim the lights at the right moment.",                color: "#ff4d9e", text: "#16271b", tilt: -2 },
+  { title: "Team offsites",            body: "Better than a hotel ballroom. Quieter than a karaoke bar.",                                color: "#ff9f45", text: "#16271b", tilt: 2 },
+  { title: "Showers &amp; celebrations", body: "Baby, bridal, graduation, divorce — we don&#8217;t judge, we host.",                       color: "#d7f25a", text: "#16271b", tilt: -1.5 },
+  { title: "Whatever you can imagine", body: "Listening parties, board game nights, midnight book clubs. Tell us.",                       color: "#6EE7B7", text: "#16271b", tilt: 1.5 },
 ];
 
 export function WhatYouCanDo() {

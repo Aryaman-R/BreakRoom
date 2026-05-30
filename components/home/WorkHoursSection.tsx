@@ -66,34 +66,34 @@ function DaytimeIllustration() {
     <svg viewBox="0 0 600 480" className="w-full h-full" aria-hidden>
       <defs>
         <linearGradient id="dwall" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#F2E6D2" />
-          <stop offset="100%" stopColor="#E1CDB1" />
+          <stop offset="0%" stopColor="#eaf1dc" />
+          <stop offset="100%" stopColor="#d8e6bc" />
         </linearGradient>
       </defs>
       <rect width="600" height="320" fill="url(#dwall)" />
-      <rect y="320" width="600" height="160" fill="#7E5A38" />
+      <rect y="320" width="600" height="160" fill="#4e6b42" />
       {/* Window */}
-      <rect x="60" y="40" width="220" height="180" fill="#FFF6E1" stroke="#3F2A18" strokeWidth="3" />
-      <line x1="170" y1="40" x2="170" y2="220" stroke="#3F2A18" strokeWidth="3" />
-      <line x1="60" y1="130" x2="280" y2="130" stroke="#3F2A18" strokeWidth="3" />
+      <rect x="60" y="40" width="220" height="180" fill="#eff6e2" stroke="#20271e" strokeWidth="3" />
+      <line x1="170" y1="40" x2="170" y2="220" stroke="#20271e" strokeWidth="3" />
+      <line x1="60" y1="130" x2="280" y2="130" stroke="#20271e" strokeWidth="3" />
       {/* Plant */}
-      <ellipse cx="500" cy="320" rx="40" ry="14" fill="#3F2A18" />
-      <path d="M500 320 C 460 240, 470 180, 510 200" stroke="#7E8C6E" strokeWidth="6" fill="none" />
-      <path d="M500 320 C 540 240, 530 180, 490 200" stroke="#7E8C6E" strokeWidth="6" fill="none" />
+      <ellipse cx="500" cy="320" rx="40" ry="14" fill="#20271e" />
+      <path d="M500 320 C 460 240, 470 180, 510 200" stroke="#3c6b4a" strokeWidth="6" fill="none" />
+      <path d="M500 320 C 540 240, 530 180, 490 200" stroke="#3c6b4a" strokeWidth="6" fill="none" />
       {/* Laptop */}
       <g transform="translate(180 320)">
-        <rect x="-6" y="-72" width="200" height="120" rx="6" fill="#2A2520" />
-        <rect x="0" y="-66" width="188" height="108" fill="#FBF7F0" />
-        <rect x="14" y="-58" width="160" height="6" rx="2" fill="#C9A57B" />
-        <rect x="14" y="-46" width="100" height="4" rx="2" fill="#C9A57B" opacity="0.7" />
+        <rect x="-6" y="-72" width="200" height="120" rx="6" fill="#20271e" />
+        <rect x="0" y="-66" width="188" height="108" fill="#f5f9ec" />
+        <rect x="14" y="-58" width="160" height="6" rx="2" fill="#c2d0a8" />
+        <rect x="14" y="-46" width="100" height="4" rx="2" fill="#c2d0a8" opacity="0.7" />
         <rect x="-20" y="48" width="228" height="10" rx="3" fill="#1A1410" />
       </g>
       {/* Latte */}
       <g transform="translate(440 360)">
-        <ellipse cx="0" cy="0" rx="40" ry="10" fill="#3F2A18" />
-        <path d="M-40 0 v 50 a 40 12 0 0 0 80 0 V 0 Z" fill="#FBF7F0" stroke="#3F2A18" strokeWidth="2" />
-        <ellipse cx="0" cy="0" rx="34" ry="8" fill="#B58A6A" />
-        <path d="M-12 -2 q 12 -10 24 0" stroke="#FBF7F0" strokeWidth="2" fill="none" />
+        <ellipse cx="0" cy="0" rx="40" ry="10" fill="#20271e" />
+        <path d="M-40 0 v 50 a 40 12 0 0 0 80 0 V 0 Z" fill="#f5f9ec" stroke="#20271e" strokeWidth="2" />
+        <ellipse cx="0" cy="0" rx="34" ry="8" fill="#8aa178" />
+        <path d="M-12 -2 q 12 -10 24 0" stroke="#f5f9ec" strokeWidth="2" fill="none" />
       </g>
     </svg>
   );

@@ -17,7 +17,7 @@ export interface ColorWipeOpts {
 export function colorWipeIn({
   x,
   y,
-  color = "#FF3D8A",
+  color = "#ff4d9e",
   durationMs = 480,
 }: ColorWipeOpts): Promise<void> {
   return new Promise((resolve) => {

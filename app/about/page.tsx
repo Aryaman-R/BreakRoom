@@ -130,12 +130,12 @@ export default function AboutPage() {
 
 function Avatar({ seed }: { seed: number }) {
   const palettes = [
-    ["#F4D6B5", "#9C7A55"],
-    ["#E1CDB1", "#7E8C6E"],
-    ["#F2E6D2", "#8B5E3C"],
-    ["#FBE6CC", "#6B6258"],
-    ["#E8BD93", "#3F2A18"],
-    ["#FFEAC4", "#C9A57B"],
+    ["#d8e6bc", "#6e8a5c"],
+    ["#d8e6bc", "#3c6b4a"],
+    ["#eaf1dc", "#e84c8e"],
+    ["#e6f0ce", "#5c6657"],
+    ["#c2d0a8", "#20271e"],
+    ["#e6f0ce", "#c2d0a8"],
   ];
   const [bg, fg] = palettes[seed % palettes.length];
   return (

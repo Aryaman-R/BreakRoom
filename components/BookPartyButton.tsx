@@ -57,12 +57,12 @@ export function BookPartyButton({
         startVelocity: 32,
         ticks: 60,
         origin: { x: cx / window.innerWidth, y: cy / window.innerHeight },
-        colors: ["#FF3D8A", "#FF8C42", "#FFE066", "#6EE7B7", "#A78BFA"],
+        colors: ["#ff4d9e", "#ff9f45", "#d7f25a", "#6EE7B7", "#A78BFA"],
       });
 
       // Colored wipe transition.
       const { colorWipeIn } = await import("@/lib/transitions/colorWipe");
-      await colorWipeIn({ x: cx, y: cy, color: "#FF3D8A" });
+      await colorWipeIn({ x: cx, y: cy, color: "#ff4d9e" });
     }
 
     router.push(href);

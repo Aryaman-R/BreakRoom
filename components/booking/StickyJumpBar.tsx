@@ -30,7 +30,7 @@ export function StickyJumpBar() {
           <div className="ml-3 mr-3 mb-3 rounded-full pl-3 pr-20 py-2 flex items-center justify-between gap-3 bg-ah-cream text-ah-bg shadow-lifted"
                style={{
                  backgroundImage:
-                   "linear-gradient(90deg, #FF3D8A 0%, #FF8C42 30%, #FFE066 55%, #6EE7B7 80%, #A78BFA 100%)",
+                   "linear-gradient(90deg, #ff4d9e 0%, #ff9f45 30%, #d7f25a 55%, #6EE7B7 80%, #A78BFA 100%)",
                }}
           >
             <span className="text-xs font-medium pl-2 text-ah-bg">Ready when you are</span>

@@ -12,7 +12,7 @@ export function SuccessCard({ values }: { values: BookingFormValues }) {
       className="rounded-3xl p-8 sm:p-10 text-ah-bg shadow-lifted"
       style={{
         backgroundImage:
-          "linear-gradient(135deg, #FFE066 0%, #6EE7B7 50%, #A78BFA 100%)",
+          "linear-gradient(135deg, #d7f25a 0%, #6EE7B7 50%, #A78BFA 100%)",
       }}
     >
       <p className="text-sm uppercase tracking-[0.18em] opacity-70">Confirmed</p>

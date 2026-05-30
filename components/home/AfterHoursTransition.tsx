@@ -19,12 +19,12 @@ export function AfterHoursTransition() {
   const bg = useTransform(
     scrollYProgress,
     [0, 0.4, 0.7, 1],
-    ["#F4EFE6", "#3A2055", "#1A0F2E", "#1A0F2E"]
+    ["#eaf1dc", "#244430", "#16271b", "#16271b"]
   );
   const ink = useTransform(
     scrollYProgress,
     [0, 0.4, 1],
-    ["#2A2520", "#FFF8E7", "#FFF8E7"]
+    ["#20271e", "#eff6e2", "#eff6e2"]
   );
 
   return (
@@ -116,29 +116,29 @@ function NightIllustration() {
       <svg viewBox="0 0 600 480" className="w-full h-full" aria-hidden>
         <defs>
           <radialGradient id="glow" cx="50%" cy="40%" r="65%">
-            <stop offset="0%" stopColor="#FF8C42" stopOpacity="0.6" />
-            <stop offset="60%" stopColor="#FF3D8A" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#1A0F2E" stopOpacity="0" />
+            <stop offset="0%" stopColor="#ff9f45" stopOpacity="0.6" />
+            <stop offset="60%" stopColor="#ff4d9e" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#16271b" stopOpacity="0" />
           </radialGradient>
         </defs>
-        <rect width="600" height="480" fill="#1A0F2E" />
+        <rect width="600" height="480" fill="#16271b" />
         <rect width="600" height="480" fill="url(#glow)" />
         {/* String lights */}
-        <g stroke="#FFE066" strokeWidth="2" fill="#FFE066">
+        <g stroke="#d7f25a" strokeWidth="2" fill="#d7f25a">
           {Array.from({ length: 14 }).map((_, i) => {
             const x = 30 + i * 40;
             const y = 60 + Math.sin(i * 0.6) * 12;
             return (
               <g key={i}>
                 <circle cx={x} cy={y} r="5" />
-                <circle cx={x} cy={y} r="11" fill="#FFE066" opacity="0.18" />
+                <circle cx={x} cy={y} r="11" fill="#d7f25a" opacity="0.18" />
               </g>
             );
           })}
         </g>
         {/* Confetti specks */}
         {Array.from({ length: 40 }).map((_, i) => {
-          const colors = ["#FF3D8A", "#FF8C42", "#FFE066", "#6EE7B7", "#A78BFA"];
+          const colors = ["#ff4d9e", "#ff9f45", "#d7f25a", "#6EE7B7", "#A78BFA"];
           return (
             <rect
               key={i}
@@ -154,7 +154,7 @@ function NightIllustration() {
         })}
         {/* Disco silhouette */}
         <circle cx="300" cy="270" r="64" fill="#A78BFA" opacity="0.4" />
-        <g stroke="#FFE066" strokeWidth="1" opacity="0.7">
+        <g stroke="#d7f25a" strokeWidth="1" opacity="0.7">
           <line x1="240" y1="270" x2="200" y2="270" />
           <line x1="360" y1="270" x2="400" y2="270" />
           <line x1="300" y1="210" x2="300" y2="170" />

@@ -1,11 +1,11 @@
 "use client";
 
 const PHOTOS = [
-  { color: "#FF3D8A", swatch: "#FFE066" },
-  { color: "#FF8C42", swatch: "#A78BFA" },
+  { color: "#ff4d9e", swatch: "#d7f25a" },
+  { color: "#ff9f45", swatch: "#A78BFA" },
   { color: "#A78BFA", swatch: "#6EE7B7" },
-  { color: "#6EE7B7", swatch: "#FF3D8A" },
-  { color: "#FFE066", swatch: "#FF8C42" },
+  { color: "#6EE7B7", swatch: "#ff4d9e" },
+  { color: "#d7f25a", swatch: "#ff9f45" },
 ];
 
 export function TheSpace() {
@@ -56,8 +56,8 @@ function SpacePhoto({
     <svg viewBox="0 0 400 500" className="w-full h-full block" aria-hidden>
       <defs>
         <linearGradient id={`bg-${index}`} x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#2B1450" />
-          <stop offset="100%" stopColor="#1A0F2E" />
+          <stop offset="0%" stopColor="#1f3a28" />
+          <stop offset="100%" stopColor="#16271b" />
         </linearGradient>
       </defs>
       <rect width="400" height="500" fill={`url(#bg-${index})`} />
@@ -83,7 +83,7 @@ function SpacePhoto({
         />
       ))}
       {/* Crowd silhouettes */}
-      <g fill="#1A0F2E" opacity="0.85">
+      <g fill="#16271b" opacity="0.85">
         <circle cx="80"  cy="380" r="22" />
         <circle cx="140" cy="380" r="22" />
         <circle cx="200" cy="380" r="22" />
