@@ -96,7 +96,6 @@ export default function VisitPage() {
                   />
                 </svg>
               </span>
-              that one.
             </p>
           </div>
         </div>
