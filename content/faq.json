@@ -1,28 +1,10 @@
 {
   "items": [
-    {
-      "q": "How far in advance can I book?",
-      "a": "Up to six months. We do book up — most Saturday nights are spoken for 4–8 weeks out. Weekday evenings are usually easier."
-    },
-    {
-      "q": "What&#8217;s included?",
-      "a": "The full space (after 5 PM weekdays, all day weekends), tables &amp; chairs reconfigured to your needs, A/V (a small projector + speakers), and a host on-site for the duration."
-    },
-    {
-      "q": "Can you cater?",
-      "a": "Yes. We offer a coffee bar, a light-bites package, or full menus from a small list of partner kitchens. Or you can bring your own — just tell us."
-    },
-    {
-      "q": "Is there a minimum spend?",
-      "a": "Yes, but it&#8217;s reasonable. Weeknights start at $400; weekend evenings at $900. We&#8217;ll quote based on your details."
-    },
-    {
-      "q": "What about alcohol?",
-      "a": "BYOB with a small corkage. We can also coordinate a bartender via a partner — ask in the form."
-    },
-    {
-      "q": "Cancellation?",
-      "a": "Full refund up to 14 days before. After that, we&#8217;ll work with you to reschedule or refund what we reasonably can."
-    }
+    { "q": "Do you cater?", "a": "Yes — we cater everything from office lunches to private parties, from our full comfort-food and boba menu. Tell us your headcount and date in the form and we will put together a quote." },
+    { "q": "Can I book the space for a private event?", "a": "We host private and corporate gatherings in the evenings. The room seats around 24 and fits about 40 standing. Share your details and we will confirm availability." },
+    { "q": "How far in advance should I reach out?", "a": "The more notice the better, but we will always try to make it work. A week or two ahead is a safe bet for larger events and catering orders." },
+    { "q": "What is included?", "a": "The space, tables and seating arranged for your group, and a host on-site. Food and drinks are quoted from our menu based on your headcount." },
+    { "q": "Any dietary options?", "a": "Plenty — vegetarian dishes, paneer and tofu options, and a full non-coffee lineup of boba, shakes, and teas. Note anything specific in the form." },
+    { "q": "How do I start?", "a": "Fill out the form with your date, headcount, and what you have in mind, and we will follow up by email or phone." }
   ]
 }

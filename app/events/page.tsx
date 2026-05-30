@@ -6,7 +6,7 @@ import type { PublicEvent } from "@/lib/types";
 export const metadata: Metadata = {
   title: "Events",
   description:
-    "Upcoming public events at The Break Room — open mics, trivia, cuppings, and more.",
+    "Upcoming public events at The Breakroom — open mics, trivia, cuppings, and more.",
 };
 
 export default async function EventsPage() {
@@ -31,30 +31,63 @@ export default async function EventsPage() {
 
       <section className="mt-12">
         <h2 className="font-display text-2xl">Coming up</h2>
-        <ul className="mt-6 space-y-6">
-          {upcoming.map((e, i) => (
-            <Reveal key={e.id} delay={i * 0.06}>
-              <EventCard event={e} />
-            </Reveal>
-          ))}
-        </ul>
+        {upcoming.length === 0 ? (
+          <EmptyEvents />
+        ) : (
+          <ul className="mt-6 space-y-6">
+            {upcoming.map((e, i) => (
+              <Reveal key={e.id} delay={i * 0.06}>
+                <EventCard event={e} />
+              </Reveal>
+            ))}
+          </ul>
+        )}
       </section>
 
-      <section className="mt-20">
-        <h2 className="font-display text-2xl text-qh-ink-soft">Past</h2>
-        <ul className="mt-6 space-y-4 opacity-60">
-          {past.map((e) => (
-            <li
-              key={e.id}
-              className="flex items-baseline gap-4 py-2 border-b border-qh-line text-sm"
-            >
-              <span className="font-mono text-xs text-qh-ink-soft w-24 shrink-0">{e.date}</span>
-              <span className="font-display">{e.title}</span>
-              <span className="text-qh-ink-soft text-xs">— {e.host}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {past.length > 0 && (
+        <section className="mt-20">
+          <h2 className="font-display text-2xl text-qh-ink-soft">Past</h2>
+          <ul className="mt-6 space-y-4 opacity-60">
+            {past.map((e) => (
+              <li
+                key={e.id}
+                className="flex items-baseline gap-4 py-2 border-b border-qh-line text-sm"
+              >
+                <span className="font-mono text-xs text-qh-ink-soft w-24 shrink-0">{e.date}</span>
+                <span className="font-display">{e.title}</span>
+                <span className="text-qh-ink-soft text-xs">— {e.host}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function EmptyEvents() {
+  return (
+    <div className="mt-6 rounded-2xl border border-qh-line bg-qh-bg-elevated p-8">
+      <p className="font-display text-xl tracking-tightish leading-tight">
+        No public events on the calendar right now.
+      </p>
+      <p className="mt-3 text-sm text-qh-ink-soft">
+        Follow{" "}
+        <a
+          href="https://www.instagram.com/thebreakroombothell"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-qh-accent underline underline-offset-2"
+        >
+          @thebreakroombothell
+        </a>{" "}
+        on Instagram for pop-ups and seasonal specials &mdash; and for private
+        events or catering, head to our{" "}
+        <a href="/book" className="text-qh-accent underline underline-offset-2">
+          events &amp; catering
+        </a>{" "}
+        form.
+      </p>
     </div>
   );
 }

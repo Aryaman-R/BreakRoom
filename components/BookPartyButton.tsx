@@ -29,7 +29,7 @@ interface Props {
 export function BookPartyButton({
   size = "md",
   className,
-  label = "Book a party",
+  label = "Plan an event",
   href = "/book",
 }: Props) {
   const router = useRouter();

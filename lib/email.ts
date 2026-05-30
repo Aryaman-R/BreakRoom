@@ -28,7 +28,7 @@ export async function send(message: EmailMessage): Promise<{ ok: true }> {
 export function bookingConfirmation(b: Booking): EmailMessage {
   return {
     to: b.email,
-    subject: "We got your booking request — The Break Room",
+    subject: "We got your booking request — The Breakroom",
     text: [
       `Hi ${b.name},`,
       ``,
@@ -40,14 +40,14 @@ export function bookingConfirmation(b: Booking): EmailMessage {
       ``,
       `We'll email you within one business day to confirm details.`,
       ``,
-      `— The Break Room`,
+      `— The Breakroom`,
     ].join("\n"),
   };
 }
 
 export function bookingNotification(b: Booking): EmailMessage {
   return {
-    to: process.env.BOOKING_NOTIFY_EMAIL ?? "hello@thebreakroom.cafe",
+    to: process.env.BOOKING_NOTIFY_EMAIL ?? "thebreakroombothell@gmail.com",
     subject: `New booking request: ${b.name} — ${b.date} ${b.timeSlot}`,
     text: JSON.stringify(b, null, 2),
   };

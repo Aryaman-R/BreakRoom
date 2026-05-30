@@ -14,7 +14,7 @@ const PRINTED_MENU = [
 export const metadata: Metadata = {
   title: "Menu",
   description:
-    "Sandwiches, rice bowls, wings & yakisoba, burgers, bubble tea, shakes, and coffee from The Break Room.",
+    "Sandwiches, rice bowls, wings & yakisoba, burgers, bubble tea, shakes, and coffee from The Breakroom.",
 };
 
 export default async function MenuPage() {

@@ -64,9 +64,9 @@ export function AfterHoursTransition() {
             style={{ color: ink }}
             className="mt-5 max-w-lg text-lg opacity-90"
           >
-            Lights warm up, the room rearranges, the playlist gets a personality.
-            Birthdays, showers, team nights, trivia — whatever you&#8217;re bringing,
-            we know how to dress for it.
+            In the evening the kitchen stays on and the room opens up.
+            Birthdays, showers, team dinners, private events — we host them here,
+            and we cater too.
           </motion.p>
           <div className="mt-8">
             <BookPartyButton size="lg" />

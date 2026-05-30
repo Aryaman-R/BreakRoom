@@ -3,19 +3,19 @@
 import { motion } from "framer-motion";
 
 const CARDS = [
-  { title: "Birthday parties",         body: "Cake, candles, the works. We&#8217;ll dim the lights at the right moment.",                color: "#ff4d9e", text: "#16271b", tilt: -2 },
-  { title: "Team offsites",            body: "Better than a hotel ballroom. Quieter than a karaoke bar.",                                color: "#ff9f45", text: "#16271b", tilt: 2 },
-  { title: "Showers &amp; celebrations", body: "Baby, bridal, graduation, divorce — we don&#8217;t judge, we host.",                       color: "#d7f25a", text: "#16271b", tilt: -1.5 },
-  { title: "Whatever you can imagine", body: "Listening parties, board game nights, midnight book clubs. Tell us.",                       color: "#6EE7B7", text: "#16271b", tilt: 1.5 },
+  { title: "Have the place to yourself", body: "Private use of the lounge for your gathering &mdash; about 24 seated or 40 standing, with our marble tables and soft sofas.", color: "#ff4d9e", text: "#16271b", tilt: -2 },
+  { title: "Full menu, dialed in",        body: "Our whole comfort-food menu plus specialty coffee, bubble tea, and shakes &mdash; set up for your group.",               color: "#ff9f45", text: "#16271b", tilt: 2 },
+  { title: "Catering, off-site",          body: "Hosting somewhere else? We&#8217;ll cater your office lunch, shower, or team dinner and bring the boba.",                      color: "#d7f25a", text: "#16271b", tilt: -1.5 },
+  { title: "Set up your way",             body: "Flexible layouts and A/V for presentations &mdash; meetings, celebrations, or a quiet team dinner. Tell us what you need.",     color: "#6EE7B7", text: "#16271b", tilt: 1.5 },
 ];
 
 export function WhatYouCanDo() {
   return (
     <section className="relative py-24">
       <div className="container-page">
-        <p className="text-sm uppercase tracking-[0.18em] text-ah-electric">What you can do here</p>
+        <p className="text-sm uppercase tracking-[0.18em] text-ah-electric">What we can do for you</p>
         <h2 className="mt-3 font-party text-4xl sm:text-5xl text-ah-cream tracking-tightish">
-          Pick your shape of fun.
+          Dine in or let us cater.
         </h2>
 
         <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

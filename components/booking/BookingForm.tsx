@@ -78,7 +78,7 @@ export function BookingForm() {
       setSubmitted(values);
     } catch {
       setSubmitError(
-        "Something went sideways. Email us at hello@thebreakroom.cafe and we&#8217;ll sort it out."
+        "Something went sideways. Email us at thebreakroombothell@gmail.com and we&#8217;ll sort it out."
       );
     } finally {
       setSubmitting(false);

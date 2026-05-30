@@ -9,9 +9,9 @@ import { FaqAccordion } from "@/components/booking/FaqAccordion";
 import { StickyJumpBar } from "@/components/booking/StickyJumpBar";
 
 export const metadata: Metadata = {
-  title: "Book a party",
+  title: "Events & Catering",
   description:
-    "Throw your next birthday, shower, team night, or whatever-you-can-imagine at The Break Room.",
+    "Private events and catering at The Breakroom in Bothell — birthdays, showers, team gatherings, and more.",
 };
 
 export default function BookPage() {

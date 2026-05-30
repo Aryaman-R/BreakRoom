@@ -38,22 +38,22 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
   ),
   title: {
-    default: "The Break Room",
-    template: "%s — The Break Room",
+    default: "The Breakroom",
+    template: "%s — The Breakroom",
   },
   description:
-    "By day, a calm cafe for office workers. By night, an electric event space for parties and gatherings.",
+    "A Bothell café for specialty coffee, bubble tea, and Asian-American comfort food — dine in by day, private events and catering by night.",
   openGraph: {
-    title: "The Break Room",
+    title: "The Breakroom",
     description:
-      "Somewhere between the office and home — a quiet workspace by day, an event space by night.",
+      "Coffee, boba, and comfort food in Bothell, WA — plus private events and catering.",
     type: "website",
     images: [
       {
         url: "/photos/lounge-wide.jpg",
         width: 640,
         height: 480,
-        alt: "Inside The Break Room — the lounge with sofas and big windows.",
+        alt: "Inside The Breakroom — the lounge with sofas and big windows.",
       },
     ],
   },

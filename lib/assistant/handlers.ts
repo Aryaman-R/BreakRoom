@@ -48,13 +48,13 @@ export async function runToolCall(
       return defaultRepo.getSpecials();
     case "get_hours":
       return {
-        mon: "7:00 AM – 5:00 PM",
-        tue: "7:00 AM – 5:00 PM",
-        wed: "7:00 AM – 5:00 PM",
-        thu: "7:00 AM – 5:00 PM",
-        fri: "7:00 AM – 5:00 PM",
-        sat: "8:00 AM – 3:00 PM (events after)",
-        sun: "Private events only",
+        mon: "7:30 AM – 8:30 PM",
+        tue: "7:30 AM – 8:30 PM",
+        wed: "7:30 AM – 8:30 PM",
+        thu: "7:30 AM – 8:30 PM",
+        fri: "7:30 AM – 8:30 PM",
+        sat: "7:30 AM – 8:30 PM",
+        sun: "7:30 AM – 8:30 PM",
       };
     case "check_availability": {
       const date = String(input.date);
@@ -74,9 +74,9 @@ export async function runToolCall(
     }
     case "get_directions":
       return {
-        address: "142 Linden Street, Brooklyn, NY 11221",
+        address: "18916 N Creek Pkwy #101, Bothell, WA 98011",
         mapUrl:
-          "https://www.openstreetmap.org/?mlat=40.6892&mlon=-73.9234&zoom=17",
+          "https://www.openstreetmap.org/?mlat=47.7763&mlon=-122.2017&zoom=17",
       };
     case "escalate_to_human": {
       // TODO(backend): forward to staff Slack/email.
@@ -120,7 +120,7 @@ export async function runAssistantTurn(
   if (text.includes("hour") || text.includes("open")) {
     const result = await runToolCall("get_hours", {});
     return {
-      reply: "We&#8217;re open weekdays 7&#8211;5, Saturdays 8&#8211;3. Sundays are private events only.",
+      reply: "We&#8217;re open every day, 7:30 AM &#8211; 8:30 PM.",
       toolCalls: [{ name: "get_hours", input: {}, result }],
     };
   }
@@ -140,7 +140,7 @@ export async function runAssistantTurn(
   if (text.includes("where") || text.includes("address") || text.includes("direction")) {
     const result = await runToolCall("get_directions", {});
     return {
-      reply: "We&#8217;re at 142 Linden Street, Brooklyn. Map link below.",
+      reply: "We&#8217;re at 18916 N Creek Pkwy #101 in Bothell. Map link below.",
       toolCalls: [{ name: "get_directions", input: {}, result }],
     };
   }

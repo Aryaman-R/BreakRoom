@@ -5,9 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 const HOURS = [
-  ["Mon – Fri", "7:00 AM – 5:00 PM"],
-  ["Saturday", "8:00 AM – 3:00 PM (events after)"],
-  ["Sunday", "Private events only"],
+  ["Every day", "7:30 AM – 8:30 PM"],
 ];
 
 export function Footer() {
@@ -20,12 +18,12 @@ export function Footer() {
               <Image src="/logo-mark.png" alt="" width={32} height={28} className="h-8 w-auto" />
             </span>
             <p className="font-display italic text-2xl text-qh-ink">
-              The Break Room.
+              The Breakroom.
             </p>
           </div>
           <p className="mt-3 max-w-sm text-qh-ink-soft">
-            Coffee and quiet by day. Color and noise by night.
-            We&apos;re here for both.
+            Coffee and boba by day, comfort food and gatherings by night.
+            Come hungry.
           </p>
           <Newsletter />
         </div>
@@ -45,29 +43,29 @@ export function Footer() {
         <div>
           <h4 className="font-display text-lg mb-3">Find us</h4>
           <address className="not-italic text-sm text-qh-ink-soft leading-7">
-            142 Linden Street<br />
-            Brooklyn, NY 11221<br />
-            <a href="tel:+17185550199" className="hover:text-qh-ink">
-              (718) 555&#8209;0199
+            18916 N Creek Pkwy #101<br />
+            Bothell, WA 98011<br />
+            <a href="tel:+14253959316" className="hover:text-qh-ink">
+              (425) 395&#8209;9316
             </a><br />
-            <a href="mailto:hello@thebreakroom.cafe" className="hover:text-qh-ink">
-              hello@thebreakroom.cafe
+            <a href="mailto:thebreakroombothell@gmail.com" className="hover:text-qh-ink">
+              thebreakroombothell@gmail.com
             </a>
           </address>
           <div className="mt-4 flex gap-3 text-qh-ink-soft text-sm">
-            <a className="hover:text-qh-ink" href="#" aria-label="Instagram">Instagram</a>
-            <a className="hover:text-qh-ink" href="#" aria-label="TikTok">TikTok</a>
+            <a className="hover:text-qh-ink" href="https://www.instagram.com/thebreakroombothell" aria-label="Instagram">Instagram</a>
+            <a className="hover:text-qh-ink" href="https://www.facebook.com/people/The-Breakroom/61560259126301/" aria-label="Facebook">Facebook</a>
           </div>
         </div>
       </div>
 
       <div className="border-t border-qh-line">
         <div className="container-page py-6 flex flex-col md:flex-row justify-between gap-2 text-xs text-qh-ink-soft">
-          <p>© {new Date().getFullYear()} The Break Room. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} The Breakroom. All rights reserved.</p>
           <p>
             <Link href="/visit" className="hover:text-qh-ink">Contact</Link>
             <span className="mx-2">·</span>
-            Made with care in Brooklyn.
+            Made with care in Bothell, WA.
           </p>
         </div>
       </div>

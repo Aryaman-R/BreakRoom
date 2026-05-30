@@ -11,7 +11,7 @@
  * Address is centralized so the rest of the site can read it from one place.
  */
 
-const ADDRESS = "142 Linden Street, Brooklyn, NY 11221";
+const ADDRESS = "18916 N Creek Pkwy #101, Bothell, WA 98011";
 
 function buildEmbedUrl(): string {
   const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY;
@@ -32,7 +32,7 @@ export function MapEmbed() {
     <figure className="rounded-2xl overflow-hidden border border-qh-line shadow-soft bg-qh-bg-elevated">
       <iframe
         src={src}
-        title={`Map showing The Break Room at ${ADDRESS}`}
+        title={`Map showing The Breakroom at ${ADDRESS}`}
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
         allowFullScreen

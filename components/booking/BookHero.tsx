@@ -40,7 +40,7 @@ export function BookHero() {
           transition={{ duration: 0.5 }}
           className="text-sm uppercase tracking-[0.18em] text-ah-electric"
         >
-          Book a party
+          Events &amp; Catering
         </motion.p>
         <motion.h1
           initial={{ opacity: 0, y: 24 }}
@@ -59,8 +59,8 @@ export function BookHero() {
           transition={{ delay: 0.4, duration: 0.6 }}
           className="mt-6 max-w-xl text-ah-cream/85 text-lg"
         >
-          Birthdays, baby showers, team offsites, trivia nights, midnight book launches.
-          If it&#8217;s a gathering, we know how to host it.
+          Birthdays, baby showers, team dinners, corporate lunches &mdash; dine in or let us cater.
+          If it&#8217;s a gathering, we&#8217;ll feed it.
         </motion.p>
         <motion.a
           initial={{ opacity: 0, y: 8 }}

@@ -8,21 +8,20 @@ export function WorkHoursSection() {
     <section className="container-page py-24 grid lg:grid-cols-12 gap-12 items-center">
       <Reveal className="lg:col-span-5">
         <p className="text-sm uppercase tracking-[0.18em] text-qh-accent">
-          During work hours
+          Drop in
         </p>
         <h2 className="mt-3 font-display tracking-tightish">
-          A quiet desk you don&#8217;t have to set up.
+          A comfortable place to post up.
         </h2>
         <p className="mt-5 text-qh-ink-soft text-lg leading-relaxed">
-          Fast Wi-Fi, real outlets, soft lighting, and music low enough to think
-          over. We pour real coffee, refill your water without asking, and we&#8217;ll
-          let you have the corner table for as long as you need it.
+          Soft sofas, marble tables, big windows, and free Wi-Fi. Settle in with a
+          latte, a bubble tea, or a full plate — and stay as long as you like.
         </p>
         <ul className="mt-6 grid grid-cols-2 gap-y-2 text-sm text-qh-ink">
-          <li>· Free Wi-Fi (we tested it)</li>
-          <li>· Outlets at every seat</li>
-          <li>· Phone-call booth in back</li>
-          <li>· No laptop guilt</li>
+          <li>· Free Wi-Fi</li>
+          <li>· Comfy lounge seating</li>
+          <li>· Coffee, boba &amp; shakes</li>
+          <li>· Open every day til 8:30</li>
         </ul>
       </Reveal>
 
@@ -50,12 +49,12 @@ function LiveStatusCard() {
         <span className="font-medium text-qh-ink">Open now</span>
       </div>
       <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-        <dt className="text-qh-ink-soft">Wi-Fi</dt>
-        <dd className="font-mono text-qh-ink">fast</dd>
-        <dt className="text-qh-ink-soft">Seats</dt>
-        <dd className="font-mono text-qh-ink">~12 free</dd>
-        <dt className="text-qh-ink-soft">Music</dt>
-        <dd className="font-mono text-qh-ink">low</dd>
+        <dt className="text-qh-ink-soft">Coffee</dt>
+        <dd className="font-mono text-qh-ink">on</dd>
+        <dt className="text-qh-ink-soft">Boba</dt>
+        <dd className="font-mono text-qh-ink">yes</dd>
+        <dt className="text-qh-ink-soft">Kitchen</dt>
+        <dd className="font-mono text-qh-ink">open</dd>
       </dl>
     </motion.div>
   );

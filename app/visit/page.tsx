@@ -5,17 +5,17 @@ import { MapEmbed } from "@/components/visit/MapEmbed";
 
 export const metadata: Metadata = {
   title: "Visit",
-  description: "Hours, address, and directions to The Break Room in Brooklyn.",
+  description: "Hours, address, and directions to The Breakroom in Bothell, WA.",
 };
 
 const HOURS = [
-  { day: "Monday",    hours: "7:00 AM – 5:00 PM" },
-  { day: "Tuesday",   hours: "7:00 AM – 5:00 PM" },
-  { day: "Wednesday", hours: "7:00 AM – 5:00 PM" },
-  { day: "Thursday",  hours: "7:00 AM – 5:00 PM" },
-  { day: "Friday",    hours: "7:00 AM – 5:00 PM" },
-  { day: "Saturday",  hours: "8:00 AM – 3:00 PM (events after)" },
-  { day: "Sunday",    hours: "Private events only" },
+  { day: "Monday",    hours: "7:30 AM – 8:30 PM" },
+  { day: "Tuesday",   hours: "7:30 AM – 8:30 PM" },
+  { day: "Wednesday", hours: "7:30 AM – 8:30 PM" },
+  { day: "Thursday",  hours: "7:30 AM – 8:30 PM" },
+  { day: "Friday",    hours: "7:30 AM – 8:30 PM" },
+  { day: "Saturday",  hours: "7:30 AM – 8:30 PM" },
+  { day: "Sunday",    hours: "7:30 AM – 8:30 PM" },
 ];
 
 export default function VisitPage() {
@@ -29,10 +29,10 @@ export default function VisitPage() {
           Come by
         </p>
         <h1 className="mt-3 font-display tracking-tighter2">
-          You can&#8217;t miss the awning.
+          Right on North Creek Parkway.
         </h1>
         <p className="mt-5 text-qh-ink-soft text-lg">
-          We&#8217;re a five minute walk from the L train, on the quieter end of Linden.
+          We&#8217;re in the North Creek Parkway Center in Bothell, with easy parking right out front.
         </p>
       </header>
       <div className="hand-divider mt-10" />
@@ -59,24 +59,24 @@ export default function VisitPage() {
 
           <h2 className="font-display text-2xl mt-10">Address</h2>
           <address className="not-italic mt-2 text-qh-ink-soft leading-7">
-            142 Linden Street<br />
-            Brooklyn, NY 11221
+            18916 N Creek Pkwy #101<br />
+            Bothell, WA 98011
           </address>
           <p className="mt-3 text-sm">
-            <a href="tel:+17185550199" className="text-qh-accent underline underline-offset-2">
-              (718) 555&#8209;0199
+            <a href="tel:+14253959316" className="text-qh-accent underline underline-offset-2">
+              (425) 395&#8209;9316
             </a>
             <span className="mx-2 text-qh-line">·</span>
-            <a href="mailto:hello@thebreakroom.cafe" className="text-qh-accent underline underline-offset-2">
-              hello@thebreakroom.cafe
+            <a href="mailto:thebreakroombothell@gmail.com" className="text-qh-accent underline underline-offset-2">
+              thebreakroombothell@gmail.com
             </a>
           </p>
 
           <div className="mt-10">
             <h2 className="font-display text-2xl">How to find us</h2>
             <p className="mt-3 text-qh-ink-soft">
-              Look for the awning the color of butter. We&#8217;re next to the bookshop with
-              the orange door &mdash;
+              Head to Building 18916 in the North Creek Parkway Center and look for Suite 101
+              &mdash; the green counter and glowing menu screens are hard to miss.
               <span className="inline-block ml-1 align-middle">
                 <svg width="60" height="20" viewBox="0 0 60 20" aria-hidden>
                   <path
@@ -104,8 +104,8 @@ export default function VisitPage() {
         <div>
           <MapEmbed />
           <div className="mt-6 grid grid-cols-3 gap-3">
-            <PhotoTile src="/photos/exterior.jpg" alt="The Break Room storefront and unit sign." />
-            <PhotoTile src="/photos/patio.jpg" alt="Patio seating outside The Break Room." />
+            <PhotoTile src="/photos/exterior.jpg" alt="The Breakroom storefront and unit sign." />
+            <PhotoTile src="/photos/patio.jpg" alt="Patio seating outside The Breakroom." />
             <PhotoTile src="/photos/dining.jpg" alt="Marble-top dining tables inside." />
           </div>
         </div>
@@ -114,9 +114,9 @@ export default function VisitPage() {
       <section className="mt-20">
         <h2 className="font-display text-2xl">Send us a note</h2>
         <p className="mt-2 text-qh-ink-soft max-w-lg">
-          For party bookings, the form on the
-          <a href="/book" className="text-qh-accent underline underline-offset-2 mx-1">book page</a>
-          will get to us faster. For everything else:
+          Planning a private event or catering? The form on the
+          <a href="/book" className="text-qh-accent underline underline-offset-2 mx-1">events page</a>
+          will reach us fastest. For everything else:
         </p>
         <div className="mt-6 max-w-xl">
           <ContactForm />

@@ -6,7 +6,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { BookPartyButton } from "@/components/BookPartyButton";
 
-const HEADLINE = "Somewhere between the office and home.";
+const HEADLINE = "Coffee, boba, and good food — all day.";
 
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
@@ -26,7 +26,7 @@ export function Hero() {
           <h1 className="font-display tracking-tighter2 text-qh-ink">
             <span className="sr-only">{HEADLINE}</span>
             {words.map((w, i) => {
-              const italic = i === 4;
+              const italic = i === 1;
               return (
                 <span
                   key={i}
@@ -59,8 +59,8 @@ export function Hero() {
             transition={{ delay: 0.7, duration: 0.6 }}
             className="mt-6 max-w-md text-qh-ink-soft text-lg"
           >
-            By day a quiet workspace, by night a colorful event space.
-            Same room, different lighting.
+            By day it&#8217;s coffee, bubble tea, and Asian-American comfort food.
+            In the evening the room opens up for dinners, gatherings, and private events.
           </motion.p>
 
           <motion.div
@@ -91,7 +91,7 @@ export function Hero() {
         >
           <Image
             src="/photos/lounge.jpg"
-            alt="The lounge at The Break Room — soft grey sofas, plants, and big windows letting in morning light."
+            alt="The lounge at The Breakroom — soft grey sofas, plants, and big windows letting in morning light."
             fill
             sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover"
