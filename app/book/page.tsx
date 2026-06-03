@@ -6,6 +6,7 @@ import { TheSpace } from "@/components/booking/TheSpace";
 import { GoogleFormEmbed } from "@/components/booking/GoogleFormEmbed";
 import { FaqAccordion } from "@/components/booking/FaqAccordion";
 import { StickyJumpBar } from "@/components/booking/StickyJumpBar";
+import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "Events & Catering",
@@ -31,15 +32,15 @@ export default function BookPage() {
             We&#8217;ll write back within a business day with a quote and the next steps.
             None of this is binding — it just gets the conversation started.
           </p>
-          <div className="mt-10">
+          <Reveal className="mt-10">
             <GoogleFormEmbed
               src="https://docs.google.com/forms/d/e/1FAIpQLSeIfi6i39cW6kjEmB-LtEBoHJljz-mjNH-bCb4QGlIDfrWTZQ/viewform?embedded=true"
               title="The Breakroom — events & catering inquiry form"
               label="Events & catering"
-              height={1400}
+              heightClass="h-[2050px] sm:h-[1450px]"
               variant="after-hours"
             />
-          </div>
+          </Reveal>
         </div>
       </section>
       <FaqAccordion items={faqContent.items} />

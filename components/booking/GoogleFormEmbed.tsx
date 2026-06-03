@@ -27,8 +27,12 @@ interface GoogleFormEmbedProps {
   title: string;
   /** Text shown in the card's header strip. */
   label?: string;
-  /** Fixed iframe height in px (Google iframes don't auto-resize). */
-  height?: number;
+  /**
+   * Iframe height as a Tailwind class. Google iframes don't auto-resize and
+   * render taller (single-column) on mobile, so pass a responsive class, e.g.
+   * "h-[1900px] sm:h-[1400px]".
+   */
+  heightClass?: string;
   /** Page theme the card sits in. */
   variant?: "after-hours" | "quiet-hours";
 }
@@ -37,7 +41,7 @@ export function GoogleFormEmbed({
   src,
   title,
   label = "The Breakroom",
-  height = 1400,
+  heightClass = "h-[1700px] sm:h-[1400px]",
   variant = "after-hours",
 }: GoogleFormEmbedProps) {
   const dark = variant === "after-hours";
@@ -87,8 +91,7 @@ export function GoogleFormEmbed({
             src={src}
             title={title}
             loading="lazy"
-            className={`block w-full ${cardBg}`}
-            style={{ height }}
+            className={`block w-full ${cardBg} ${heightClass}`}
           >
             Loading the form…
           </iframe>

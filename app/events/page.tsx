@@ -30,7 +30,7 @@ export default async function EventsPage() {
       </header>
       <div className="hand-divider mt-10" />
 
-      <div className="mt-12 grid grid-cols-3 gap-3 sm:gap-4">
+      <Reveal className="mt-12 grid grid-cols-3 gap-3 sm:gap-4">
         {[
           { src: "/photos/counter.jpg", alt: "The service counter and overhead menu boards." },
           { src: "/photos/lounge-wide.jpg", alt: "The lounge with sofas and big windows." },
@@ -49,7 +49,7 @@ export default async function EventsPage() {
             />
           </div>
         ))}
-      </div>
+      </Reveal>
 
       <section className="mt-16">
         <h2 className="font-display text-2xl">Coming up</h2>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { GoogleFormEmbed } from "@/components/booking/GoogleFormEmbed";
 import { MapEmbed } from "@/components/visit/MapEmbed";
+import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "Visit",
@@ -38,7 +39,7 @@ export default function VisitPage() {
       <div className="hand-divider mt-10" />
 
       <section className="mt-12 grid lg:grid-cols-2 gap-12">
-        <div>
+        <Reveal>
           <h2 className="font-display text-2xl">Hours</h2>
           <table className="mt-4 w-full text-sm">
             <tbody>
@@ -98,19 +99,20 @@ export default function VisitPage() {
               </span>
             </p>
           </div>
-        </div>
+        </Reveal>
 
-        <div>
+        <Reveal delay={0.12}>
           <MapEmbed />
           <div className="mt-6 grid grid-cols-3 gap-3">
             <PhotoTile src="/photos/exterior.jpg" alt="The Breakroom storefront and unit sign." />
             <PhotoTile src="/photos/patio.jpg" alt="Patio seating outside The Breakroom." />
             <PhotoTile src="/photos/dining.jpg" alt="Marble-top dining tables inside." />
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <section className="mt-20">
+        <Reveal>
         <h2 className="font-display text-2xl">Send us a note</h2>
         <p className="mt-2 text-qh-ink-soft max-w-lg">
           Planning a private event or catering? The form on the
@@ -122,10 +124,11 @@ export default function VisitPage() {
             src="https://docs.google.com/forms/d/e/1FAIpQLSfZEgDbecg1xOnkB3k1BOk0fAFgCtxwqh44dwFVK-TwbWrxPQ/viewform?embedded=true"
             title="The Breakroom — contact form"
             label="Send us a note"
-            height={820}
+            heightClass="h-[1150px] sm:h-[820px]"
             variant="quiet-hours"
           />
         </div>
+        </Reveal>
       </section>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const PHOTOS = [
   { src: "/photos/lounge-wide.jpg", alt: "The lounge with sofas and big windows, ready for a gathering.", color: "#ff4d9e" },
@@ -30,9 +31,13 @@ export function TheSpace() {
           className="mt-10 -mx-4 px-4 sm:-mx-6 sm:px-6 overflow-x-auto snap-x snap-mandatory flex gap-5 pb-4"
           style={{ scrollbarWidth: "thin" }}
         >
-          {PHOTOS.map((p) => (
-            <div
+          {PHOTOS.map((p, i) => (
+            <motion.div
               key={p.src}
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.5, ease: "easeOut", delay: i * 0.08 }}
               className="relative snap-start shrink-0 w-[82%] sm:w-[420px] aspect-[4/5] rounded-3xl overflow-hidden shadow-lifted"
               style={{ border: `4px solid ${p.color}` }}
             >
@@ -43,7 +48,7 @@ export function TheSpace() {
                 sizes="(max-width: 640px) 82vw, 420px"
                 className="object-cover"
               />
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

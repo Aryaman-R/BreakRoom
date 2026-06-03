@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { BookPartyButton } from "@/components/BookPartyButton";
@@ -112,55 +113,29 @@ function Blobs({ progress }: { progress: ReturnType<typeof useScroll>["scrollYPr
 
 function NightIllustration() {
   return (
-    <div className="aspect-[5/4] rounded-3xl overflow-hidden border border-white/10 shadow-lifted">
-      <svg viewBox="0 0 600 480" className="w-full h-full" aria-hidden>
-        <defs>
-          <radialGradient id="glow" cx="50%" cy="40%" r="65%">
-            <stop offset="0%" stopColor="#ff9f45" stopOpacity="0.6" />
-            <stop offset="60%" stopColor="#ff4d9e" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#16271b" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        <rect width="600" height="480" fill="#16271b" />
-        <rect width="600" height="480" fill="url(#glow)" />
-        {/* String lights */}
-        <g stroke="#d7f25a" strokeWidth="2" fill="#d7f25a">
-          {Array.from({ length: 14 }).map((_, i) => {
-            const x = 30 + i * 40;
-            const y = 60 + Math.sin(i * 0.6) * 12;
-            return (
-              <g key={i}>
-                <circle cx={x} cy={y} r="5" />
-                <circle cx={x} cy={y} r="11" fill="#d7f25a" opacity="0.18" />
-              </g>
-            );
-          })}
-        </g>
-        {/* Confetti specks */}
-        {Array.from({ length: 40 }).map((_, i) => {
-          const colors = ["#ff4d9e", "#ff9f45", "#d7f25a", "#6EE7B7", "#A78BFA"];
-          return (
-            <rect
-              key={i}
-              x={(i * 73) % 580 + 10}
-              y={120 + ((i * 41) % 320)}
-              width="6"
-              height="14"
-              transform={`rotate(${i * 23} ${(i * 73) % 580 + 13} ${120 + ((i * 41) % 320) + 7})`}
-              fill={colors[i % colors.length]}
-              opacity="0.85"
-            />
-          );
-        })}
-        {/* Disco silhouette */}
-        <circle cx="300" cy="270" r="64" fill="#A78BFA" opacity="0.4" />
-        <g stroke="#d7f25a" strokeWidth="1" opacity="0.7">
-          <line x1="240" y1="270" x2="200" y2="270" />
-          <line x1="360" y1="270" x2="400" y2="270" />
-          <line x1="300" y1="210" x2="300" y2="170" />
-          <line x1="300" y1="330" x2="300" y2="370" />
-        </g>
-      </svg>
-    </div>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.7, ease: "easeOut" }}
+      className="relative aspect-[5/4] rounded-3xl overflow-hidden border border-white/10 shadow-lifted"
+    >
+      <Image
+        src="/photos/dining.jpg"
+        alt="The Breakroom dining room, set for an evening gathering."
+        fill
+        sizes="(max-width: 1024px) 100vw, 50vw"
+        className="object-cover"
+      />
+      {/* Night + neon wash so the daytime photo reads as 'after hours'. */}
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(22,39,27,0.20) 0%, rgba(22,39,27,0.55) 60%, rgba(22,39,27,0.88) 100%), radial-gradient(120% 80% at 50% 0%, rgba(255,159,69,0.38), rgba(255,77,158,0.14) 45%, transparent 72%)",
+        }}
+      />
+    </motion.div>
   );
 }

@@ -9,7 +9,7 @@ type Filter = "all" | "V" | "GF" | "DF" | "under10";
 
 const FILTERS: { id: Filter; label: string }[] = [
   { id: "all",     label: "Everything" },
-  { id: "V",       label: "Vegan" },
+  { id: "V",       label: "Vegetarian" },
   { id: "GF",      label: "Gluten-free" },
   { id: "DF",      label: "Dairy-free" },
   { id: "under10", label: "Under $10" },
@@ -96,7 +96,7 @@ function ItemRow({ item }: { item: MenuItem }) {
       className="grid grid-cols-[1fr_auto] gap-x-4"
     >
       <div className="min-w-0">
-        <div className="flex items-baseline gap-3">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
           <h3 className="font-display text-lg leading-tight">
             <span dangerouslySetInnerHTML={{ __html: item.name }} />
           </h3>
