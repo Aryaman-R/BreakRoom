@@ -1,0 +1,17 @@
+{
+  // Static-assets-only Worker. Its mere presence makes `wrangler deploy` use
+  // THIS config instead of auto-detecting Next.js and running the OpenNext
+  // (Workers SSR) adapter — which can't build Next 14 and was failing the deploy.
+  //
+  // `npm run build` (next build with output: "export") emits ./out; wrangler
+  // uploads it as static files. No "main" = no Worker code, just the site.
+  "name": "breakroom",
+  "compatibility_date": "2026-06-03",
+  "assets": {
+    "directory": "./out",
+    // /about is served from about.html (clean URLs, no trailing slash).
+    "html_handling": "auto-trailing-slash",
+    // Unmatched routes serve out/404.html.
+    "not_found_handling": "404-page"
+  }
+}
