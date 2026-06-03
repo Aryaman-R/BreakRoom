@@ -24,7 +24,7 @@
       "blurb": "Served with rice or quinoa, kimchi, green salad, and potato fritters or gyoza.",
       "items": [
         { "id": "chicken-curry",   "name": "Chicken Curry",                          "price": 14.99, "description": "Slow-simmered, warming.",                  "tags": [] },
-        { "id": "tempura-special", "name": "Tempura Special",                        "price": 14.99, "description": "Chicken gyoza, eggroll, butterfly shrimp.","tags": ["N"] },
+        { "id": "tempura-special", "name": "Tempura Special",                        "price": 14.99, "description": "Chicken gyoza, eggroll, butterfly shrimp.","tags": [] },
         { "id": "kung-pao-tofu",   "name": "Kung Pao Tofu",                          "price": 15.49, "description": "Peanuts, chili, scallion.",               "tags": ["V","N"] },
         { "id": "paneer-butter",   "name": "Paneer Butter",                          "price": 15.99, "description": "Creamy tomato, soft paneer.",             "tags": ["V"] },
         { "id": "orange-chicken",  "name": "Orange Chicken",                         "price": 16.49, "description": "Crispy, sweet, sticky.",                  "tags": [] },
@@ -68,9 +68,9 @@
       "name": "Sides",
       "blurb": "Small plates and add-ons.",
       "items": [
-        { "id": "steamed-rice",    "name": "Steamed Rice",            "price": 2.49,  "description": "A simple base.",            "tags": ["V","GF","DF"] },
+        { "id": "steamed-rice",    "name": "Steamed Rice",            "price": 2.49,  "description": "A simple base.",            "tags": ["V","VG","GF","DF"] },
         { "id": "pork-eggroll",    "name": "Pork Egg Roll",           "price": 2.99,  "description": "Crispy and golden.",        "tags": [] },
-        { "id": "quinoa",          "name": "Quinoa",                  "price": 2.99,  "description": "Nutty and light.",          "tags": ["V","GF","DF"] },
+        { "id": "quinoa",          "name": "Quinoa",                  "price": 2.99,  "description": "Nutty and light.",          "tags": ["V","VG","GF","DF"] },
         { "id": "fries",           "name": "French Fries",            "price": 4.99,  "description": "Hot, salted, classic.",     "tags": ["V"] },
         { "id": "steamed-veggies", "name": "Steamed Veggies",         "price": 4.99,  "description": "Seasonal and simple.",      "tags": ["V","GF","DF"] },
         { "id": "chicken-gyoza",   "name": "Chicken Gyoza (6)",       "price": 5.99,  "description": "Pan-fried dumplings.",      "tags": [] },
@@ -123,7 +123,7 @@
       "name": "Coffee & Espresso",
       "blurb": "Hot or iced. Prices shown for 12oz; 16oz a touch more. Oat or almond milk +$0.75.",
       "items": [
-        { "id": "americano",      "name": "Americano",             "price": 2.99, "description": "Espresso and hot water. 16oz $3.25.",      "tags": ["V","GF","DF"] },
+        { "id": "americano",      "name": "Americano",             "price": 2.99, "description": "Espresso and hot water. 16oz $3.25.",      "tags": ["V","VG","GF","DF"] },
         { "id": "cappuccino",     "name": "Cappuccino",            "price": 3.99, "description": "Espresso, steamed milk, foam. 16oz $4.49.", "tags": ["V"] },
         { "id": "whipped-coffee", "name": "Whipped Coffee",        "price": 3.99, "description": "A cloud of whipped espresso. 16oz $4.49.",  "tags": ["V"] },
         { "id": "latte",          "name": "Latte",                 "price": 4.49, "description": "Espresso and silky milk. 16oz $4.99.",      "tags": ["V"] },
@@ -131,8 +131,8 @@
         { "id": "mocha",          "name": "Mocha",                 "price": 4.99, "description": "Espresso, chocolate, milk. 16oz $5.49.",    "tags": ["V"] },
         { "id": "caramel-macc",   "name": "Caramel Macchiato",     "price": 4.99, "description": "Vanilla, caramel, espresso. 16oz $5.49.",   "tags": ["V"] },
         { "id": "dirty-chai",     "name": "Dirty Chai Latte",      "price": 4.49, "description": "Chai with a shot. 16oz $5.49.",             "tags": ["V"] },
-        { "id": "espresso-tonic", "name": "Espresso Tonic",        "price": 6.49, "description": "Espresso over sparkling tonic.",            "tags": ["V","GF","DF"] },
-        { "id": "pom-sparkling",  "name": "Pomegranate Sparkling", "price": 6.49, "description": "Bright, fizzy, fruity.",                    "tags": ["V","GF","DF"] }
+        { "id": "espresso-tonic", "name": "Espresso Tonic",        "price": 6.49, "description": "Espresso over sparkling tonic.",            "tags": ["V","VG","GF","DF"] },
+        { "id": "pom-sparkling",  "name": "Pomegranate Sparkling", "price": 6.49, "description": "Bright, fizzy, fruity.",                    "tags": ["V","VG","GF","DF"] }
       ]
     },
     {
@@ -140,8 +140,8 @@
       "name": "Tea",
       "blurb": "Steeped by the cup.",
       "items": [
-        { "id": "chamomile", "name": "Chamomile",     "price": 2.49, "description": "Soft and floral.",    "tags": ["V","GF","DF"] },
-        { "id": "herbal",    "name": "Herbal Tea",    "price": 2.99, "description": "Caffeine-free blend.", "tags": ["V","GF","DF"] },
+        { "id": "chamomile", "name": "Chamomile",     "price": 2.49, "description": "Soft and floral.",    "tags": ["V","VG","GF","DF"] },
+        { "id": "herbal",    "name": "Herbal Tea",    "price": 2.99, "description": "Caffeine-free blend.", "tags": ["V","VG","GF","DF"] },
         { "id": "masala",    "name": "Indian Masala", "price": 3.99, "description": "Spiced and milky.",    "tags": ["V"] },
         { "id": "ginger",    "name": "Indian Ginger", "price": 3.99, "description": "Warming and sharp.",   "tags": ["V"] }
       ]
@@ -154,6 +154,7 @@
     }
   ],
   "tagDefinitions": {
+    "VG": "Vegan",
     "V":  "Vegetarian",
     "GF": "Gluten-free",
     "DF": "Dairy-free",

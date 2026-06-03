@@ -5,10 +5,11 @@ import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import clsx from "clsx";
 import type { MenuCategory, MenuItem } from "@/lib/types";
 
-type Filter = "all" | "V" | "GF" | "DF" | "under10";
+type Filter = "all" | "VG" | "V" | "GF" | "DF" | "under10";
 
 const FILTERS: { id: Filter; label: string }[] = [
   { id: "all",     label: "Everything" },
+  { id: "VG",      label: "Vegan" },
   { id: "V",       label: "Vegetarian" },
   { id: "GF",      label: "Gluten-free" },
   { id: "DF",      label: "Dairy-free" },
@@ -176,6 +177,7 @@ function FilterToggle({
 }
 
 const ALLERGEN_LABEL: Record<string, string> = {
+  VG: "Vegan",
   V: "Vegetarian",
   GF: "Gluten-free",
   DF: "Dairy-free",
@@ -204,6 +206,7 @@ function Allergens() {
     <div className="text-xs text-qh-ink-soft border-t border-qh-line pt-4">
       <p className="uppercase tracking-[0.18em] mb-2">Key</p>
       <ul className="space-y-1">
+        <li><span className="font-mono text-qh-ink">VG</span> — Vegan</li>
         <li><span className="font-mono text-qh-ink">V</span> — Vegetarian</li>
         <li><span className="font-mono text-qh-ink">GF</span> — Gluten-free</li>
         <li><span className="font-mono text-qh-ink">DF</span> — Dairy-free</li>

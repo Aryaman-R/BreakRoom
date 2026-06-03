@@ -19,8 +19,9 @@ export const BEANS_TOOLS = [
         },
         dietary: {
           type: "string",
-          enum: ["V", "GF", "DF", "N"],
-          description: "Filter by dietary tag.",
+          enum: ["VG", "V", "GF", "DF", "N"],
+          description:
+            "Filter by dietary tag: VG (vegan), V (vegetarian), GF (gluten-free), DF (dairy-free), N (contains nuts).",
         },
       },
     },

@@ -3,7 +3,7 @@
  * the UI, the API routes, and (eventually) the persistence layer.
  */
 
-export type DietaryTag = "V" | "GF" | "DF" | "N";
+export type DietaryTag = "VG" | "V" | "GF" | "DF" | "N";
 
 export interface MenuItem {
   id: string;
