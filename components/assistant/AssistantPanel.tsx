@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ToolResultCard } from "./ToolResultCard";
+import { runAssistantTurn } from "@/lib/assistant/handlers";
 
 interface Message {
   role: "user" | "assistant";
@@ -53,17 +54,11 @@ export function AssistantPanel({ onClose }: Props) {
     setBusy(true);
 
     try {
-      const res = await fetch("/api/assistant", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          messages: next.map((m) => ({ role: m.role, content: m.content })),
-        }),
-      });
-      const data = (await res.json()) as {
-        reply: string;
-        toolCalls: { name: string; result: unknown }[];
-      };
+      // Runs entirely client-side — Beans is a deterministic mock today, so no
+      // server round-trip is needed (and the site ships as a static export).
+      const data = await runAssistantTurn(
+        next.map((m) => ({ role: m.role, content: m.content }))
+      );
       setMessages((m) => [
         ...m,
         { role: "assistant", content: data.reply, toolCalls: data.toolCalls },

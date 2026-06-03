@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import faqContent from "@/content/faq.json";
 import { BookHero } from "@/components/booking/BookHero";
 import { WhatYouCanDo } from "@/components/booking/WhatYouCanDo";
 import { TheSpace } from "@/components/booking/TheSpace";
-import { BookingForm } from "@/components/booking/BookingForm";
+import { GoogleFormEmbed } from "@/components/booking/GoogleFormEmbed";
 import { FaqAccordion } from "@/components/booking/FaqAccordion";
 import { StickyJumpBar } from "@/components/booking/StickyJumpBar";
 
@@ -33,22 +32,12 @@ export default function BookPage() {
             None of this is binding — it just gets the conversation started.
           </p>
           <div className="mt-10">
-            <Suspense fallback={<FormFallback />}>
-              <BookingForm />
-            </Suspense>
+            <GoogleFormEmbed />
           </div>
         </div>
       </section>
       <FaqAccordion items={faqContent.items} />
       <StickyJumpBar />
     </>
-  );
-}
-
-function FormFallback() {
-  return (
-    <div className="rounded-3xl border border-ah-cream/15 bg-ah-bg-2/40 backdrop-blur-sm p-10 text-ah-cream/70">
-      Loading the form…
-    </div>
   );
 }

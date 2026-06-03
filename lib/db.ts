@@ -15,7 +15,6 @@
  * added here as methods, not as ad-hoc reads from JSON.
  */
 
-import { randomUUID } from "node:crypto";
 import menuContent from "@/content/menu.json";
 import specialsContent from "@/content/specials.json";
 import eventsContent from "@/content/events.json";
@@ -104,7 +103,7 @@ class InMemoryRepo implements Repo {
   async createBooking(input: BookingInput) {
     const booking: Booking = {
       ...input,
-      id: randomUUID(),
+      id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
       status: "pending",
     };
