@@ -32,7 +32,13 @@ export default function BookPage() {
             None of this is binding — it just gets the conversation started.
           </p>
           <div className="mt-10">
-            <GoogleFormEmbed />
+            <GoogleFormEmbed
+              src="https://docs.google.com/forms/d/e/1FAIpQLSeIfi6i39cW6kjEmB-LtEBoHJljz-mjNH-bCb4QGlIDfrWTZQ/viewform?embedded=true"
+              title="The Breakroom — events & catering inquiry form"
+              label="Events & catering"
+              height={1400}
+              variant="after-hours"
+            />
           </div>
         </div>
       </section>

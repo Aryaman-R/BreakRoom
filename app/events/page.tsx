@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { defaultRepo } from "@/lib/db";
 import { Reveal } from "@/components/ui/Reveal";
 import type { PublicEvent } from "@/lib/types";
@@ -29,7 +30,28 @@ export default async function EventsPage() {
       </header>
       <div className="hand-divider mt-10" />
 
-      <section className="mt-12">
+      <div className="mt-12 grid grid-cols-3 gap-3 sm:gap-4">
+        {[
+          { src: "/photos/counter.jpg", alt: "The service counter and overhead menu boards." },
+          { src: "/photos/lounge-wide.jpg", alt: "The lounge with sofas and big windows." },
+          { src: "/photos/patio.jpg", alt: "Patio seating outside The Breakroom." },
+        ].map((p) => (
+          <div
+            key={p.src}
+            className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-qh-line shadow-soft"
+          >
+            <Image
+              src={p.src}
+              alt={p.alt}
+              fill
+              sizes="(max-width: 768px) 31vw, 260px"
+              className="object-cover"
+            />
+          </div>
+        ))}
+      </div>
+
+      <section className="mt-16">
         <h2 className="font-display text-2xl">Coming up</h2>
         {upcoming.length === 0 ? (
           <EmptyEvents />

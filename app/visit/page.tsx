@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { ContactForm } from "@/components/visit/ContactForm";
+import { GoogleFormEmbed } from "@/components/booking/GoogleFormEmbed";
 import { MapEmbed } from "@/components/visit/MapEmbed";
 
 export const metadata: Metadata = {
@@ -117,8 +117,14 @@ export default function VisitPage() {
           <a href="/book" className="text-qh-accent underline underline-offset-2 mx-1">events page</a>
           will reach us fastest. For everything else:
         </p>
-        <div className="mt-6 max-w-xl">
-          <ContactForm />
+        <div className="mt-6 max-w-2xl">
+          <GoogleFormEmbed
+            src="https://docs.google.com/forms/d/e/1FAIpQLSfZEgDbecg1xOnkB3k1BOk0fAFgCtxwqh44dwFVK-TwbWrxPQ/viewform?embedded=true"
+            title="The Breakroom — contact form"
+            label="Send us a note"
+            height={820}
+            variant="quiet-hours"
+          />
         </div>
       </section>
     </div>
