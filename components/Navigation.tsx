@@ -144,10 +144,10 @@ function Wordmark() {
     >
       {/* Logo has a solid (white) background, so keep it in a self-contained
           rounded tile that reads intentionally on both light and dark nav. */}
-      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white shadow-soft ring-1 ring-qh-ink/10 overflow-hidden shrink-0">
-        <Image src="/logo-mark.png" alt="" width={32} height={28} className="h-6 w-auto" />
+      <span className="inline-flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-white shadow-soft ring-1 ring-qh-ink/10 overflow-hidden shrink-0">
+        <Image src="/logo-mark.png" alt="" width={32} height={28} className="h-5 sm:h-6 w-auto" />
       </span>
-      <span className="font-display italic text-2xl tracking-tightish">
+      <span className="font-display italic text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-tightish">
         The Breakroom
         <span className="inline-block transition-transform duration-300 group-hover:rotate-12 group-hover:translate-x-0.5">
           .
