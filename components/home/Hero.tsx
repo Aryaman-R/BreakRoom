@@ -26,7 +26,7 @@ export function Hero() {
           <h1 className="font-display tracking-tighter2 text-qh-ink">
             <span className="sr-only">{HEADLINE}</span>
             {words.map((w, i) => {
-              const italic = i === 1;
+              const italic = i === 3;
               return (
                 <span
                   key={i}
