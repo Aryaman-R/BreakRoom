@@ -103,6 +103,21 @@ export function Navigation() {
 
         <div className="flex items-center gap-3">
           <AssistantTrigger dark={dark} />
+
+          <Link
+            href="https://www.doordash.com/store/the-breakroom-bothell-45695059/111526546/?cursor=eyJzZWFyY2hfaXRlbV9jYXJvdXNlbF9jdXJzb3IiOnsicXVlcnkiOiJUaGUgQnJlYWtyb29tIiwiaXRlbV9pZHMiOltdLCJzZWFyY2hfdGVybSI6InRoZSBicmVha3Jvb20iLCJ2ZXJ0aWNhbF9pZCI6LTk5OSwidmVydGljYWxfbmFtZSI6ImFsbCIsInF1ZXJ5X2ludGVudCI6IlNUT1JFX1JYIn0sInN0b3JlX3ByaW1hcnlfdmVydGljYWxfaWRzIjpbMSwxMTAwMzcsMTEwMDQ1LDExMDA1MiwxMTAwNTUsMTEwMDYyLDRdfQ==&pickup=false"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={clsx(
+    "hidden sm:inline-flex items-center justify-center px-5 py-3.5 rounded-full text-sm font-medium transition-colors",
+    dark
+      ? "bg-ah-electric text-black hover:bg-ah-electric/90"
+      : "bg-qh-accent text-white hover:bg-qh-accent/90"
+  )}
+          >
+          Order
+          </Link>
+
           <div className="hidden sm:block">
             <BookPartyButton size="md" />
           </div>
