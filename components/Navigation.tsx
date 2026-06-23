@@ -109,10 +109,7 @@ export function Navigation() {
             target="_blank"
             rel="noopener noreferrer"
             className={clsx(
-    "hidden sm:inline-flex items-center justify-center px-5 py-3.5 rounded-full text-sm font-medium transition-colors",
-    dark
-      ? "bg-ah-electric text-black hover:bg-ah-electric/90"
-      : "bg-qh-accent text-white hover:bg-qh-accent/90"
+    "hidden sm:inline-flex items-center justify-center px-5 py-3.5 rounded-full text-sm font-medium transition-colors", "bg-ah-electric text-black hover:bg-ah-electric/90", "bg-qh-accent text-white hover:bg-qh-accent/90"
   )}
           >
           Order
