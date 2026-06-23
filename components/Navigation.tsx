@@ -18,6 +18,10 @@ const TABS = [
   { href: "/events", label: "Events" },
 ];
 
+// DoorDash storefront — shared between the desktop nav button and the mobile drawer.
+const ORDER_URL =
+  "https://www.doordash.com/store/the-breakroom-bothell-45695059/111526546/?cursor=eyJzZWFyY2hfaXRlbV9jYXJvdXNlbF9jdXJzb3IiOnsicXVlcnkiOiJUaGUgQnJlYWtyb29tIiwiaXRlbV9pZHMiOltdLCJzZWFyY2hfdGVybSI6InRoZSBicmVha3Jvb20iLCJ2ZXJ0aWNhbF9pZCI6LTk5OSwidmVydGljYWxfbmFtZSI6ImFsbCIsInF1ZXJ5X2ludGVudCI6IlNUT1JFX1JYIn0sInN0b3JlX3ByaW1hcnlfdmVydGljYWxfaWRzIjpbMSwxMTAwMzcsMTEwMDQ1LDExMDA1MiwxMTAwNTUsMTEwMDYyLDRdfQ==&pickup=false";
+
 export function Navigation() {
   const pathname = usePathname() ?? "/";
   const [scrolled, setScrolled] = useState(false);
@@ -41,15 +45,19 @@ export function Navigation() {
     setMobileOpen(false);
   }, [pathname]);
 
-  // Lock body scroll when mobile menu is open
+  // Lock body scroll + allow Escape to close while the mobile drawer is open
   useEffect(() => {
-    if (mobileOpen) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = prev;
-      };
-    }
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
   }, [mobileOpen]);
 
   return (
@@ -67,7 +75,7 @@ export function Navigation() {
         dark ? "text-ah-cream" : "text-qh-ink"
       )}
     >
-      <div className="container-page flex items-center justify-between h-[68px] gap-6">
+      <div className="container-page flex items-center justify-between h-[68px] gap-2 sm:gap-6">
         <Wordmark />
 
         <LayoutGroup id="nav-tabs">
@@ -102,11 +110,11 @@ export function Navigation() {
           </nav>
         </LayoutGroup>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           <AssistantTrigger dark={dark} />
 
           <Link
-            href="https://www.doordash.com/store/the-breakroom-bothell-45695059/111526546/?cursor=eyJzZWFyY2hfaXRlbV9jYXJvdXNlbF9jdXJzb3IiOnsicXVlcnkiOiJUaGUgQnJlYWtyb29tIiwiaXRlbV9pZHMiOltdLCJzZWFyY2hfdGVybSI6InRoZSBicmVha3Jvb20iLCJ2ZXJ0aWNhbF9pZCI6LTk5OSwidmVydGljYWxfbmFtZSI6ImFsbCIsInF1ZXJ5X2ludGVudCI6IlNUT1JFX1JYIn0sInN0b3JlX3ByaW1hcnlfdmVydGljYWxfaWRzIjpbMSwxMTAwMzcsMTEwMDQ1LDExMDA1MiwxMTAwNTUsMTEwMDYyLDRdfQ==&pickup=false"
+            href={ORDER_URL}
             target="_blank"
             rel="noopener noreferrer"
             className={clsx(
@@ -121,7 +129,7 @@ export function Navigation() {
           </div>
           {/* Mobile shrunken variant — never collapses into hamburger */}
           <div className="sm:hidden">
-            <BookPartyButton size="sm" />
+            <BookPartyButton size="sm" label="Book" />
           </div>
           <button
             type="button"
@@ -140,9 +148,12 @@ export function Navigation() {
         </div>
       </div>
 
-      <AnimatePresence>
-        {mobileOpen && <MobileSheet pathname={pathname} dark={dark} />}
-      </AnimatePresence>
+      <MobileDrawer
+        open={mobileOpen}
+        pathname={pathname}
+        dark={dark}
+        onClose={() => setMobileOpen(false)}
+      />
     </header>
   );
 }
@@ -152,7 +163,7 @@ function Wordmark() {
     <Link
       href="/"
       // Inherits color from the nav header — no need to hard-code here.
-      className="group flex items-center gap-2.5"
+      className="group flex items-center gap-2 sm:gap-2.5 min-w-0"
       aria-label="The Breakroom — home"
     >
       {/* Logo has a solid (white) background, so keep it in a self-contained
@@ -160,7 +171,7 @@ function Wordmark() {
       <span className="inline-flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-white shadow-soft ring-1 ring-qh-ink/10 overflow-hidden shrink-0">
         <Image src="/logo-mark.png" alt="" width={32} height={28} className="h-5 sm:h-6 w-auto" />
       </span>
-      <span className="font-display italic text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-tightish">
+      <span className="font-display italic text-lg sm:text-2xl md:text-3xl lg:text-4xl tracking-tightish truncate">
         The Breakroom
         <span className="inline-block transition-transform duration-300 group-hover:rotate-12 group-hover:translate-x-0.5">
           .
@@ -189,48 +200,125 @@ function HamburgerIcon({ open }: { open: boolean }) {
   );
 }
 
-function MobileSheet({ pathname, dark }: { pathname: string; dark: boolean }) {
+function MobileDrawer({
+  open,
+  pathname,
+  dark,
+  onClose,
+}: {
+  open: boolean;
+  pathname: string;
+  dark: boolean;
+  onClose: () => void;
+}) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-      className={clsx(
-        "md:hidden fixed inset-0 top-[68px] z-40 overflow-y-auto overscroll-contain",
-        dark ? "bg-ah-bg" : "bg-qh-bg"
-      )}
-    >
-      <nav className="container-page flex flex-col py-6 sm:py-10 gap-1 sm:gap-2">
-        {TABS.map((tab, i) => {
-          const active = pathname.startsWith(tab.href);
-          return (
-            <motion.div
-              key={tab.href}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: i * 0.06, duration: 0.4, ease: "easeOut" }}
+    <AnimatePresence>
+      {open && [
+        // Dimmed backdrop — tap to close.
+        <motion.div
+          key="backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={onClose}
+          aria-hidden="true"
+          className="md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+        />,
+        // Slide-in sidebar from the right.
+        <motion.aside
+          key="drawer"
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
+          exit={{ x: "100%" }}
+          transition={{ type: "spring", stiffness: 380, damping: 40 }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu"
+          className={clsx(
+            "md:hidden fixed right-0 top-0 bottom-0 z-50 flex w-[80%] max-w-xs flex-col overflow-y-auto overscroll-contain shadow-2xl",
+            dark ? "bg-ah-bg text-ah-cream" : "bg-qh-bg text-qh-ink"
+          )}
+        >
+          <div
+            className={clsx(
+              "flex items-center justify-between h-[68px] px-5 border-b",
+              dark ? "border-ah-cream/10" : "border-qh-line"
+            )}
+          >
+            <span className="font-display italic text-xl tracking-tightish">Menu</span>
+            <button
+              type="button"
+              aria-label="Close menu"
+              onClick={onClose}
+              className={clsx(
+                "inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors",
+                dark ? "hover:bg-ah-cream/10" : "hover:bg-qh-line/60"
+              )}
             >
-              <Link
-                href={tab.href}
-                className={clsx(
-                  "block py-4 font-display text-3xl tracking-tightish border-b",
-                  dark ? "border-ah-cream/15" : "border-qh-line",
-                  active
-                    ? dark
-                      ? "italic text-ah-electric"
-                      : "italic text-qh-accent"
-                    : dark
-                    ? "text-ah-cream"
-                    : "text-qh-ink"
-                )}
-              >
-                {tab.label}
-              </Link>
-            </motion.div>
-          );
-        })}
-      </nav>
-    </motion.div>
+              <CloseIcon />
+            </button>
+          </div>
+
+          <nav className="flex flex-col px-5 py-4">
+            {TABS.map((tab, i) => {
+              const active = pathname.startsWith(tab.href);
+              return (
+                <motion.div
+                  key={tab.href}
+                  initial={{ x: 16, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.05 + i * 0.05, duration: 0.3, ease: "easeOut" }}
+                >
+                  <Link
+                    href={tab.href}
+                    onClick={onClose}
+                    className={clsx(
+                      "block py-4 font-display text-2xl tracking-tightish border-b",
+                      dark ? "border-ah-cream/12" : "border-qh-line",
+                      active
+                        ? dark
+                          ? "italic text-ah-electric"
+                          : "italic text-qh-accent"
+                        : dark
+                        ? "text-ah-cream"
+                        : "text-qh-ink"
+                    )}
+                  >
+                    {tab.label}
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </nav>
+
+          <div className="mt-auto px-5 pb-8 pt-4 flex flex-col gap-3">
+            <Link
+              href={ORDER_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={onClose}
+              className={clsx(
+                "inline-flex items-center justify-center px-5 py-3.5 rounded-full text-sm font-medium transition-colors",
+                dark
+                  ? "bg-ah-electric text-black hover:bg-ah-electric/90"
+                  : "bg-qh-accent text-white hover:bg-qh-accent/90"
+              )}
+            >
+              Order on DoorDash ↗
+            </Link>
+          </div>
+        </motion.aside>,
+      ]}
+    </AnimatePresence>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden>
+      <line x1="5" y1="5" x2="17" y2="17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <line x1="17" y1="5" x2="5" y2="17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
   );
 }
