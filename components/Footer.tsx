@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 const HOURS = [
-  ["Every day", "7:30 AM – 8:30 PM"],
+  ["Every day", "9:30 AM – 3:30 PM"],
 ];
 
 export function Footer() {
