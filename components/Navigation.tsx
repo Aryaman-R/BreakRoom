@@ -12,6 +12,7 @@ import clsx from "clsx";
 
 const TABS = [
   { href: "/menu", label: "Menu" },
+  { href: "/online-order", label: "Online Order" },
   { href: "/visit", label: "Visit" },
   { href: "/about", label: "About" },
   { href: "/events", label: "Events" },
