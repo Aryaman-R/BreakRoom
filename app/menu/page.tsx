@@ -29,12 +29,18 @@ export default async function MenuPage() {
         <p className="mt-5 text-qh-ink-soft text-lg">
           Sandwiches to rice bowls, wings to bubble tea. Read it like a magazine, not a database &mdash; allergens are marked.
         </p>
+        <a
+        href="#print_menu"
+        className="inline-flex items-center mt-3 text-sm font-medium text-qh-accent hover:text-qh-ink transition-colors"
+        >
+        Quick View ↓
+      </a>
       </header>
       <div className="hand-divider mt-10" />
       <MenuView categories={categories} />
 
       <section className="mt-20">
-        <h2 className="font-display text-3xl tracking-tightish">The full menu, in print</h2>
+        <h2 className="font-display text-3xl tracking-tightish" id = "print_menu">The full menu, in print</h2>
         <p className="mt-2 text-qh-ink-soft max-w-2xl">
           Photos of our in-store menu boards and the printed takeaway card. Tap any to enlarge.
         </p>
