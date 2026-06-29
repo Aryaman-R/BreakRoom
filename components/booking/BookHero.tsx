@@ -27,7 +27,7 @@ export function BookHero() {
   }, []);
 
   return (
-    <section className="relative min-h-[88vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[50vh] flex items-center overflow-hidden">
       {/* Animated background mesh (CSS, on body) is already there.
           These extra blobs add depth on this hero specifically. */}
       <Blobs />
@@ -62,18 +62,6 @@ export function BookHero() {
           Birthdays, baby showers, team dinners, corporate lunches &mdash; dine in or let us cater.
           If it&#8217;s a gathering, we&#8217;ll feed it.
         </motion.p>
-        <motion.a
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55, duration: 0.6 }}
-          href="#form"
-          className="mt-10 inline-flex items-center gap-2 rounded-full bg-ah-cream text-ah-bg px-6 py-3 font-medium text-sm hover:bg-ah-electric transition-colors"
-        >
-          Skip to the form
-          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
-            <path d="M3 5 L7 10 L11 5" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </motion.a>
       </div>
     </section>
   );
