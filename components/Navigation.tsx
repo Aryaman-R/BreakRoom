@@ -235,10 +235,11 @@ function MobileDrawer({
           aria-modal="true"
           aria-label="Menu"
           className={clsx(
-            "md:hidden fixed right-0 top-0 bottom-0 z-50 flex w-[80%] max-w-xs flex-col overflow-y-auto overscroll-contain shadow-2xl",
-            dark ? "bg-ah-bg text-ah-cream" : "bg-qh-bg text-qh-ink"
-          )}
+  "md:hidden fixed right-0 top-0 bottom-0 z-50 flex h-[100dvh] w-[80%] max-w-xs flex-col shadow-2xl overflow-hidden",
+  dark ? "bg-ah-bg text-ah-cream" : "bg-qh-bg text-qh-ink"
+)}
         >
+        
           <div
             className={clsx(
               "flex items-center justify-between h-[68px] px-5 border-b",
