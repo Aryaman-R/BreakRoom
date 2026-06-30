@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 };
 
 const HOURS = [
-  { day: "Monday",    hours: "7:30 AM – 8:30 PM" },
-  { day: "Tuesday",   hours: "7:30 AM – 8:30 PM" },
-  { day: "Wednesday", hours: "7:30 AM – 8:30 PM" },
-  { day: "Thursday",  hours: "7:30 AM – 8:30 PM" },
-  { day: "Friday",    hours: "7:30 AM – 8:30 PM" },
-  { day: "Saturday",  hours: "7:30 AM – 8:30 PM" },
-  { day: "Sunday",    hours: "7:30 AM – 8:30 PM" },
+  { day: "Monday",    hours: "9:30 AM – 3:30 PM" },
+  { day: "Tuesday",   hours: "9:30 AM – 3:30 PM" },
+  { day: "Wednesday", hours: "9:30 AM – 3:30 PM" },
+  { day: "Thursday",  hours: "9:30 AM – 3:30 PM" },
+  { day: "Friday",    hours: "9:30 AM – 3:30 PM" },
+  { day: "Saturday",  hours: "Closed" },
+  { day: "Sunday",    hours: "Closed" },
 ];
 
 export default function VisitPage() {

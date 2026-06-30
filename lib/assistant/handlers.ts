@@ -48,13 +48,13 @@ export async function runToolCall(
       return defaultRepo.getSpecials();
     case "get_hours":
       return {
-        mon: "7:30 AM – 8:30 PM",
-        tue: "7:30 AM – 8:30 PM",
-        wed: "7:30 AM – 8:30 PM",
-        thu: "7:30 AM – 8:30 PM",
-        fri: "7:30 AM – 8:30 PM",
-        sat: "7:30 AM – 8:30 PM",
-        sun: "7:30 AM – 8:30 PM",
+        mon: "9:30 AM – 3:30 PM",
+        tue: "9:30 AM – 3:30 PM",
+        wed: "9:30 AM – 3:30 PM",
+        thu: "9:30 AM – 3:30 PM",
+        fri: "9:30 AM – 3:30 PM",
+        sat: "9:30 AM – 3:30 PM",
+        sun: "9:30 AM – 3:30 PM",
       };
     case "check_availability": {
       const date = String(input.date);
@@ -120,7 +120,7 @@ export async function runAssistantTurn(
   if (text.includes("hour") || text.includes("open")) {
     const result = await runToolCall("get_hours", {});
     return {
-      reply: "We&#8217;re open every day, 7:30 AM &#8211; 8:30 PM.",
+      reply: "We&#8217;re open every day, 9:30 AM &#8211; 3:30 PM.",
       toolCalls: [{ name: "get_hours", input: {}, result }],
     };
   }
