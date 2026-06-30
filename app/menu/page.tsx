@@ -4,11 +4,11 @@ import { MenuView } from "@/components/menu/MenuView";
 import { PhotoGallery } from "@/components/ui/PhotoGallery";
 
 const PRINTED_MENU = [
-  { src: "/menu/printed-1.png", alt: "Printed menu — sandwiches, sides, and specials.", w: 2000, h: 1545 },
   { src: "/menu/printed-2.png", alt: "Printed menu — rice bowls, breakfast, bubble tea, and beverages.", w: 2000, h: 1545 },
-  { src: "/photos/menu-board-1.jpg", alt: "In-store menu board — sandwiches, sides, beverages.", w: 640, h: 480 },
-  { src: "/photos/menu-board-2.jpg", alt: "In-store menu board — specials, burgers, rice bowls.", w: 640, h: 480 },
-  { src: "/photos/bubble-tea.jpg", alt: "Bubble tea flavors and toppings sign.", w: 480, h: 640, fit: "contain" as const },
+  { src: "/menu/printed-1.png", alt: "Printed menu — sandwiches, sides, and specials.", w: 2000, h: 1545 }
+  //{ src: "/photos/menu-board-1.jpg", alt: "In-store menu board — sandwiches, sides, beverages.", w: 640, h: 480 },
+  //{ src: "/photos/menu-board-2.jpg", alt: "In-store menu board — specials, burgers, rice bowls.", w: 640, h: 480 },
+  //{ src: "/photos/bubble-tea.jpg", alt: "Bubble tea flavors and toppings sign.", w: 480, h: 640, fit: "contain" as const },
 ];
 
 export const metadata: Metadata = {

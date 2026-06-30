@@ -171,10 +171,9 @@ function Wordmark() {
       <span className="inline-flex items-center justify-center shrink-0">
         <Image src="/logo_transparent.png" alt="" width={200} height={212} className="h-28 sm:h-32 w-auto" />
       </span> 
-      <span className="font-display italic text-lg sm:text-2xl md:text-3xl lg:text-4xl tracking-tightish truncate">
-        The Breakroom
+      <span className="font-display text-lg sm:text-2xl md:text-3xl lg:text-4xl tracking-tightish truncate">
+        THE BREAKROOM
         <span className="inline-block transition-transform duration-300 group-hover:rotate-12 group-hover:translate-x-0.5">
-          .
         </span>
       </span>
     </Link>

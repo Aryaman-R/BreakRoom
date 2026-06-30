@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, DM_Sans, JetBrains_Mono, Bagel_Fat_One } from "next/font/google";
+import { Squada_One, DM_Sans, JetBrains_Mono, Bagel_Fat_One } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
@@ -7,11 +7,11 @@ import { AssistantWidget } from "@/components/assistant/AssistantWidget";
 import { ModeProvider } from "@/components/ModeProvider";
 import { AssistantProvider } from "@/components/assistant/AssistantContext";
 
-const fraunces = Fraunces({
+const squadaOne = Squada_One({
   subsets: ["latin"],
+  weight: "400",
   display: "swap",
   variable: "--font-display",
-  axes: ["SOFT", "WONK", "opsz"],
 });
 
 const dmSans = DM_Sans({
@@ -67,7 +67,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${dmSans.variable} ${jetbrains.variable} ${bagel.variable}`}
+      className={`${squadaOne.variable} ${dmSans.variable} ${jetbrains.variable} ${bagel.variable}`}
     >
       <body>
         <ModeProvider>
