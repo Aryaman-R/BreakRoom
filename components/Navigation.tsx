@@ -236,7 +236,7 @@ function MobileDrawer({
           aria-label="Menu"
           className={clsx(
   "md:hidden fixed right-0 top-0 bottom-0 z-50 flex h-[100dvh] w-[80%] max-w-xs flex-col shadow-2xl overflow-hidden",
-  dark ? "bg-ah-bg text-ah-cream" : "bg-qh-bg text-qh-ink"
+  dark ? "bg-ah-bg text-ah-cream" : "bg-qh-bg text-qh-ink", "font-sans"
 )}
         >
         
@@ -246,7 +246,7 @@ function MobileDrawer({
               dark ? "border-ah-cream/10" : "border-qh-line"
             )}
           >
-            <span className="font-display italic text-xl tracking-tightish">Menu</span>
+            <span className="font-display text-xl tracking-tightish"></span>
             <button
               type="button"
               aria-label="Close menu"
