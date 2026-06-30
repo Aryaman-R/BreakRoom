@@ -23,7 +23,7 @@ export function Hero() {
 
   return (
     <section ref={ref} className="relative pt-10 sm:pt-16 pb-24">
-      <div className="container-page grid lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+      <div className="container-page grid lg:grid-cols-12 gap-8 lg:gap-14 items-start">
         <div className="lg:col-span-6 relative z-[2]">
           <h1 className="font-display tracking-tighter2 text-qh-ink">
             <span className="sr-only">{HEADLINE}</span>
