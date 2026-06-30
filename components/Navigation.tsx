@@ -12,7 +12,7 @@ import clsx from "clsx";
 
 const TABS = [
   { href: "/menu", label: "Menu" },
-  { href: "/online-order", label: "Online Order" },
+  //{ href: "/online-order", label: "Online Order" },
   { href: "/visit", label: "Visit" },
   { href: "/about", label: "About" },
   { href: "/events", label: "Events" },
@@ -75,7 +75,7 @@ export function Navigation() {
         dark ? "text-ah-cream" : "text-qh-ink"
       )}
     >
-      <div className="container-page flex items-center justify-between h-[68px] gap-2 sm:gap-6">
+      <div className="container-page flex items-center justify-between h-[200px] gap-2 sm:gap-6">
         <Wordmark />
 
         <LayoutGroup id="nav-tabs">
@@ -163,14 +163,14 @@ function Wordmark() {
     <Link
       href="/"
       // Inherits color from the nav header — no need to hard-code here.
-      className="group flex items-center gap-2 sm:gap-2.5 min-w-0"
+      className="group flex items-center gap-2 sm:gap-2.5 shrink-0"
       aria-label="The Breakroom — home"
     >
       {/* Logo has a solid (white) background, so keep it in a self-contained
           rounded tile that reads intentionally on both light and dark nav. */}
-      <span className="inline-flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-white shadow-soft ring-1 ring-qh-ink/10 overflow-hidden shrink-0">
-        <Image src="/logo-mark.png" alt="" width={32} height={28} className="h-5 sm:h-6 w-auto" />
-      </span>
+      <span className="inline-flex items-center justify-center shrink-0">
+        <Image src="/logo_transparent.png" alt="" width={200} height={212} className="h-28 sm:h-32 w-auto" />
+      </span> 
       <span className="font-display italic text-lg sm:text-2xl md:text-3xl lg:text-4xl tracking-tightish truncate">
         The Breakroom
         <span className="inline-block transition-transform duration-300 group-hover:rotate-12 group-hover:translate-x-0.5">
