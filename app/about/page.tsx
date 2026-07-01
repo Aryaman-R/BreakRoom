@@ -33,7 +33,7 @@ export default function AboutPage() {
           {about.story.map((para, i) => (
             <Reveal key={i} delay={i * 0.04}>
               <p
-                className={`mt-6 text-lg leading-relaxed ${i === 0 ? "dropcap" : ""}`}
+                
                 dangerouslySetInnerHTML={{ __html: para }}
               />
             </Reveal>
