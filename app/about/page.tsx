@@ -22,24 +22,27 @@ export default function AboutPage() {
     <div className="container-page py-16">
       <header className="max-w-2xl">
         <p className="text-sm uppercase tracking-[0.18em] text-qh-accent">About us</p>
-        <h1 className="mt-3 font-display tracking-tighter2">
-          A neighborhood café in Bothell.
+        <h1 className="mt-3 font-display tracking-tighter2 whitespace-nowrap">
+          Meet the Owners
         </h1>
       </header>
       <div className="hand-divider mt-10" />
 
-      <section className="mt-12 grid lg:grid-cols-12 gap-12">
-        <div className="lg:col-span-8 lg:col-start-3">
-          {about.story.map((para, i) => (
-            <Reveal key={i} delay={i * 0.04}>
-              <p
-                
-                dangerouslySetInnerHTML={{ __html: para }}
-              />
-            </Reveal>
-          ))}
+      <section className="mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <img
+          src="/photos/trupti.png"
+          alt="Owner 1"
+          className="w-full rounded-2xl object-cover"
+        />
+          <img
+          src="/photos/sunidhi.png"
+          alt="Owner 2"
+          className="w-full rounded-2xl object-cover"
+        />
         </div>
       </section>
+
 
       <section className="mt-24">
         <Reveal>
