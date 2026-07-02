@@ -107,16 +107,21 @@ export async function runAssistantTurn(
     };
   }
 
-  if (text.includes("menu") || text.includes("coffee") || text.includes("food")) {
-    const result = await runToolCall("get_menu", {
-      category: text.includes("food") || text.includes("lunch") ? "lunch" : "coffee",
-    });
-    return {
-      reply: "Pulled the menu. Anything in particular catch your eye?",
-      toolCalls: [{ name: "get_menu", input: {}, result }],
-    };
-  }
+ if (text.includes("menu") || text.includes("coffee") || text.includes("food")) {
+  const category =
+    text.includes("coffee")
+      ? "coffee"
+      : text.includes("food") || text.includes("lunch")
+      ? "lunch"
+      : undefined;
 
+  const result = await runToolCall("get_menu", { category });
+
+  return {
+    reply: "Here's our menu!",
+    toolCalls: [{ name: "get_menu", input: { category }, result }],
+  };
+}
   if (text.includes("hour") || text.includes("open")) {
     const result = await runToolCall("get_hours", {});
     return {

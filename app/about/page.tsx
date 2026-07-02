@@ -31,12 +31,12 @@ export default function AboutPage() {
       <section className="mt-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <img
-          src="/photos/trupti.png"
+          src="/photos/sunidhi.png"
           alt="Owner 1"
           className="w-full rounded-2xl object-cover"
         />
           <img
-          src="/photos/sunidhi.png"
+          src="/photos/trupti.png"
           alt="Owner 2"
           className="w-full rounded-2xl object-cover"
         />
