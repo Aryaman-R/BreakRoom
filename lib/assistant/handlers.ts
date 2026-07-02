@@ -107,6 +107,14 @@ export async function runAssistantTurn(
     };
   }
 
+  if (text.includes("order")) {
+  return {
+    reply:
+      "There's two ways you can order. Either give us a call at 425-419-4231 or order online through DoorDash by clicking the pink ORDER button on our website. If you don't want the delivery charges on Doordash, click the 'PICKUP' option. ",
+    toolCalls: [],
+  };
+}
+
  if (text.includes("menu") || text.includes("coffee") || text.includes("food")) {
   const category =
     text.includes("coffee")
