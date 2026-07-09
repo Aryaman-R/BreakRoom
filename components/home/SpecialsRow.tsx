@@ -14,11 +14,11 @@ export function SpecialsRow({ specials }: { specials: Special[] }) {
               Today
             </p>
             <h2 className="mt-2 font-display tracking-tightish">
-              Three things, fresh today.
+              Fresh New Additions
             </h2>
           </div>
           <p className="text-qh-ink-soft max-w-md">
-            We change them when the market changes. Ask us what looked good this morning.
+            Recipes we've recently added to the menu. 
           </p>
         </div>
         <div className="hand-divider mt-8" />

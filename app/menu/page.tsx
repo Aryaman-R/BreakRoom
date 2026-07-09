@@ -37,7 +37,58 @@ export default async function MenuPage() {
       </a>
       </header>
       <div className="hand-divider mt-10" />
+       <section className="mt-12">
+  <div className="flex items-center gap-2">
+    <span className="text-qh-accent">✨</span>
+    <h2 className="font-display text-2xl tracking-tight">
+      New Additions
+    </h2>
+  </div>
+
+  <p className="mt-2 text-qh-ink-soft max-w-xl">
+    Fresh favorites we've recently added to the menu.
+  </p>
+
+  <div className="mt-8 grid gap-8 md:grid-cols-2">
+    {/* Item 1 */}
+    <article className="rounded-2xl border border-qh-line overflow-hidden bg-white">
+      <img
+        src="menu/butter_chicken.jpeg"
+        alt="Butter Chicken Rice Bowl"
+        className="aspect-[4/3] w-full object-cover"
+      />
+
+      <div className="p-5">
+        <h3 className="font-display text-xl">Butter Chicken Bowl</h3>
+        <p className="mt-2 text-qh-ink-soft">
+          Rich, buttery tomato curry and chicken served with rice and fresh sides.
+        </p>
+
+        <p className="mt-4 font-semibold">$16.99</p>
+      </div>
+    </article>
+
+    {/* Item 2 */}
+    <article className="rounded-2xl border border-qh-line overflow-hidden bg-white">
+      <img
+        src="menu/chicken_wings.jpg"
+        alt="Chicken Wings"
+        className="aspect-[4/3] w-full object-cover object-top-left"
+      />
+
+      <div className="p-5">
+        <h3 className="font-display text-xl">Chicken Wings</h3>
+        <p className="mt-2 text-qh-ink-soft">
+          Perfectly crispy wings with your pick of classic or signature sauces.
+        </p>
+
+        <p className="mt-4 font-semibold">$8.99</p>
+      </div>
+    </article>
+  </div>
+</section>
       <MenuView categories={categories} />
+      
 
       <section className="mt-20">
         <h2 className="font-display text-3xl tracking-tightish" id = "print_menu">The full menu, in print</h2>
