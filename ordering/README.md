@@ -32,17 +32,30 @@ Free tiers cover a single cafe. SMS costs roughly a cent per message.
 
 ## Status
 
-📄 **Documentation complete — code not started.** This repo is currently the full build spec. To build Phase 1, point Claude Code at the repo root: `CLAUDE.md` tells it what to read and the rules to follow.
+✅ **Phase 1 code complete** — every surface built and tested locally against a
+real Postgres + PostgREST rig (see `PROGRESS.md` for the test log). What's left
+is wiring: creating the Supabase/Twilio/Vercel accounts and setting env vars.
+**`SETUP.md` is the owner's step-by-step for that.**
 
-## Repo layout
+This app lives in the `ordering/` subfolder of the main-site repo but deploys
+independently (Vercel, **Root Directory = `ordering`**). The main site's static
+Cloudflare Pages deployment is untouched.
+
+## Folder layout
 
 ```
 CLAUDE.md                            Build instructions + guardrails for Claude Code
+README.md                            This file
+PROGRESS.md                          Build log: status, decisions, test results
+SETUP.md                             Owner setup: Supabase, Twilio, Vercel, Cloudflare
 docs/ORDERING-ARCHITECTURE.md        System design, order lifecycle, security posture
 docs/ORDERING-DATABASE.md            Full Postgres schema, RLS, real Breakroom seed menu
 docs/ORDERING-IMPLEMENTATION.md      Step-by-step Phase 1 build plan with acceptance criteria
 docs/ORDERING-FRAUD-PREVENTION.md    Threat model and the six control layers
 docs/ORDERING-ROADMAP.md             Phase 2 (QR, printer, kiosk) and Phase 3 (payments)
+supabase/migrations/                 Schema + seed + place_order(), run in order
+app/ · components/ · lib/            The Next.js app (customer, staff, admin, API)
+tests/                               Unit tests (pricing, hours, transitions, phone)
 ```
 
 ## Phases at a glance

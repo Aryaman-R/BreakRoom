@@ -21,16 +21,16 @@
 
 | Step (docs/ORDERING-IMPLEMENTATION.md) | State |
 |---|---|
-| 0 · Accounts & services | ⛔ **Owner task — will be detailed in SETUP.md** |
+| 0 · Accounts & services | ⛔ **Owner task — see SETUP.md** |
 | 1 · Scaffold | ✅ done |
 | 2 · Schema (SQL written; must be run in Supabase) | ✅ SQL in `supabase/migrations/`, verified on local Postgres 16 |
 | 3 · API layer | ✅ done, e2e-tested against local Postgres + PostgREST |
 | 4 · Customer pages | ✅ done (menu, item sheet, cart, verify + checkout, status page) |
-| 5 · Staff screen | ⬜ |
-| 6 · Admin | ⬜ |
+| 5 · Staff screen | ✅ done (realtime + polling fallback, chime, status buttons) |
+| 6 · Admin | ✅ done (menu CRUD, variants/add-ons, sold-out, hours, caps, blocklist) |
 | 7 · Deploy | ⛔ Owner task — see SETUP.md |
-| 8 · Pilot hardening | ⬜ |
-| 9 · Test checklist | ⬜ needs a deployed build + real creds |
+| 8 · Pilot hardening | ✅ done (empty/loading/error states, error boundary, SMS failure policy) |
+| 9 · Test checklist | 🔶 all API-testable items passed locally (log below); the SMS-delivery and realtime-latency items need the deployed build — reproduced in SETUP.md §5–6 |
 
 ## Implementation notes & deviations
 
@@ -60,3 +60,29 @@
   phone can't get a code · sold-out item rejected via direct API · order at
   2 AM Pacific → 403 closed · status endpoint returns no phone · 3 codes/hr
   rate limit · daily order numbers increment atomically.
+- Schema + RLS also verified directly in psql: anon sees only available menu
+  items and nothing else; authenticated sees menu/orders/items but no
+  settings/codes/blocklist; `place_order()`/`next_order_number()` not
+  executable by client roles; empty-item orders rejected.
+- The **service-role key is provably absent from the client bundle** (grep of
+  `.next/static` after a production build: zero hits for the key value or the
+  env var name).
+- `/staff` and `/admin` are `noindex`; the admin page renders a friendly
+  "not an admin" screen for staff accounts not on `ADMIN_EMAILS`.
+
+## Verification run (2026-07-21)
+
+- `npm run lint` — clean
+- `npm run typecheck` — clean
+- `npm test` — 22/22 passing (pricing, hours, transitions, phone)
+- `npm run build` — production build succeeds, all routes dynamic as intended
+- Main site: `npm run typecheck` still clean with `ordering/` excluded
+
+## What's next (in order)
+
+1. Owner works through `SETUP.md` (Twilio first — approval lag).
+2. Deployed smoke test with `ALLOW_DEV_VERIFICATION=1`, then the full §9
+   checklist with real SMS.
+3. First admin task after launch: complete the menu (yakisoba proteins etc.).
+4. Phase 2 candidates when trust is earned: QR code on the counter, main-site
+   Order button swap, thermal printer, `/admin` stats.
