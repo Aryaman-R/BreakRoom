@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Brand tokens — Quiet Hours palette, shared with the main site */
+:root {
+  --qh-bg: #eaf1dc;
+  --qh-bg-elevated: #f5f9ec;
+  --qh-ink: #20271e;
+  --qh-ink-soft: #5c6657;
+  --qh-accent: #c2246b;
+  --qh-accent-soft: #f6b8d3;
+  --qh-sage: #3c6b4a;
+  --qh-line: #d3dec0;
+
+  /* Fonts — set in app/layout.tsx via next/font */
+  --font-display: Georgia, serif;
+  --font-body: system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+}
+
+html,
+body {
+  background: var(--qh-bg);
+  color: var(--qh-ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  letter-spacing: 0.005em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--qh-accent-soft);
+  color: var(--qh-ink);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.05; }
+h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.15; }
+h3 { font-size: clamp(1.2rem, 2vw, 1.5rem); }
+
+.container-page {
+  max-width: 1100px;
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+
+/* Hand-drawn divider, same as the main site */
+.hand-divider {
+  display: block;
+  width: 100%;
+  height: 22px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 22' fill='none'><path d='M2 11 C 30 4, 60 18, 100 11 S 170 4, 198 11' stroke='%233c6b4a' stroke-width='1.4' stroke-linecap='round' fill='none' opacity='0.7'/></svg>");
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+.dotted-leader {
+  flex: 1;
+  border-bottom: 2px dotted var(--qh-line);
+  margin: 0 12px 6px 12px;
+  min-width: 24px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 180ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 180ms ease,
+    background-color 160ms ease, color 160ms ease, opacity 160ms ease;
+  border: 1px solid transparent;
+}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.btn:focus-visible {
+  outline: 3px solid var(--qh-accent-soft);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--qh-ink);
+  color: var(--qh-bg);
+  border-color: var(--qh-ink);
+}
+.btn-primary:hover:not(:disabled) { background: #000; }
+
+.btn-accent {
+  background: var(--qh-accent);
+  color: #fff;
+  border-color: var(--qh-accent);
+}
+.btn-accent:hover:not(:disabled) { filter: brightness(1.08); }
+
+.btn-quiet {
+  background: var(--qh-bg-elevated);
+  color: var(--qh-ink);
+  border-color: var(--qh-line);
+}
+.btn-quiet:hover:not(:disabled) { border-color: var(--qh-ink-soft); }
+
+.btn-danger {
+  background: transparent;
+  color: #a4283d;
+  border-color: #d9a3ad;
+}
+.btn-danger:hover:not(:disabled) { background: #f9e6ea; }
+
+.btn-sm { padding: 6px 14px; font-size: 0.85rem; }
+.btn-md { padding: 10px 22px; font-size: 0.95rem; }
+.btn-lg { padding: 14px 30px; font-size: 1.05rem; }
+
+/* Form fields */
+.field {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--qh-line);
+  background: var(--qh-bg-elevated);
+  color: var(--qh-ink);
+  padding: 10px 14px;
+  font-size: 1rem;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.field::placeholder { color: var(--qh-ink-soft); opacity: 0.7; }
+.field:focus {
+  outline: none;
+  border-color: var(--qh-sage);
+  box-shadow: 0 0 0 3px rgba(60, 107, 74, 0.15);
+}
+
+/* Cards */
+.card {
+  background: var(--qh-bg-elevated);
+  border: 1px solid var(--qh-line);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(42, 37, 32, 0.04), 0 8px 24px -12px rgba(42, 37, 32, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
