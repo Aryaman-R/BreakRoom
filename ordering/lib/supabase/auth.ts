@@ -1,6 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 // Cookie-session client for auth checks inside route handlers and server
@@ -15,7 +15,9 @@ export function authClient(): SupabaseClient {
     {
       cookies: {
         getAll: () => store.getAll(),
-        setAll: (list) => {
+        setAll: (
+          list: { name: string; value: string; options: CookieOptions }[]
+        ) => {
           try {
             list.forEach(({ name, value, options }) =>
               store.set(name, value, options)
