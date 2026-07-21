@@ -133,7 +133,7 @@ export async function runAssistantTurn(
   if (text.includes("hour") || text.includes("open")) {
     const result = await runToolCall("get_hours", {});
     return {
-      reply: "We&#8217;re open every day, 9:30 AM &#8211; 3:30 PM.",
+      reply: "We&#8217;re open all weekdays, 9:30 AM &#8211; 3:30 PM.",
       toolCalls: [{ name: "get_hours", input: {}, result }],
     };
   }

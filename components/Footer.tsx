@@ -45,7 +45,7 @@ export function Footer() {
           <address className="not-italic text-sm text-qh-ink-soft leading-7">
             18916 N Creek Pkwy #101<br />
             Bothell, WA 98011<br />
-            <a href="tel:+14253959316" className="hover:text-qh-ink">
+            <a href="tel:+14254194231" className="hover:text-qh-ink">
               (425) 395&#8209;9316
             </a><br />
             <a href="mailto:thebreakroombothell@gmail.com" className="hover:text-qh-ink">

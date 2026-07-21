@@ -64,7 +64,7 @@ export default function VisitPage() {
             Bothell, WA 98011
           </address>
           <p className="mt-3 text-sm">
-            <a href="tel:+14253959316" className="text-qh-accent underline underline-offset-2">
+            <a href="tel:+14254194231" className="text-qh-accent underline underline-offset-2">
               (425) 395&#8209;9316
             </a>
             <span className="mx-2 text-qh-line">·</span>
