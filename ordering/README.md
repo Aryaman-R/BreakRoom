@@ -46,6 +46,7 @@ Cloudflare Pages deployment is untouched.
 ```
 CLAUDE.md                            Build instructions + guardrails for Claude Code
 README.md                            This file
+RUNNING.md                           Run it locally in ~10 min + current limitations
 PROGRESS.md                          Build log: status, decisions, test results
 SETUP.md                             Owner setup: Supabase, Twilio, Vercel, Cloudflare
 docs/ORDERING-ARCHITECTURE.md        System design, order lifecycle, security posture

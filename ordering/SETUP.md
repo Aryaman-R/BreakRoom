@@ -128,10 +128,5 @@ not code.
 
 ## Local development (optional)
 
-```bash
-cd ordering
-cp .env.example .env.local   # fill in Supabase values; leave Twilio empty
-npm install
-npm run dev                  # http://localhost:3100
-npm test                     # unit tests
-```
+See **`RUNNING.md`** — a 10-minute walkthrough to run and tour the whole
+system locally (Supabase free tier only, codes shown on-screen, no Twilio).
