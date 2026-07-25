@@ -22,6 +22,13 @@ const TABS = [
 const ORDER_URL =
   "https://www.doordash.com/store/the-breakroom-bothell-45695059/111526546/?cursor=eyJzZWFyY2hfaXRlbV9jYXJvdXNlbF9jdXJzb3IiOnsicXVlcnkiOiJUaGUgQnJlYWtyb29tIiwiaXRlbV9pZHMiOltdLCJzZWFyY2hfdGVybSI6InRoZSBicmVha3Jvb20iLCJ2ZXJ0aWNhbF9pZCI6LTk5OSwidmVydGljYWxfbmFtZSI6ImFsbCIsInF1ZXJ5X2ludGVudCI6IlNUT1JFX1JYIn0sInN0b3JlX3ByaW1hcnlfdmVydGljYWxfaWRzIjpbMSwxMTAwMzcsMTEwMDQ1LDExMDA1MiwxMTAwNTUsMTEwMDYyLDRdfQ==&pickup=false";
 
+// Order-ahead app (this repo's own ordering system) — a separate origin from
+// the marketing site. Defaults to localhost:3100 for local dev; set
+// NEXT_PUBLIC_ORDER_URL to the real domain (e.g. order.breakroombothell.com)
+// at build time and no code changes are needed.
+const ORDER_AHEAD_URL =
+  process.env.NEXT_PUBLIC_ORDER_URL || "http://localhost:3100";
+
 export function Navigation() {
   const pathname = usePathname() ?? "/";
   const [scrolled, setScrolled] = useState(false);
@@ -112,6 +119,20 @@ export function Navigation() {
 
         <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           <AssistantTrigger dark={dark} />
+
+          <Link
+            href={ORDER_AHEAD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={clsx(
+              "hidden sm:inline-flex items-center justify-center px-5 py-3.5 rounded-full text-sm font-medium transition-colors",
+              dark
+                ? "bg-ah-electric text-black hover:bg-ah-electric/90"
+                : "bg-qh-accent text-white hover:bg-qh-accent/90"
+            )}
+          >
+            Order Ahead
+          </Link>
 
           <Link
             href={ORDER_URL}
@@ -293,6 +314,20 @@ function MobileDrawer({
           </nav>
 
           <div className="mt-auto px-5 pb-8 pt-4 flex flex-col gap-3">
+            <Link
+              href={ORDER_AHEAD_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={onClose}
+              className={clsx(
+                "inline-flex items-center justify-center px-5 py-3.5 rounded-full text-sm font-medium transition-colors",
+                dark
+                  ? "bg-ah-electric text-black hover:bg-ah-electric/90"
+                  : "bg-qh-accent text-white hover:bg-qh-accent/90"
+              )}
+            >
+              Order Ahead ↗
+            </Link>
             <Link
               href={ORDER_URL}
               target="_blank"
