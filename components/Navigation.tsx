@@ -75,7 +75,7 @@ export function Navigation() {
         dark ? "text-ah-cream" : "text-qh-ink"
       )}
     >
-      <div className="container-page flex items-center justify-between h-[200px] gap-2 sm:gap-6">
+      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-2 px-4 sm:h-20 sm:gap-4 sm:px-6 md:h-28">
         <Wordmark />
 
         <LayoutGroup id="nav-tabs">
@@ -118,10 +118,13 @@ export function Navigation() {
             target="_blank"
             rel="noopener noreferrer"
             className={clsx(
-    "hidden sm:inline-flex items-center justify-center px-5 py-3.5 rounded-full text-sm font-medium transition-colors", "bg-ah-electric text-black hover:bg-ah-electric/90", "bg-qh-accent text-white hover:bg-qh-accent/90"
-  )}
+              "hidden sm:inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-medium transition-colors",
+              dark
+                ? "bg-ah-electric text-black hover:bg-ah-electric/90"
+                : "bg-qh-accent text-white hover:bg-qh-accent/90"
+            )}
           >
-          Order
+            Order
           </Link>
 
           <div className="hidden sm:block">
@@ -136,7 +139,7 @@ export function Navigation() {
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
             className={clsx(
-              "md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors",
+              "md:hidden inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors",
               dark
                 ? "hover:bg-ah-cream/10 text-ah-cream"
                 : "hover:bg-qh-line/60 text-qh-ink"
@@ -163,18 +166,22 @@ function Wordmark() {
     <Link
       href="/"
       // Inherits color from the nav header — no need to hard-code here.
-      className="group flex items-center gap-2 sm:gap-2.5 shrink-0"
+      // min-w-0 (not shrink-0!) so the wordmark text can truncate on narrow
+      // phones instead of shoving the hamburger off-screen.
+      className="group flex min-w-0 items-center gap-2 sm:gap-2.5"
       aria-label="The Breakroom — home"
     >
-      {/* Logo has a solid (white) background, so keep it in a self-contained
-          rounded tile that reads intentionally on both light and dark nav. */}
-      <span className="inline-flex items-center justify-center shrink-0">
-        <Image src="/logo_transparent.png" alt="" width={200} height={212} className="h-28 sm:h-32 w-auto" />
-      </span> 
-      <span className="font-display text-lg sm:text-2xl md:text-3xl lg:text-4xl tracking-tightish truncate">
+      <span className="inline-flex shrink-0 items-center justify-center">
+        <Image
+          src="/logo_transparent.png"
+          alt=""
+          width={657}
+          height={572}
+          className="h-10 w-auto sm:h-12 md:h-20"
+        />
+      </span>
+      <span className="min-w-0 truncate font-display text-base tracking-tightish sm:text-2xl md:text-3xl lg:text-4xl">
         THE BREAKROOM
-        <span className="inline-block transition-transform duration-300 group-hover:rotate-12 group-hover:translate-x-0.5">
-        </span>
       </span>
     </Link>
   );
@@ -293,6 +300,7 @@ function MobileDrawer({
           </nav>
 
           <div className="mt-auto px-5 pb-8 pt-4 flex flex-col gap-3">
+            <BookPartyButton size="md" label="Plan an event" />
             <Link
               href={ORDER_URL}
               target="_blank"
