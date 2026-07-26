@@ -53,7 +53,9 @@ export function MenuView({ categories }: { categories: MenuCategory[] }) {
                 className={clsx(
                   "scroll-mt-28 mb-16",
                   cat.id === "specials" &&
-                    "border border-dashed border-qh-accent rounded-2xl p-6 -mx-6"
+                    // bleed into the gutters only on large screens — on
+                    // phones -mx-6 pushed the border past the viewport edge
+                    "border border-dashed border-qh-accent rounded-2xl p-5 sm:p-6 lg:-mx-6"
                 )}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}

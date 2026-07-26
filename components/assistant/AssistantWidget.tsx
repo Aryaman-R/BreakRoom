@@ -45,7 +45,7 @@ function FloatingButton() {
       aria-label={open ? "Close Beans" : "Open Beans, the assistant"}
       aria-expanded={open}
       onClick={toggle}
-      className="fixed bottom-5 right-5 z-[60] h-14 w-14 rounded-full bg-qh-ink text-qh-bg shadow-lifted flex items-center justify-center transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-qh-accent"
+      className="fixed bottom-5 right-5 z-30 h-14 w-14 rounded-full bg-qh-ink text-qh-bg shadow-lifted flex items-center justify-center transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-qh-accent"
     >
       <motion.span
         animate={bounce ? { y: [0, -8, 0] } : { y: 0 }}
