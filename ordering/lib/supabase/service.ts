@@ -15,5 +15,12 @@ export function serviceClient(): SupabaseClient {
   }
   return createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
+    // Next.js patches global fetch and caches GET responses in its Data Cache.
+    // That made admin edits (hours, sold-out, caps) invisible to the customer
+    // page until a server restart. Force no-store so every server-side read and
+    // write hits the database at request time — the invariant CLAUDE.md requires.
+    global: {
+      fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }),
+    },
   });
 }
