@@ -23,11 +23,14 @@ const ORDER_URL =
   "https://www.doordash.com/store/the-breakroom-bothell-45695059/111526546/?cursor=eyJzZWFyY2hfaXRlbV9jYXJvdXNlbF9jdXJzb3IiOnsicXVlcnkiOiJUaGUgQnJlYWtyb29tIiwiaXRlbV9pZHMiOltdLCJzZWFyY2hfdGVybSI6InRoZSBicmVha3Jvb20iLCJ2ZXJ0aWNhbF9pZCI6LTk5OSwidmVydGljYWxfbmFtZSI6ImFsbCIsInF1ZXJ5X2ludGVudCI6IlNUT1JFX1JYIn0sInN0b3JlX3ByaW1hcnlfdmVydGljYWxfaWRzIjpbMSwxMTAwMzcsMTEwMDQ1LDExMDA1MiwxMTAwNTUsMTEwMDYyLDRdfQ==&pickup=false";
 
 // Order-ahead app (this repo's own ordering system) — a separate origin from
-// the marketing site. Defaults to localhost:3100 for local dev; set
-// NEXT_PUBLIC_ORDER_URL to the real domain (e.g. order.breakroombothell.com)
-// at build time and no code changes are needed.
+// the marketing site. Production builds default to the ordering subdomain;
+// `next dev` defaults to the local dev server. NEXT_PUBLIC_ORDER_URL
+// overrides both (e.g. point a preview build at a *.vercel.app URL).
 const ORDER_AHEAD_URL =
-  process.env.NEXT_PUBLIC_ORDER_URL || "http://localhost:3100";
+  process.env.NEXT_PUBLIC_ORDER_URL ||
+  (process.env.NODE_ENV === "development"
+    ? "http://localhost:3100"
+    : "https://order.breakroombothell.com");
 
 export function Navigation() {
   const pathname = usePathname() ?? "/";
