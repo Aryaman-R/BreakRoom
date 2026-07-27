@@ -46,6 +46,21 @@
   keyboard suppression, focus tracking, scroll-into-view, and writing values
   through the prototype setter so React's controlled inputs see real `input`
   events — stays in the component. Usage is documented in `README.md`.
+- **Kiosk "Done" key replaced with a hide-keyboard key (pilot feedback).** The
+  original key blurred the field, which fired the app's own focus handling and
+  abandoned half-typed item notes and checkout fields. Worse, it ran on
+  `pointerdown`: unmounting the keyboard mid-gesture let the follow-up click
+  hit-test through to the page underneath and press whatever had reflowed into
+  that spot — usually the sheet backdrop, which closed the dialog. It is now a
+  keyboard-with-down-arrow key that only hides the keyboard, leaves focus and
+  the caret alone, and fires on `pointerup` so nothing falls through. Tapping
+  any field brings it back (the pointerdown-capture listener clears the
+  dismissed flag, since re-tapping an already-focused field fires no focus
+  event).
+- **Keyboard key contrast.** The `?123`/`ABC` layer switch was `bg-qh-line/60`
+  over the panel — 1.19:1, effectively invisible on a glare-lit screen. Action
+  keys now use a full-opacity fill with a sage border, and the layer switch is
+  its own solid `mode` variant: 5.79:1 fill and 6.19:1 label, both AA.
 - **Admin numeric fields moved from `type="number"` to `inputMode`.** Native
   number inputs suppress the `inputmode` hint the kiosk keyboard reads to pick
   a layout, so price/quantity fields now declare `inputMode="decimal"` or

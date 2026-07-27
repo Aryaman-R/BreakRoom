@@ -131,6 +131,9 @@ function KioskKeyboardManager() {
   const [target, setTarget] = useState<Editable | null>(null);
   // Bumped per focused field so the keyboard remounts with fresh shift/layer.
   const [targetGen, setTargetGen] = useState(0);
+  // The hide key puts the keyboard away without touching focus, so the field
+  // stays focused and its sheet stays open. Tapping any field brings it back.
+  const [dismissed, setDismissed] = useState(false);
   const targetRef = useRef<Editable | null>(null);
   const kbRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef(0);
@@ -155,6 +158,7 @@ function KioskKeyboardManager() {
     targetRef.current = el;
     setTarget(el);
     setTargetGen((g) => g + 1);
+    setDismissed(false);
   }, []);
 
   // Track which editable field has focus.
@@ -174,7 +178,13 @@ function KioskKeyboardManager() {
     const onPointerDown = (e: PointerEvent) => {
       // Before focus lands, so the native keyboard never flashes.
       const el = editableFrom(e.target);
-      if (el) suppressNativeKeyboard(el);
+      if (el) {
+        suppressNativeKeyboard(el);
+        // Tapping a field always summons the keyboard back. Needed because
+        // hiding it leaves the field focused, so re-tapping the *same* field
+        // fires no focus event for retarget to react to.
+        setDismissed(false);
+      }
     };
     document.addEventListener("focusin", onFocusIn);
     document.addEventListener("focusout", onFocusOut);
@@ -221,7 +231,7 @@ function KioskKeyboardManager() {
 
   // Publish keyboard height while visible so the page makes room under it.
   useEffect(() => {
-    if (!target) return;
+    if (!target || dismissed) return;
     const root = document.documentElement;
     root.classList.add("kiosk-kb-open");
     const sync = () => {
@@ -238,19 +248,22 @@ function KioskKeyboardManager() {
       root.classList.remove("kiosk-kb-open");
       root.style.setProperty("--kiosk-kb-h", "0px");
     };
-  }, [target, targetGen, ensureVisibleSoon]);
+  }, [target, targetGen, dismissed, ensureVisibleSoon]);
 
   const handleKey = useCallback(
     (action: KeyAction) => {
       const el = targetRef.current;
       if (!el || !el.isConnected) return;
       if (document.activeElement !== el) el.focus({ preventScroll: true });
-      if (action.type === "done") {
-        el.blur();
+      // Put the keyboard away, but never blur: blurring fires the app's own
+      // focus handling and drops the caret, which is how the old "Done" key
+      // ended up abandoning half-filled item notes and checkout fields.
+      if (action.type === "hide") {
+        setDismissed(true);
         return;
       }
       if (action.type === "enter" && !(el instanceof HTMLTextAreaElement)) {
-        el.blur();
+        setDismissed(true);
         return;
       }
       const text =
@@ -273,7 +286,7 @@ function KioskKeyboardManager() {
     [ensureVisibleSoon]
   );
 
-  if (!enabled || !target) return null;
+  if (!enabled || !target || dismissed) return null;
   return (
     <VirtualKeyboard
       key={targetGen}

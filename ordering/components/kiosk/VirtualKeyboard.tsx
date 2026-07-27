@@ -12,7 +12,7 @@ export type KeyAction =
   | { type: "insert"; text: string }
   | { type: "backspace" }
   | { type: "enter" }
-  | { type: "done" };
+  | { type: "hide" };
 
 export type KeyboardIntent = {
   layout: "alpha" | "phone" | "numeric" | "decimal";
@@ -29,16 +29,40 @@ type ShiftState = "off" | "once" | "locked";
 type KeyDef = {
   id: string;
   label: string;
-  onPress: "insert" | "backspace" | "enter" | "done" | "shift" | "symbols" | "abc";
+  onPress: "insert" | "backspace" | "enter" | "hide" | "shift" | "symbols" | "abc";
   /** Text to insert; defaults to label. */
   text?: string;
   /** Relative width; keys use flex-grow with basis 0. */
   grow?: number;
-  variant?: "char" | "action" | "primary";
+  /** "mode" is the ?123/ABC layer switch — filled so it reads as a mode. */
+  variant?: "char" | "action" | "mode";
+  /** Render a glyph instead of the label. */
+  icon?: "hide";
   /** Repeat while held (backspace). */
   repeat?: boolean;
   aria?: string;
 };
+
+// Keyboard-with-down-arrow, the standard "put the keyboard away" glyph.
+function HideIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="2.5" y="3.5" width="19" height="11.5" rx="2.5" />
+      <path d="M6 7h.01M9.5 7h.01M13 7h.01M16.5 7h.01M6 11h.01M18 11h.01M9.5 11h5" />
+      <path d="M9 18.5l3 3 3-3" />
+    </svg>
+  );
+}
 
 const key = (label: string, opts: Partial<KeyDef> = {}): KeyDef => ({
   id: opts.id ?? label,
@@ -53,14 +77,16 @@ const chars = (s: string): KeyDef[] => s.split("").map((c) => key(c));
 const backspaceKey = (grow = 1.4): KeyDef =>
   key("⌫", { onPress: "backspace", variant: "action", grow, repeat: true, aria: "Backspace" });
 
-const doneKey = (grow = 1.6): KeyDef =>
-  key("Done", { onPress: "done", variant: "primary", grow, aria: "Done — hide keyboard" });
+// Hides the keyboard only — it never blurs the field or submits anything, so
+// the sheet you're typing in stays open and your place is kept.
+const hideKey = (grow = 1.6): KeyDef =>
+  key("", { id: "hide", onPress: "hide", variant: "action", icon: "hide", grow, aria: "Hide keyboard" });
 
 function bottomRow(layer: "alpha" | "symbols", intent: KeyboardIntent): KeyDef[] {
   const row: KeyDef[] = [
     layer === "alpha"
-      ? key("?123", { onPress: "symbols", variant: "action", grow: 1.6, aria: "Numbers and symbols" })
-      : key("ABC", { onPress: "abc", variant: "action", grow: 1.6, aria: "Letters" }),
+      ? key("?123", { onPress: "symbols", variant: "mode", grow: 1.6, aria: "Numbers and symbols" })
+      : key("ABC", { onPress: "abc", variant: "mode", grow: 1.6, aria: "Letters" }),
   ];
   if (intent.email && layer === "alpha") {
     row.push(key("@"), key("space", { id: "space", text: " ", grow: 2.6, aria: "Space" }), key(".com"), key("."));
@@ -70,7 +96,7 @@ function bottomRow(layer: "alpha" | "symbols", intent: KeyboardIntent): KeyDef[]
   if (intent.multiline) {
     row.push(key("↵", { onPress: "enter", variant: "action", text: "\n", aria: "New line" }));
   }
-  row.push(doneKey());
+  row.push(hideKey());
   return row;
 }
 
@@ -103,21 +129,21 @@ const PHONE_ROWS: KeyDef[][] = [
   [key("1"), key("2"), key("3"), backspaceKey(1)],
   [key("4"), key("5"), key("6"), key("+")],
   [key("7"), key("8"), key("9"), key("-")],
-  [key("("), key("0"), key(")"), doneKey(1)],
+  [key("("), key("0"), key(")"), hideKey(1)],
 ];
 
 const NUMERIC_ROWS: KeyDef[][] = [
   [key("1"), key("2"), key("3")],
   [key("4"), key("5"), key("6")],
   [key("7"), key("8"), key("9")],
-  [backspaceKey(1), key("0"), doneKey(1)],
+  [backspaceKey(1), key("0"), hideKey(1)],
 ];
 
 const DECIMAL_ROWS: KeyDef[][] = [
   [key("1"), key("2"), key("3"), backspaceKey(1)],
   [key("4"), key("5"), key("6"), key("-")],
   [key("7"), key("8"), key("9"), key(".")],
-  [key("0", { grow: 3.1 }), doneKey(1)],
+  [key("0", { grow: 3.1 }), hideKey(1)],
 ];
 
 export function VirtualKeyboard({
@@ -164,8 +190,8 @@ export function VirtualKeyboard({
       case "enter":
         onKey({ type: "enter" });
         break;
-      case "done":
-        onKey({ type: "done" });
+      case "hide":
+        onKey({ type: "hide" });
         break;
       case "shift":
         setShift((s) => (s === "off" ? "once" : s === "once" ? "locked" : "off"));
@@ -217,34 +243,53 @@ export function VirtualKeyboard({
               !compact && layer === "alpha" && i === 1 && "px-[4.5%]"
             )}
           >
-            {row.map((k) => (
-              <button
-                key={k.id}
-                type="button"
-                tabIndex={-1}
-                aria-label={k.aria ?? k.label}
-                aria-pressed={k.onPress === "shift" ? shift !== "off" : undefined}
-                style={{ flexGrow: k.grow ?? 1, flexBasis: 0 }}
-                className={clsx(
-                  "flex h-12 min-w-0 items-center justify-center rounded-lg border transition-colors duration-75 sm:h-14",
-                  k.label.length > 1 && k.variant === "char" ? "text-sm" : "text-lg",
-                  k.variant === "primary"
-                    ? "border-qh-accent bg-qh-accent font-medium text-white active:brightness-110"
-                    : k.variant === "action"
-                      ? clsx(
-                          "border-qh-line bg-qh-line/60 text-qh-ink active:bg-qh-accent-soft",
-                          k.onPress === "shift" && shift !== "off" && "bg-qh-sage/25 border-qh-sage"
-                        )
-                      : "border-qh-line bg-white/80 text-qh-ink active:bg-qh-accent-soft"
-                )}
-                onPointerDown={() => startPress(k)}
-                onPointerUp={k.repeat ? stopRepeat : undefined}
-                onPointerLeave={k.repeat ? stopRepeat : undefined}
-                onPointerCancel={k.repeat ? stopRepeat : undefined}
-              >
-                {k.onPress === "shift" ? (shift === "locked" ? "⇪" : "⇧") : k.label}
-              </button>
-            ))}
+            {row.map((k) => {
+              // Hiding the keyboard unmounts it, so it must happen on pointerup,
+              // never pointerdown: unmounting mid-gesture lets the follow-up
+              // click hit-test through to the page underneath and press
+              // whatever now sits there (it used to close the open sheet).
+              const hides = k.onPress === "hide";
+              return (
+                <button
+                  key={k.id}
+                  type="button"
+                  tabIndex={-1}
+                  aria-label={k.aria ?? k.label}
+                  aria-pressed={k.onPress === "shift" ? shift !== "off" : undefined}
+                  style={{ flexGrow: k.grow ?? 1, flexBasis: 0 }}
+                  className={clsx(
+                    "flex h-12 min-w-0 items-center justify-center rounded-lg border transition-colors duration-75 sm:h-14",
+                    k.label.length > 1 && k.variant === "char" ? "text-sm" : "text-lg",
+                    k.variant === "mode"
+                      ? "border-qh-sage bg-qh-sage font-medium text-white active:brightness-125"
+                      : k.variant === "action"
+                        ? clsx(
+                            "border-qh-sage/45 bg-qh-line font-medium text-qh-ink active:bg-qh-accent-soft",
+                            k.onPress === "shift" &&
+                              shift !== "off" &&
+                              "border-qh-sage bg-qh-sage/30"
+                          )
+                        : "border-qh-line bg-white text-qh-ink active:bg-qh-accent-soft"
+                  )}
+                  onPointerDown={hides ? undefined : () => startPress(k)}
+                  onPointerUp={hides ? () => press(k) : k.repeat ? stopRepeat : undefined}
+                  onPointerLeave={k.repeat ? stopRepeat : undefined}
+                  onPointerCancel={k.repeat ? stopRepeat : undefined}
+                >
+                  {k.icon === "hide" ? (
+                    <HideIcon />
+                  ) : k.onPress === "shift" ? (
+                    shift === "locked" ? (
+                      "⇪"
+                    ) : (
+                      "⇧"
+                    )
+                  ) : (
+                    k.label
+                  )}
+                </button>
+              );
+            })}
           </div>
         ))}
       </div>

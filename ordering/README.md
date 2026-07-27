@@ -43,6 +43,11 @@ a phone pad for phone numbers, a number pad for quantities and caps, and a
 decimal pad for prices. Email fields get `@` and `.com` keys. Shift is one-shot
 by default and locks on a second tap; holding backspace repeats.
 
+The key at bottom right (a keyboard with a down arrow) **only puts the keyboard
+away** — it doesn't submit, doesn't close the dialog you're in, and doesn't drop
+what you've typed. Tap the field again to bring the keyboard back. Use the
+page's own buttons — *Add to cart*, *Place order* — to actually move forward.
+
 The device's own keyboard is suppressed while kiosk mode is on, so the two can
 never fight over the screen. Date and time pickers keep their native widgets.
 
