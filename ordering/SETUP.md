@@ -1,132 +1,190 @@
-# Ordering System — What You Need To Do (Owner Setup)
+# Ordering System — Owner Setup & Deployment Guide
 
-The code is complete and tested locally; none of it can go live without
-accounts and credentials only you can create. Work through this top to bottom
-— roughly 45 minutes of clicking, plus a days-long Twilio approval wait you
-should **start first**.
+> Updated 2026-07-27 to match the **actual** deployment path (pilot on Vercel
+> URLs first, real subdomain at launch) and Supabase's new API-key system.
+> `RUNNING.md` covers local dev; `PROGRESS.md` is the build/test log.
 
-Every step references the build docs in `docs/` if you want the why.
+## 0 · Where things run — the current topology
 
----
+Two GitHub repos, one codebase:
 
-## 1 · Twilio — start TODAY (approval takes days)
+| Repo | Branch | Contains | Feeds |
+|---|---|---|---|
+| `Aryaman-R/BreakRoom` (public) | `main` | main site only (no ordering) | **live breakroombothell.com** via Cloudflare Pages |
+| `Aryaman-R/BreakRoom` (public) | `online-ordering` | main site + Order Ahead button + `ordering/` app | staging for everything below |
+| `Aryaman-R/BreakroomTest` (private) | `main` | mirror of `online-ordering` | **Vercel pilot deployments** |
 
-US carriers block SMS from unregistered numbers, and registration review takes
-days — start it before anything else (docs/ORDERING-IMPLEMENTATION.md §0).
+Two Vercel projects, both importing `BreakroomTest`:
 
-1. Create an account at [twilio.com](https://www.twilio.com) and buy a phone
-   number with SMS capability (~$1/mo; messages ~1¢ each).
-2. Immediately start **toll-free verification** (if you bought a toll-free
-   number — simpler) or **10DLC registration** (local number) under
-   *Messaging → Regulatory compliance*. Describe the use case honestly:
-   "Transactional SMS for a cafe's order-ahead site: verification codes and
-   order-status notifications. No marketing."
-3. Note down, from the Twilio Console home:
-   - `TWILIO_ACCOUNT_SID`
-   - `TWILIO_AUTH_TOKEN`
-   - `TWILIO_FROM_NUMBER` — your new number in `+1XXXXXXXXXX` form
+1. **Ordering app** — Root Directory = `ordering`. This is the product:
+   customer menu at `/`, staff at `/staff`, admin at `/admin`.
+2. **Site test copy** (optional) — Root Directory = repo root. A private copy
+   of the marketing site whose Order Ahead button points at project 1 via
+   `NEXT_PUBLIC_ORDER_URL`.
 
-> Until these are set, the app runs in **dev SMS mode**: no texts are sent and
-> the verification code is shown on-screen/in logs. Fine for testing, not for
-> customers.
+**The separation rule:** the live site only changes when `BreakRoom`'s `main`
+changes. Nothing on Vercel or in `BreakroomTest` can touch it. Keeping the
+pilot private = don't add custom domains in Vercel and don't touch Cloudflare
+DNS until launch (§6). To sync new work to the pilot:
+`git push breakroomtest online-ordering:main`.
 
-## 2 · Supabase — database + staff logins
+## 1 · Twilio — start FIRST (approval takes days)
 
-1. Create a project at [supabase.com](https://supabase.com) (free tier).
-   Region: **West US (Oregon)** — closest to Bothell.
-2. Open **SQL Editor** and run these three files from `supabase/migrations/`,
-   in order, each as one paste-and-run:
-   1. `0001_schema.sql` — tables, RLS, realtime, indexes
-   2. `0002_seed_menu.sql` — the starter Breakroom menu
-   3. `0003_place_order.sql` — the atomic order-placement function
-3. Sanity check: in SQL Editor run `select count(*) from menu_items;` —
-   expect **29**.
-4. Create logins under **Authentication → Users → Add user** (email +
-   password, "Auto confirm" on):
-   - one **staff** account (shared by the counter), e.g. `staff@breakroombothell.com`
-   - one **owner** account for yourself — this email goes in `ADMIN_EMAILS`
-5. Note down, from **Project Settings → API**:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (the `anon` `public` key)
-   - `SUPABASE_SERVICE_ROLE_KEY` (the `service_role` key — **secret**, server
-     only; never share it or put it anywhere but env vars)
+US carriers block automated texts from unregistered numbers. Until this
+clears, the app runs in dev-SMS mode (codes shown on screen — fine for the
+pilot, not for customers).
 
-## 3 · Vercel — hosting
+1. Create the account at twilio.com; upgrade (add card) before launch — trial
+   accounts only text your own verified numbers, with a "trial" prefix.
+2. Buy a **toll-free** number (8XX, ~$2/mo, SMS-capable). Toll-free
+   verification is one form with no monthly campaign fees; a local number
+   would need the fussier A2P 10DLC brand+campaign registration instead.
+   **Do not use the cafe's real phone number** — Twilio would have to take it
+   over (porting or hosted SMS), breaking normal calls/texts on it, and the
+   registration wait is the same anyway. The real number keeps its human
+   jobs: customer calls and the call-to-confirm flow.
+3. Messaging → Regulatory Compliance → **Toll-Free Verification**. Answers
+   that pass review cleanly:
+   - Business: The Breakroom's legal name, address, breakroombothell.com.
+     (Mismatched business info is the #1 rejection cause.)
+   - Use case: *"Transactional messages for a cafe's order-ahead website:
+     one-time verification codes and order-status notifications. No
+     marketing."*
+   - Sample messages (the exact three the app sends):
+     `Your Breakroom code: 123456` ·
+     `Breakroom order #12 confirmed — ready in about 15 minutes.` ·
+     `Breakroom order #12 is ready for pickup!`
+   - Opt-in: *"Customer enters their mobile number on the checkout form and
+     taps 'Text me a code', consenting to a verification code and status
+     updates for that order."* (They may ask for a checkout screenshot.)
+   - Volume: low, under 1,000/month.
+4. Typical approval: **1–5 business days.** When it lands, do §6 step 4.
+5. Note down: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` (console home), and
+   the number as `TWILIO_FROM_NUMBER` in `+18XXXXXXXXX` form.
 
-The main site stays on Cloudflare Pages; this app needs a server runtime, so
-it deploys to Vercel (free Hobby tier is fine to start).
+Cost: ~$2/mo + ~1¢ per message; ~3 messages per order.
 
-1. Sign up at [vercel.com](https://vercel.com) with your GitHub account and
-   **Import** the `BreakRoom` repository.
-2. In the import screen set **Root Directory = `ordering`** (critical — the
-   app lives in that subfolder). Framework preset: Next.js. Leave build
-   commands default.
-3. Add **Environment Variables** (all environments):
+## 2 · Supabase — database + logins
+
+1. Create a project at supabase.com (free tier, region West US).
+2. **SQL Editor** → run the three files from `supabase/migrations/` in order:
+   `0001_schema.sql`, `0002_seed_menu.sql`, `0003_place_order.sql`.
+   Check: `select count(*) from menu_items;` → **29**.
+3. **Authentication → Users → Add user** (Auto confirm ON). Create two:
+   - your owner account — this email also goes in `ADMIN_EMAILS`
+   - a shared staff account for the counter (not in `ADMIN_EMAILS`)
+
+   **There is no separate "admin password" setting.** `ADMIN_EMAILS` is only
+   an allow-list; the password is whatever you set on the Auth user here.
+   Any Auth user can use `/staff`; only allow-listed emails also get `/admin`.
+4. Collect three values:
+   - **Project URL** — `https://<ref>.supabase.co`. Find it via the
+     **Connect** button, under **Project Settings → Data API**, or just read
+     `<ref>` out of your dashboard address bar
+     (`supabase.com/dashboard/project/<ref>`) and append `.supabase.co`.
+   - **Publishable key** (`sb_publishable_…`) — API Keys page.
+   - **Secret key** (`sb_secret_…`) — create one on the API Keys page, named
+     for the deployment (e.g. `vercel-ordering`). Rotation later = create a
+     new key, swap it in Vercel, revoke the old one.
+
+   *Newer Supabase projects use these publishable/secret keys instead of the
+   legacy "anon"/"service_role" JWTs. The app takes either kind — the env
+   var names below are just labels.*
+
+## 3 · Vercel — the ordering app
+
+1. Add New → Project → import `Aryaman-R/BreakroomTest`.
+2. **Root Directory = `ordering`** — the setting that matters. On the import
+   screen it's next to Framework Preset; on an existing project it's in
+   Settings (currently under **Build and Deployment**; older UI: General).
+   Symptom of getting this wrong: the URL serves the marketing site and
+   `/staff` 404s.
+3. Environment Variables (all environments):
 
    | Name | Value |
    |---|---|
-   | `NEXT_PUBLIC_SUPABASE_URL` | from step 2 |
-   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | from step 2 |
-   | `SUPABASE_SERVICE_ROLE_KEY` | from step 2 (keep secret) |
-   | `TWILIO_ACCOUNT_SID` | from step 1 (omit until ready) |
-   | `TWILIO_AUTH_TOKEN` | from step 1 (omit until ready) |
-   | `TWILIO_FROM_NUMBER` | from step 1 (omit until ready) |
-   | `ADMIN_EMAILS` | your owner email, e.g. `you@example.com` |
-   | `ALLOW_DEV_VERIFICATION` | `1` **only while smoke-testing without Twilio — delete before launch** |
+   | `NEXT_PUBLIC_SUPABASE_URL` | the `https://<ref>.supabase.co` URL |
+   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | the **publishable** `sb_publishable_…` key |
+   | `SUPABASE_SERVICE_ROLE_KEY` | the **secret** `sb_secret_…` key |
+   | `ADMIN_EMAILS` | your owner email(s), comma-separated |
+   | `ALLOW_DEV_VERIFICATION` | `1` — pilot only; **delete at launch** |
+   | `TWILIO_*` (three vars) | omit until §6 |
 
-4. Deploy. You'll get a `*.vercel.app` URL.
-5. Back in **Supabase → Authentication → URL Configuration**, set **Site URL**
-   to that URL (update it again after the custom domain below).
+4. Deploy, then note the **stable** URL (Settings → Domains, e.g.
+   `something.vercel.app` — not the long per-deployment hash URL).
+5. **Env vars only apply to new builds** — after any change: Deployments →
+   ⋯ → Redeploy.
+6. Supabase → **Authentication → URL Configuration → Site URL** = that URL
+   (keeps `/staff` logins working on it).
 
-## 4 · Cloudflare — the order.breakroombothell.com domain
+## 4 · Optional: site test copy with the Order Ahead button
 
-1. In Vercel: project → **Settings → Domains** → add
-   `order.breakroombothell.com`. Vercel shows a CNAME target
-   (`cname.vercel-dns.com`).
-2. In Cloudflare (which already manages breakroombothell.com): **DNS → Add
-   record** → CNAME, name `order`, target `cname.vercel-dns.com`, proxy
-   status **DNS only** (grey cloud — Vercel handles TLS).
-3. Wait for Vercel to show the domain as valid; update the Supabase Site URL
-   to `https://order.breakroombothell.com`.
+Second Vercel project from the same repo, Root Directory = repo root, one env
+var: `NEXT_PUBLIC_ORDER_URL` = the ordering app's URL → deploy. The nav's
+Order Ahead button resolves: `NEXT_PUBLIC_ORDER_URL` if set → else
+`order.breakroombothell.com` in production builds → else `localhost:3100` in
+`next dev`. (So without the var, a deployed test copy points at the
+not-yet-live subdomain — that's the NXDOMAIN error.)
 
-## 5 · Smoke test the deployed build
+## 5 · Smoke test — each step isolates one config
 
-With `ALLOW_DEV_VERIFICATION=1` and no Twilio vars, codes appear in the
-checkout UI itself, so you can test before SMS approval lands:
+1. Ordering URL shows the menu → Supabase URL + publishable key right.
+   ("Ordering is taking a quick break" = the server can't reach Supabase:
+   wrong/missing env vars or no redeploy. Exact cause appears in Vercel
+   runtime logs as `[/] menu load failed: …`.)
+2. Checkout returns an on-screen code and the order lands → secret key +
+   `ALLOW_DEV_VERIFICATION` right.
+3. `/staff` signs in and the order card appears live → Site URL + auth user
+   right.
+4. `/admin` opens (not "Not an admin") → `ADMIN_EMAILS` matches the login
+   email exactly.
+5. Fraud rails work even in pilot: a second order from the same phone is
+   refused until the first is picked up; 3 codes/hour per phone; hours gate
+   is 9:30 AM–3:10 PM Pacific (temporarily widen in `/admin` → Hours & caps
+   for after-hours testing).
 
-1. Open the site on your phone (cellular, not wifi), add an item, check out —
-   the on-screen dev code completes verification. Order lands.
-2. On another device, sign in at `/login` with the staff account — the order
-   card should appear within ~2 s; tap **Enable sound** and confirm the chime.
-3. Tap **Accept**, then **Ready**, then **Picked up**; watch the customer
-   status page move within 5 s of each.
-4. Sign in with the owner account, open `/admin`: toggle an item sold-out and
-   confirm it vanishes from the menu on reload; change a cap and try to
-   exceed it.
-5. When Twilio approval arrives: add the three `TWILIO_*` vars, **delete
-   `ALLOW_DEV_VERIFICATION`**, redeploy, and re-run steps 1–3 confirming real
-   texts arrive (code, "confirmed", "ready").
+## 6 · Launch day — going public
 
-## 6 · The full definition-of-done checklist
+1. Vercel ordering project → Settings → Domains → add
+   `order.breakroombothell.com` (it shows "Invalid Configuration" until DNS
+   exists — expected).
+2. Cloudflare → breakroombothell.com → DNS → add record: CNAME, name
+   `order`, target `cname.vercel-dns.com`, **DNS only (grey cloud)** — the
+   orange proxy breaks Vercel's TLS. A few minutes later Vercel validates
+   and issues the certificate.
+3. Supabase Site URL → `https://order.breakroombothell.com`.
+4. Add the three `TWILIO_*` vars; **delete `ALLOW_DEV_VERIFICATION`**;
+   redeploy; place one real order end-to-end (code, confirmed, ready texts).
+5. Wire the live site's button: merge the Order Ahead nav change from
+   `online-ordering` into `BreakRoom`'s `main` (no env var needed — the
+   production default is already the subdomain). Until this merge, the live
+   site simply has no button, which is the point.
+6. Run the full checklist in `docs/ORDERING-IMPLEMENTATION.md` §9 against
+   production.
 
-Run the list at the end of `docs/ORDERING-IMPLEMENTATION.md` §9 against the
-production site. Everything in it already passed locally against a real
-Postgres + PostgREST rig (see `PROGRESS.md`), so surprises should be config,
-not code.
+## 7 · First weeks of operation
 
-## 7 · First week of operation
+- Finish the menu in `/admin` — the seed is a real-price subset (e.g.
+  yakisoba needs its chicken/beef/shrimp/tofu/pork variants).
+- Print the counter QR pointing at
+  `https://order.breakroombothell.com/?source=qr` (staff see a QR badge).
+- Consider a Twilio auto-reply on the toll-free number ("This line is
+  automated — call us at (425) 419-4231").
 
-- Finish the menu in `/admin` — the seed is a representative subset. Known
-  gaps: yakisoba protein variants (chicken/beef/shrimp/tofu/pork with real
-  prices), plus anything missing from the full cafe menu.
-- Print the QR code (Phase 2): point it at
-  `https://order.breakroombothell.com/?source=qr` and staff will see a QR
-  badge on those orders.
-- When you trust it, point the main site's Order button here for pickup
-  (that's a main-site edit — the one-line link swap described in
-  docs/ORDERING-ROADMAP.md).
+## Troubleshooting quick table
 
-## Local development (optional)
+| Symptom | Cause → fix |
+|---|---|
+| "Ordering is taking a quick break" | Server can't reach Supabase → check env vars, **redeploy**, read `[/] menu load failed:` in Vercel runtime logs |
+| Ordering URL shows the marketing site; `/staff` 404s | Root Directory isn't `ordering` → set it, redeploy |
+| Order Ahead button → localhost | `NEXT_PUBLIC_ORDER_URL` unset on a dev/preview build → set it + redeploy |
+| Order Ahead button → DNS_PROBE_FINISHED_NXDOMAIN | Button defaulting to the subdomain before §6 wiring → set `NEXT_PUBLIC_ORDER_URL`, or do §6 |
+| `/login` succeeds but bounces back to login | Supabase Site URL doesn't match the deployed URL |
+| `/admin` says "Not an admin" | Login email ≠ `ADMIN_EMAILS` entry (exact string match) |
+| No SMS arrives after Twilio setup | Number unverified (§1.3 pending), or env vars added without redeploy |
+| Env var change seems ignored | Always redeploy — values are baked at build time |
 
-See **`RUNNING.md`** — a 10-minute walkthrough to run and tour the whole
-system locally (Supabase free tier only, codes shown on-screen, no Twilio).
+## Local development
+
+See **`RUNNING.md`** — 10-minute local walkthrough (Supabase free tier only,
+codes on-screen, no Twilio).

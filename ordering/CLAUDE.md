@@ -28,12 +28,13 @@ Next.js 14+ App Router + TypeScript · Tailwind · Supabase (Postgres, Auth for 
 
 ```
 NEXT_PUBLIC_SUPABASE_URL
-NEXT_PUBLIC_SUPABASE_ANON_KEY
-SUPABASE_SERVICE_ROLE_KEY      # server only
+NEXT_PUBLIC_SUPABASE_ANON_KEY  # legacy anon JWT or new sb_publishable_… key
+SUPABASE_SERVICE_ROLE_KEY      # server only; legacy service_role JWT or new sb_secret_… key
 TWILIO_ACCOUNT_SID
 TWILIO_AUTH_TOKEN
 TWILIO_FROM_NUMBER
 ADMIN_EMAILS                   # comma-separated allow-list for /admin
+ALLOW_DEV_VERIFICATION         # optional: 1 = deployed builds return codes on-screen (pre-launch only)
 ```
 
 ## Commands

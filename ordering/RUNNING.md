@@ -22,14 +22,17 @@ npm install
 npm run dev          # → http://localhost:3100
 ```
 
-In `.env.local`, fill exactly four values (Project Settings → API):
+In `.env.local`, fill exactly four values:
 
 ```
-NEXT_PUBLIC_SUPABASE_URL=      https://xxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY= the "anon public" key
-SUPABASE_SERVICE_ROLE_KEY=     the "service_role" key
+NEXT_PUBLIC_SUPABASE_URL=      https://<ref>.supabase.co   (Connect button, or Project Settings → Data API)
+NEXT_PUBLIC_SUPABASE_ANON_KEY= the publishable key (sb_publishable_…)
+SUPABASE_SERVICE_ROLE_KEY=     a secret key (sb_secret_…)
 ADMIN_EMAILS=                  the email you created in step 1.3
 ```
+
+(Older Supabase projects show legacy "anon"/"service_role" JWT keys instead —
+those work in the same two slots.)
 
 Leave the Twilio lines empty — that's what turns on dev mode.
 

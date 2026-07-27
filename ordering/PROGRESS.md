@@ -21,14 +21,14 @@
 
 | Step (docs/ORDERING-IMPLEMENTATION.md) | State |
 |---|---|
-| 0 · Accounts & services | ⛔ **Owner task — see SETUP.md** |
+| 0 · Accounts & services | 🔶 in progress — Supabase created + migrations run; Twilio not started (SETUP.md §1) |
 | 1 · Scaffold | ✅ done |
 | 2 · Schema (SQL written; must be run in Supabase) | ✅ SQL in `supabase/migrations/`, verified on local Postgres 16 |
 | 3 · API layer | ✅ done, e2e-tested against local Postgres + PostgREST |
 | 4 · Customer pages | ✅ done (menu, item sheet, cart, verify + checkout, status page) |
 | 5 · Staff screen | ✅ done (realtime + polling fallback, chime, status buttons) |
 | 6 · Admin | ✅ done (menu CRUD, variants/add-ons, sold-out, hours, caps, blocklist) |
-| 7 · Deploy | ⛔ Owner task — see SETUP.md |
+| 7 · Deploy | 🔶 pilot on Vercel in progress (private `*.vercel.app`, from BreakroomTest); public subdomain deferred to launch — SETUP.md §0/§6 |
 | 8 · Pilot hardening | ✅ done (empty/loading/error states, error boundary, SMS failure policy) |
 | 9 · Test checklist | 🔶 all API-testable items passed locally (log below); the SMS-delivery and realtime-latency items need the deployed build — reproduced in SETUP.md §5–6 |
 
@@ -78,11 +78,33 @@
 - `npm run build` — production build succeeds, all routes dynamic as intended
 - Main site: `npm run typecheck` still clean with `ordering/` excluded
 
+## Deployment log (updated 2026-07-27)
+
+- **Repo topology:** `BreakRoom` `main` = live site only (Cloudflare Pages);
+  `online-ordering` branch = site + Order Ahead button + this app; private
+  mirror repo **`Aryaman-R/BreakroomTest`** (`main`) is what Vercel deploys.
+  Sync with `git push breakroomtest online-ordering:main`.
+- **Pilot mode chosen:** everything stays on `*.vercel.app` URLs; no custom
+  domain, no Cloudflare DNS changes until launch (SETUP.md §6). The live
+  site is untouched by design.
+- **Owner progress so far:** Supabase project created and migrations run
+  (new-style publishable/secret API keys — see SETUP.md §2 note); Vercel
+  project deployed — initial Root Directory misconfiguration (served the
+  marketing site, `/staff` 404) diagnosed and corrected; env-var wiring was
+  in progress as of this update. Twilio not started — it has the longest
+  lead time (SETUP.md §1).
+- **Later main-site work rode along on this branch:** the mobile nav
+  overhaul (compact header, reachable menu button — also landed on
+  `BreakRoom` `main` for the live site) and the nav's Order Ahead button
+  (`NEXT_PUBLIC_ORDER_URL` override → subdomain default in production →
+  localhost in dev), which stays branch-only until launch.
+
 ## What's next (in order)
 
-1. Owner works through `SETUP.md` (Twilio first — approval lag).
-2. Deployed smoke test with `ALLOW_DEV_VERIFICATION=1`, then the full §9
-   checklist with real SMS.
-3. First admin task after launch: complete the menu (yakisoba proteins etc.).
-4. Phase 2 candidates when trust is earned: QR code on the counter, main-site
-   Order button swap, thermal printer, `/admin` stats.
+1. Finish env wiring + smoke test ladder (SETUP.md §3/§5).
+2. Start Twilio toll-free verification (SETUP.md §1 — days of approval lag).
+3. Launch: SETUP.md §6 (subdomain, real SMS, delete ALLOW_DEV_VERIFICATION,
+   merge the nav button to `BreakRoom` `main`), then the §9 checklist.
+4. First admin task after launch: complete the menu (yakisoba proteins etc.).
+5. Phase 2 candidates when trust is earned: QR code on the counter, thermal
+   printer, `/admin` stats.

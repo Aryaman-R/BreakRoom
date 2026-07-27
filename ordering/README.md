@@ -41,6 +41,11 @@ This app lives in the `ordering/` subfolder of the main-site repo but deploys
 independently (Vercel, **Root Directory = `ordering`**). The main site's static
 Cloudflare Pages deployment is untouched.
 
+**Where the code lives (as of 2026-07-27):** `BreakRoom`'s `main` branch has
+the live site only; this app rides the **`online-ordering`** branch, mirrored
+to the private repo **`Aryaman-R/BreakroomTest`** (`main`) which Vercel deploys
+for the pilot. Full topology, env vars, and troubleshooting: `SETUP.md` §0.
+
 ## Folder layout
 
 ```
