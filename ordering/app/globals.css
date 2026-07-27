@@ -152,6 +152,25 @@ h3 { font-size: clamp(1.2rem, 2vw, 1.5rem); }
   box-shadow: 0 1px 2px rgba(42, 37, 32, 0.04), 0 8px 24px -12px rgba(42, 37, 32, 0.12);
 }
 
+/* Kiosk virtual keyboard (components/kiosk). While it's visible it sets
+   --kiosk-kb-h to its measured height and adds .kiosk-kb-open to <html>,
+   and everything below makes room so the keyboard never covers the focused
+   field: the page grows bottom padding, Sheet dialogs (.kiosk-lift) get
+   pushed up, and their panels shrink to the space that remains. */
+:root {
+  --kiosk-kb-h: 0px;
+}
+html.kiosk-kb-open body {
+  padding-bottom: var(--kiosk-kb-h);
+}
+html.kiosk-kb-open .kiosk-lift {
+  padding-bottom: var(--kiosk-kb-h);
+}
+html.kiosk-kb-open .kiosk-sheet-panel {
+  max-height: calc(100vh - var(--kiosk-kb-h) - 16px);
+  max-height: calc(100dvh - var(--kiosk-kb-h) - 16px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -22,6 +22,34 @@ Order-ahead web app for The Breakroom (Bothell, WA). Customers browse the menu, 
 
 Plus `/order/[id]` — the customer's live status page.
 
+## Kiosk mode
+
+For a shared touchscreen at the counter that has no physical keyboard. Every
+screen above gains an on-screen keyboard whenever a text field is focused.
+
+**Turn it on:** visit any page with `?kiosk=on` once, on that device.
+**Turn it off:** `?kiosk=off`.
+
+The setting is a `localStorage` flag on **that one device**, so it survives
+reloads and reboots but is invisible to everyone else — customers on their own
+phones never load any of it, and there's nothing to accidentally leave enabled
+for the public.
+
+While a field is focused the keyboard docks to the bottom of the screen and the
+page makes room for it, so the field you're typing into is never covered — this
+includes the cart and checkout dialogs, which shrink and scroll to stay clear.
+The layout follows the field: full QWERTY with a `?123` symbol layer for text,
+a phone pad for phone numbers, a number pad for quantities and caps, and a
+decimal pad for prices. Email fields get `@` and `.com` keys. Shift is one-shot
+by default and locks on a second tap; holding backspace repeats.
+
+The device's own keyboard is suppressed while kiosk mode is on, so the two can
+never fight over the screen. Date and time pickers keep their native widgets.
+
+Nothing here needs special hardware — it's the same app, so a tablet in a stand
+works today. Dedicated kiosk hardware is a separate, later question:
+[docs/ORDERING-ROADMAP.md](docs/ORDERING-ROADMAP.md).
+
 ## Stack
 
 Next.js (App Router, TypeScript) · Supabase (Postgres + Auth + Realtime) · Twilio SMS · Vercel.
@@ -60,8 +88,8 @@ docs/ORDERING-IMPLEMENTATION.md      Step-by-step Phase 1 build plan with accept
 docs/ORDERING-FRAUD-PREVENTION.md    Threat model and the six control layers
 docs/ORDERING-ROADMAP.md             Phase 2 (QR, printer, kiosk) and Phase 3 (payments)
 supabase/migrations/                 Schema + seed + place_order(), run in order
-app/ · components/ · lib/            The Next.js app (customer, staff, admin, API)
-tests/                               Unit tests (pricing, hours, transitions, phone)
+app/ · components/ · lib/            The Next.js app (customer, staff, admin, kiosk, API)
+tests/                               Unit tests (pricing, hours, transitions, phone, kiosk)
 ```
 
 ## Phases at a glance

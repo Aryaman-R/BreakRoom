@@ -16,12 +16,14 @@ The rule: every phase adds **surfaces** to the same app and database. If a phase
 
 **Modifier upgrade path, only if needed.** Variants + add-ons + guided notes should cover the real menu. If notes-based choices (bread, sauce, sweetness, side picks) prove error-prone in re-keying, graduate them to proper `modifier_groups` / `modifier_options` tables. That's an additive migration — existing orders' snapshots are untouched.
 
-**Kiosk — deliberately shelved.** Until online payment exists, a kiosk customer still pays at the register, so its only unique audience over the QR code is phoneless walk-ins. When revived, it's a *deployment target*, not a new app:
+**Kiosk hardware — still shelved.** Until online payment exists, a kiosk customer still pays at the register, so its only unique audience over the QR code is phoneless walk-ins. When revived, it's a *deployment target*, not a new app:
 
 - Raspberry Pi 4/5 + 10–15" HDMI/USB touchscreen + secured stand (~$250 total)
-- Chromium in `--kiosk` mode pointed at a `/kiosk` route: bigger touch targets, no site nav, checkout by order number only (optional numeric pad for a phone → "ready" text — no on-screen keyboard, which is the jankiest part of any Pi kiosk)
+- Chromium in `--kiosk` mode pointed at the normal customer page: bigger touch targets, no site nav, checkout by order number only
 - 60-second idle timer wipes the cart; nightly reboot; systemd restarts the browser on crash; "please order at the counter" fallback if offline; hidden 5-tap-corner + PIN staff exit
 - The moment Phase 3 payments ship, this exact hardware becomes true self-checkout with zero changes
+
+**Kiosk keyboard — built ahead of the hardware.** The on-screen keyboard was historically the jankiest part of any Pi kiosk, so it's done and in the app already: see [Kiosk mode](../README.md#kiosk-mode) for how to switch it on. It needs no dedicated route and no hardware — it's a per-device flag that layers a touch keyboard over the existing pages, so a touchscreen without a physical keyboard is already a usable ordering surface. Nothing about it waits on Phase 3.
 
 ## Phase 3 — only if the owners ask
 

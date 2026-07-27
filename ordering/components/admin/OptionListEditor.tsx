@@ -60,9 +60,6 @@ export function OptionListEditor({
               <input
                 aria-label={`${legend} price`}
                 className="field pl-7 text-right font-mono"
-                type="number"
-                min="0"
-                step="0.01"
                 inputMode="decimal"
                 value={row.dollars}
                 onChange={(e) => update(i, { dollars: e.target.value })}

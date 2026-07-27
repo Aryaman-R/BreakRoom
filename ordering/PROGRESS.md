@@ -34,6 +34,24 @@
 
 ## Implementation notes & deviations
 
+- **Kiosk on-screen keyboard, pulled forward from Phase 2.** The roadmap had
+  flagged the on-screen keyboard as the jankiest part of a kiosk build, so it
+  was built early to retire that risk while the rest is still fresh. It is
+  *not* a new route or a new app: `components/kiosk/` mounts once in
+  `app/layout.tsx` and layers a touch keyboard over the existing pages when a
+  text field is focused. Activation is a per-device `localStorage` flag set by
+  `?kiosk=on`, so regular customers never see it and there is nothing to leave
+  switched on for the public. Caret/value math is pure and lives in
+  `lib/kiosk.ts` (14 tests in `tests/kiosk.test.ts`); the DOM wiring — native
+  keyboard suppression, focus tracking, scroll-into-view, and writing values
+  through the prototype setter so React's controlled inputs see real `input`
+  events — stays in the component. Usage is documented in `README.md`.
+- **Admin numeric fields moved from `type="number"` to `inputMode`.** Native
+  number inputs suppress the `inputmode` hint the kiosk keyboard reads to pick
+  a layout, so price/quantity fields now declare `inputMode="decimal"` or
+  `"numeric"` and parse defensively on submit (`|| 0`, `Math.max`). The server
+  is unchanged and still the authority — `settingsPatchSchema` rejects
+  anything malformed.
 - **Docs moved** from `ordering/*.md` to `ordering/docs/` to match the layout
   `CLAUDE.md` references (`docs/ORDERING-*.md`).
 - **Atomic order insert:** supabase-js can't span a transaction across two

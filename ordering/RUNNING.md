@@ -55,7 +55,13 @@ Leave the Twilio lines empty — that's what turns on dev mode.
 Hours & caps and set Opens `00:00`, Closes `23:59`, Buffer `0` (put it back
 later — the defaults are the cafe's real hours).
 
-`npm test` runs the 22 unit tests; no database needed.
+4. **Kiosk keyboard** (optional) — load
+   `http://localhost:3100/?kiosk=on` and tap any text field: an on-screen
+   keyboard docks to the bottom and the page makes room for it. The layout
+   changes per field (QWERTY, phone pad, number pad, decimal pad). Turn it
+   back off with `?kiosk=off` — the flag is per-device, in `localStorage`.
+
+`npm test` runs the 36 unit tests; no database needed.
 
 ## Current limitations
 

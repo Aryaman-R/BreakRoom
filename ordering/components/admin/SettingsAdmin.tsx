@@ -59,8 +59,8 @@ export function SettingsAdmin() {
       ordering_open_minutes: timeToMinutes(open),
       ordering_close_minutes: timeToMinutes(close),
       last_order_buffer_minutes: Math.max(0, parseInt(buffer, 10) || 0),
-      call_to_confirm_threshold_cents: Math.round(parseFloat(confirmAt || "0") * 100),
-      hard_cap_cents: Math.round(parseFloat(hardCap || "0") * 100),
+      call_to_confirm_threshold_cents: Math.max(0, Math.round(parseFloat(confirmAt) * 100) || 0),
+      hard_cap_cents: Math.max(0, Math.round(parseFloat(hardCap) * 100) || 0),
       max_qty_per_item: Math.max(1, parseInt(maxQty, 10) || 1),
       max_open_orders_per_phone: Math.max(1, parseInt(maxOpen, 10) || 1),
       max_orders_per_phone_per_day: Math.max(1, parseInt(maxDaily, 10) || 1),
@@ -103,7 +103,7 @@ export function SettingsAdmin() {
           </label>
           <label className="text-sm">
             Buffer (min)
-            <input type="number" min="0" className="field mt-1 text-right font-mono" value={buffer} onChange={(e) => setBuffer(e.target.value)} />
+            <input inputMode="numeric" className="field mt-1 text-right font-mono" value={buffer} onChange={(e) => setBuffer(e.target.value)} />
           </label>
         </div>
       </section>
@@ -113,23 +113,23 @@ export function SettingsAdmin() {
         <div className="mt-4 grid grid-cols-2 gap-3">
           <label className="text-sm">
             Call to confirm above ($)
-            <input type="number" min="0" step="0.01" className="field mt-1 text-right font-mono" value={confirmAt} onChange={(e) => setConfirmAt(e.target.value)} />
+            <input inputMode="decimal" className="field mt-1 text-right font-mono" value={confirmAt} onChange={(e) => setConfirmAt(e.target.value)} />
           </label>
           <label className="text-sm">
             Reject above ($)
-            <input type="number" min="0" step="0.01" className="field mt-1 text-right font-mono" value={hardCap} onChange={(e) => setHardCap(e.target.value)} />
+            <input inputMode="decimal" className="field mt-1 text-right font-mono" value={hardCap} onChange={(e) => setHardCap(e.target.value)} />
           </label>
           <label className="text-sm">
             Max quantity per item
-            <input type="number" min="1" className="field mt-1 text-right font-mono" value={maxQty} onChange={(e) => setMaxQty(e.target.value)} />
+            <input inputMode="numeric" className="field mt-1 text-right font-mono" value={maxQty} onChange={(e) => setMaxQty(e.target.value)} />
           </label>
           <label className="text-sm">
             Open orders per phone
-            <input type="number" min="1" className="field mt-1 text-right font-mono" value={maxOpen} onChange={(e) => setMaxOpen(e.target.value)} />
+            <input inputMode="numeric" className="field mt-1 text-right font-mono" value={maxOpen} onChange={(e) => setMaxOpen(e.target.value)} />
           </label>
           <label className="text-sm">
             Orders per phone per day
-            <input type="number" min="1" className="field mt-1 text-right font-mono" value={maxDaily} onChange={(e) => setMaxDaily(e.target.value)} />
+            <input inputMode="numeric" className="field mt-1 text-right font-mono" value={maxDaily} onChange={(e) => setMaxDaily(e.target.value)} />
           </label>
         </div>
       </section>

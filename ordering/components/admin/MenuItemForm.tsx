@@ -88,9 +88,6 @@ export function MenuItemForm({
               <input
                 id="mi-price"
                 className="field pl-7 text-right font-mono"
-                type="number"
-                min="0"
-                step="0.01"
                 inputMode="decimal"
                 value={dollars}
                 onChange={(e) => setDollars(e.target.value)}
@@ -107,8 +104,7 @@ export function MenuItemForm({
             <input
               id="mi-sort"
               className="field mt-1 text-right font-mono"
-              type="number"
-              min="0"
+              inputMode="numeric"
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
             />
