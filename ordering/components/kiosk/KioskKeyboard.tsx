@@ -137,6 +137,7 @@ function KioskKeyboardManager() {
   const targetRef = useRef<Editable | null>(null);
   const kbRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef(0);
+  const unswallowRef = useRef<(() => void) | null>(null);
 
   // ?kiosk=on|off updates the sticky flag; everyone else never sees any of
   // this because the flag simply isn't set on their device.
@@ -215,6 +216,35 @@ function KioskKeyboardManager() {
     return () => window.clearInterval(iv);
   }, [target, retarget]);
 
+  // Touch input synthesizes a `click` after `pointerup`, and hit-tests it
+  // against the DOM *at dispatch time*. Hiding the keyboard removes it first,
+  // so that click lands on whatever is now under the finger — with a centered
+  // dialog that's the full-screen backdrop, whose job is to close the dialog.
+  // Cancelling `pointerdown` doesn't help: Chrome suppresses mousedown/mouseup
+  // but still fires click. So swallow exactly that one click — matched on
+  // where the finger lifted, and only for a moment, to leave real taps alone.
+  const swallowGhostClick = useCallback((at?: { x: number; y: number }) => {
+    if (!at) return;
+    const onClick = (e: MouseEvent) => {
+      if (Math.abs(e.clientX - at.x) > 32 || Math.abs(e.clientY - at.y) > 32) return;
+      e.preventDefault();
+      e.stopPropagation();
+      stop();
+    };
+    const stop = () => {
+      document.removeEventListener("click", onClick, true);
+      window.clearTimeout(timer);
+      unswallowRef.current = null;
+    };
+    // Capture phase on `document`: React's own listeners sit on the app root
+    // below it, so stopping here keeps the click from ever reaching them.
+    document.addEventListener("click", onClick, true);
+    const timer = window.setTimeout(stop, 500);
+    unswallowRef.current?.();
+    unswallowRef.current = stop;
+  }, []);
+  useEffect(() => () => unswallowRef.current?.(), []);
+
   const ensureVisibleSoon = useCallback(() => {
     cancelAnimationFrame(rafRef.current);
     // Double rAF: let the padding from --kiosk-kb-h land before measuring.
@@ -259,6 +289,7 @@ function KioskKeyboardManager() {
       // focus handling and drops the caret, which is how the old "Done" key
       // ended up abandoning half-filled item notes and checkout fields.
       if (action.type === "hide") {
+        swallowGhostClick(action.at);
         setDismissed(true);
         return;
       }
@@ -283,7 +314,7 @@ function KioskKeyboardManager() {
       }
       ensureVisibleSoon();
     },
-    [ensureVisibleSoon]
+    [ensureVisibleSoon, swallowGhostClick]
   );
 
   if (!enabled || !target || dismissed) return null;

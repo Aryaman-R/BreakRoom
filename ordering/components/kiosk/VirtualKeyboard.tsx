@@ -12,7 +12,9 @@ export type KeyAction =
   | { type: "insert"; text: string }
   | { type: "backspace" }
   | { type: "enter" }
-  | { type: "hide" };
+  // `at` is where the finger lifted, so the parent can identify and swallow
+  // the compatibility click that touch fires once the keyboard is gone.
+  | { type: "hide"; at?: { x: number; y: number } };
 
 export type KeyboardIntent = {
   layout: "alpha" | "phone" | "numeric" | "decimal";
@@ -177,7 +179,7 @@ export function VirtualKeyboard({
           ? NUMERIC_ROWS
           : DECIMAL_ROWS;
 
-  const press = (k: KeyDef) => {
+  const press = (k: KeyDef, at?: { x: number; y: number }) => {
     switch (k.onPress) {
       case "insert":
         onKey({ type: "insert", text: k.text ?? k.label });
@@ -191,7 +193,7 @@ export function VirtualKeyboard({
         onKey({ type: "enter" });
         break;
       case "hide":
-        onKey({ type: "hide" });
+        onKey({ type: "hide", at });
         break;
       case "shift":
         setShift((s) => (s === "off" ? "once" : s === "once" ? "locked" : "off"));
@@ -244,10 +246,10 @@ export function VirtualKeyboard({
             )}
           >
             {row.map((k) => {
-              // Hiding the keyboard unmounts it, so it must happen on pointerup,
-              // never pointerdown: unmounting mid-gesture lets the follow-up
-              // click hit-test through to the page underneath and press
-              // whatever now sits there (it used to close the open sheet).
+              // Hiding unmounts the keyboard, so it waits for pointerup rather
+              // than firing on pointerdown mid-gesture. Touch still synthesizes
+              // a click afterwards that would fall through to the page below —
+              // the parent swallows that one using the coordinates passed here.
               const hides = k.onPress === "hide";
               return (
                 <button
@@ -272,7 +274,13 @@ export function VirtualKeyboard({
                         : "border-qh-line bg-white text-qh-ink active:bg-qh-accent-soft"
                   )}
                   onPointerDown={hides ? undefined : () => startPress(k)}
-                  onPointerUp={hides ? () => press(k) : k.repeat ? stopRepeat : undefined}
+                  onPointerUp={
+                    hides
+                      ? (e) => press(k, { x: e.clientX, y: e.clientY })
+                      : k.repeat
+                        ? stopRepeat
+                        : undefined
+                  }
                   onPointerLeave={k.repeat ? stopRepeat : undefined}
                   onPointerCancel={k.repeat ? stopRepeat : undefined}
                 >

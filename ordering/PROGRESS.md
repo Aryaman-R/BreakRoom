@@ -57,6 +57,23 @@
   any field brings it back (the pointerdown-capture listener clears the
   dismissed flag, since re-tapping an already-focused field fires no focus
   event).
+- **Ghost-click on hide (second pilot report).** Moving the hide key to
+  `pointerup` was not enough: touch synthesizes a compatibility `click` *after*
+  `pointerup` and hit-tests it against the DOM at dispatch time, so removing
+  the keyboard first left that click landing on whatever was underneath — with
+  a centered dialog, the full-screen backdrop, which closes it. Cancelling
+  `pointerdown` doesn't prevent it either (Chrome suppresses mousedown/mouseup
+  but still fires `click`). The hide key now reports where the finger lifted
+  and the manager swallows the one click matching those coordinates within
+  500ms, on `document` in the capture phase so it never reaches React's
+  listeners. Real taps elsewhere, and taps after the window, are unaffected.
+- **Component tests added** (`tests/kiosk-keyboard.test.tsx`, jsdom via a new
+  `vitest.config.ts`). The pure logic in `lib/kiosk.ts` was well covered but
+  every bug so far has been in DOM behaviour, which nothing exercised. Covers:
+  hiding keeps focus/caret/text, the ghost click is swallowed, a genuine tap
+  still closes the dialog, the swallow window expires, and re-tapping an
+  already-focused field re-summons the keyboard. Verified to fail without the
+  fix, not just pass with it.
 - **Keyboard key contrast.** The `?123`/`ABC` layer switch was `bg-qh-line/60`
   over the panel — 1.19:1, effectively invisible on a glare-lit screen. Action
   keys now use a full-opacity fill with a sage border, and the layer switch is

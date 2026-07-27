@@ -61,7 +61,7 @@ later — the defaults are the cafe's real hours).
    changes per field (QWERTY, phone pad, number pad, decimal pad). Turn it
    back off with `?kiosk=off` — the flag is per-device, in `localStorage`.
 
-`npm test` runs the 36 unit tests; no database needed.
+`npm test` runs the 43 unit tests; no database needed.
 
 ## Current limitations
 
