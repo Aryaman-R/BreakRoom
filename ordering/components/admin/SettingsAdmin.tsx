@@ -29,6 +29,9 @@ export function SettingsAdmin() {
   const [maxQty, setMaxQty] = useState("");
   const [maxOpen, setMaxOpen] = useState("");
   const [maxDaily, setMaxDaily] = useState("");
+  const [allowWalkin, setAllowWalkin] = useState(true);
+  const [maxOpenWalkin, setMaxOpenWalkin] = useState("");
+  const [maxWalkinHour, setMaxWalkinHour] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -45,6 +48,9 @@ export function SettingsAdmin() {
         setMaxQty(String(s.max_qty_per_item));
         setMaxOpen(String(s.max_open_orders_per_phone));
         setMaxDaily(String(s.max_orders_per_phone_per_day));
+        setAllowWalkin(s.allow_walkin_orders > 0);
+        setMaxOpenWalkin(String(s.max_open_walkin_orders));
+        setMaxWalkinHour(String(s.max_walkin_per_hour));
       } catch {
         setError("Couldn't load settings — refresh to retry.");
       }
@@ -64,6 +70,9 @@ export function SettingsAdmin() {
       max_qty_per_item: Math.max(1, parseInt(maxQty, 10) || 1),
       max_open_orders_per_phone: Math.max(1, parseInt(maxOpen, 10) || 1),
       max_orders_per_phone_per_day: Math.max(1, parseInt(maxDaily, 10) || 1),
+      allow_walkin_orders: allowWalkin ? 1 : 0,
+      max_open_walkin_orders: Math.max(1, parseInt(maxOpenWalkin, 10) || 1),
+      max_walkin_per_hour: Math.max(1, parseInt(maxWalkinHour, 10) || 1),
     };
     const res = await fetch("/api/admin/settings", {
       method: "PATCH",
@@ -132,6 +141,62 @@ export function SettingsAdmin() {
             <input inputMode="numeric" className="field mt-1 text-right font-mono" value={maxDaily} onChange={(e) => setMaxDaily(e.target.value)} />
           </label>
         </div>
+      </section>
+
+      <section className="card p-5">
+        <h2 className="text-lg">Kiosk walk-ins</h2>
+        <p className="mt-1 text-sm text-qh-ink-soft">
+          Only the counter kiosk can take an order without a phone number —
+          the customer is standing right there, so staff call the name instead
+          of texting it. Because there&#8217;s no number, the usual per-phone
+          caps can&#8217;t see these orders; the two limits below are what
+          bound them.
+        </p>
+
+        <label className="mt-4 flex cursor-pointer items-start gap-3">
+          <input
+            type="checkbox"
+            checked={allowWalkin}
+            onChange={(e) => setAllowWalkin(e.target.checked)}
+            className="mt-1 h-5 w-5 accent-[var(--qh-sage)]"
+          />
+          <span className="text-sm">
+            <span className="font-medium">
+              Let the kiosk take orders without a phone number
+            </span>
+            <span className="mt-0.5 block text-qh-ink-soft">
+              Off means every order needs a verified number, kiosk included.
+            </span>
+          </span>
+        </label>
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <label className="text-sm">
+            Walk-ins open at once
+            <input
+              inputMode="numeric"
+              className="field mt-1 text-right font-mono"
+              value={maxOpenWalkin}
+              disabled={!allowWalkin}
+              onChange={(e) => setMaxOpenWalkin(e.target.value)}
+            />
+          </label>
+          <label className="text-sm">
+            Walk-ins per hour
+            <input
+              inputMode="numeric"
+              className="field mt-1 text-right font-mono"
+              value={maxWalkinHour}
+              disabled={!allowWalkin}
+              onChange={(e) => setMaxWalkinHour(e.target.value)}
+            />
+          </label>
+        </div>
+        <p className="mt-2 text-sm text-qh-ink-soft">
+          Walk-ins are also capped at the &#8220;call to confirm&#8221; amount
+          above — over that, the kiosk asks for a number or sends them to the
+          counter, since there&#8217;s nobody to call.
+        </p>
       </section>
 
       {error ? (

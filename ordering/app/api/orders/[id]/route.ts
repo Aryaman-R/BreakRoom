@@ -23,7 +23,7 @@ export const GET = handleErrors(async (_req: NextRequest, { params }: Params) =>
   const { data, error } = await db
     .from("orders")
     .select(
-      "order_number, status, total_cents, created_at, order_items (item_name, variant_label, addons, price_cents, quantity, notes)"
+      "order_number, status, total_cents, created_at, phone, order_items (item_name, variant_label, addons, price_cents, quantity, notes)"
     )
     .eq("id", params.id)
     .maybeSingle();
@@ -33,11 +33,14 @@ export const GET = handleErrors(async (_req: NextRequest, { params }: Params) =>
   }
   if (!data) return apiError(404, "not_found", "Order not found.");
 
+  // The phone is selected only to answer "will this customer get a text?" —
+  // it is reduced to a boolean here and never leaves the server.
   const projection: PublicOrder = {
     order_number: data.order_number,
     status: data.status,
     total_cents: data.total_cents,
     created_at: data.created_at,
+    walk_in: !data.phone,
     items: (data.order_items ?? []) as PublicOrder["items"],
   };
   return NextResponse.json(projection, {
@@ -99,20 +102,25 @@ export const PATCH = handleErrors(async (req: NextRequest, { params }: Params) =
     return apiError(409, "conflict", "Order changed under you — refresh.");
   }
 
-  if (nextStatus === "accepted") {
-    const sms = await sendSms(
-      order.phone,
-      `Breakroom order #${order.order_number} confirmed — ready in about 15 minutes.`
-    );
-    if (!sms.ok) console.error(`[orders/:id] accepted SMS not sent for #${order.order_number}`);
-  } else if (nextStatus === "ready") {
-    const sms = await sendSms(
-      order.phone,
-      `Breakroom order #${order.order_number} is ready for pickup!`
-    );
-    if (!sms.ok) console.error(`[orders/:id] ready SMS not sent for #${order.order_number}`);
-  } else if (nextStatus === "no_show") {
-    await applyTwoStrikeRule(db, order.phone);
+  // Kiosk walk-ins have no phone: there is nothing to text, and nothing to
+  // put on the blocklist. Staff call the name across the counter instead —
+  // which is why the walk-in path is kiosk-only in the first place.
+  if (order.phone) {
+    if (nextStatus === "accepted") {
+      const sms = await sendSms(
+        order.phone,
+        `Breakroom order #${order.order_number} confirmed — ready in about 15 minutes.`
+      );
+      if (!sms.ok) console.error(`[orders/:id] accepted SMS not sent for #${order.order_number}`);
+    } else if (nextStatus === "ready") {
+      const sms = await sendSms(
+        order.phone,
+        `Breakroom order #${order.order_number} is ready for pickup!`
+      );
+      if (!sms.ok) console.error(`[orders/:id] ready SMS not sent for #${order.order_number}`);
+    } else if (nextStatus === "no_show") {
+      await applyTwoStrikeRule(db, order.phone);
+    }
   }
 
   return NextResponse.json(updated[0]);

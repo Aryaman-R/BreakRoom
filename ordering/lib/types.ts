@@ -37,7 +37,12 @@ export type Order = {
   order_number: number;
   order_date: string;
   customer_name: string;
-  phone: string;
+  /**
+   * E.164, or null for a kiosk walk-in — the one surface where the customer
+   * is standing in front of us, so staff can call the name instead of
+   * texting it. The database enforces that only source='kiosk' may be null.
+   */
+  phone: string | null;
   status: OrderStatus;
   total_cents: number;
   source: OrderSource;
@@ -64,6 +69,13 @@ export type PublicOrder = {
   status: OrderStatus;
   total_cents: number;
   created_at: string;
+  /**
+   * True when this order has no phone number attached (a kiosk walk-in), so
+   * the confirmation can promise the right thing: a name called across the
+   * counter rather than a text that will never arrive. Derived from the
+   * phone column — the number itself is never exposed here.
+   */
+  walk_in: boolean;
   items: Array<
     Pick<
       OrderItem,

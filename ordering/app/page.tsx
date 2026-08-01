@@ -19,6 +19,7 @@ export default async function OrderPage({ searchParams }: Props) {
   let open = false;
   let hoursCopy = "";
   let maxQty = 5;
+  let allowWalkin = false;
   let unavailable = false;
 
   try {
@@ -48,6 +49,9 @@ export default async function OrderPage({ searchParams }: Props) {
     menu = (data ?? []) as MenuItem[];
     open = isOrderingOpen(settings);
     maxQty = settings.max_qty_per_item;
+    // The kiosk's "no phone, call my name" path, toggled from /admin. Only
+    // the kiosk ever reads it; a phone or QR order always needs a number.
+    allowWalkin = settings.allow_walkin_orders > 0;
     hoursCopy = `${formatMinutes(settings.ordering_open_minutes)} – ${formatMinutes(
       lastOrderMinute(settings)
     )} daily`;
@@ -71,5 +75,14 @@ export default async function OrderPage({ searchParams }: Props) {
     );
   }
 
-  return <OrderApp menu={menu} open={open} hoursCopy={hoursCopy} maxQty={maxQty} source={source} />;
+  return (
+    <OrderApp
+      menu={menu}
+      open={open}
+      hoursCopy={hoursCopy}
+      maxQty={maxQty}
+      allowWalkin={allowWalkin}
+      source={source}
+    />
+  );
 }

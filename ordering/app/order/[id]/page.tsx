@@ -2,10 +2,17 @@
 
 import { useCallback, useEffect, useState } from "react";
 import clsx from "clsx";
+import { KioskOrderDone } from "@/components/kiosk/KioskOrderDone";
+import { useKiosk } from "@/components/kiosk/KioskProvider";
 import { formatCents } from "@/lib/money";
 import type { PublicOrder } from "@/lib/types";
 
 const POLL_MS = 5000;
+
+// Once an order reaches one of these there is nothing left to watch, so the
+// page stops asking. A phone left open on a picked-up order used to poll the
+// API every five seconds until the tab was closed.
+const SETTLED = ["picked_up", "no_show", "cancelled"];
 
 const STEPS = [
   { label: "Received", reached: ["new", "call_to_confirm", "accepted", "ready", "picked_up"] },
@@ -14,7 +21,14 @@ const STEPS = [
   { label: "Picked up", reached: ["picked_up"] },
 ];
 
-export default function OrderStatusPage({ params }: { params: { id: string } }) {
+export default function OrderStatusPage({
+  params,
+  searchParams,
+}: {
+  params: { id: string };
+  searchParams: { n?: string };
+}) {
+  const { kiosk } = useKiosk();
   const [order, setOrder] = useState<PublicOrder | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [stale, setStale] = useState(false);
@@ -35,11 +49,26 @@ export default function OrderStatusPage({ params }: { params: { id: string } }) 
     }
   }, [params.id]);
 
+  const settled = order != null && SETTLED.includes(order.status);
+
   useEffect(() => {
     fetchOrder();
+    // The kiosk resets itself in well under a minute and nobody is watching
+    // this screen for a status change, so one fetch is all it needs.
+    if (kiosk || settled) return;
     const t = setInterval(fetchOrder, POLL_MS);
     return () => clearInterval(t);
-  }, [fetchOrder]);
+  }, [fetchOrder, kiosk, settled]);
+
+  if (kiosk && !notFound) {
+    const hint = Number.parseInt(searchParams.n ?? "", 10);
+    return (
+      <KioskOrderDone
+        order={order}
+        numberHint={Number.isFinite(hint) ? hint : null}
+      />
+    );
+  }
 
   if (notFound) {
     return (

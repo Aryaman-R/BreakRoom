@@ -1,25 +1,40 @@
 // @vitest-environment jsdom
+import { useEffect } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { KIOSK_STORAGE_KEY } from "../lib/kiosk";
 import { KioskKeyboard } from "../components/kiosk/KioskKeyboard";
+import { KioskProvider, useKiosk } from "../components/kiosk/KioskProvider";
 
-// The keyboard only reads the ?kiosk= param; nothing else from the router.
+// The provider needs a path and a router; nothing here navigates.
 vi.mock("next/navigation", () => ({
-  useSearchParams: () => new URLSearchParams(""),
+  usePathname: () => "/",
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }),
 }));
+
+// A kiosk boots to the attract screen, and no typing happens behind it. This
+// stands in for the customer having tapped "start" before they reach the
+// field under test.
+function StartedSession() {
+  const { attract, beginSession } = useKiosk();
+  useEffect(() => {
+    if (attract) beginSession();
+  }, [attract, beginSession]);
+  return null;
+}
 
 // A stand-in for Sheet: a full-screen backdrop button that closes the dialog,
 // with the panel on top. This is the shape that made the bug bite — tapping
 // "hide" left a click on the backdrop, which closed the dialog mid-typing.
 function Dialog({ onClose }: { onClose: () => void }) {
   return (
-    <div>
+    <KioskProvider>
+      <StartedSession />
       <button data-testid="backdrop" aria-label="Close" onClick={onClose} />
       <label htmlFor="notes">Notes</label>
       <textarea id="notes" data-testid="notes" defaultValue="no onions" />
       <KioskKeyboard />
-    </div>
+    </KioskProvider>
   );
 }
 

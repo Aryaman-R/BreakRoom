@@ -14,6 +14,11 @@ export const SETTING_KEYS = [
   "ordering_open_minutes",
   "ordering_close_minutes",
   "last_order_buffer_minutes",
+  // Kiosk walk-ins (no phone number). Phone-keyed caps can't see these
+  // orders at all, so they get their own — see 0004_kiosk_walkin.sql.
+  "allow_walkin_orders",
+  "max_open_walkin_orders",
+  "max_walkin_per_hour",
 ] as const;
 export type SettingKey = (typeof SETTING_KEYS)[number];
 export type SettingsMap = Record<SettingKey, number>;
@@ -27,6 +32,9 @@ export const DEFAULT_SETTINGS: SettingsMap = {
   ordering_open_minutes: 570,
   ordering_close_minutes: 930,
   last_order_buffer_minutes: 20,
+  allow_walkin_orders: 1,
+  max_open_walkin_orders: 5,
+  max_walkin_per_hour: 20,
 };
 
 export async function loadSettings(db: SupabaseClient): Promise<SettingsMap> {

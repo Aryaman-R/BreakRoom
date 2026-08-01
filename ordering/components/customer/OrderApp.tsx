@@ -23,12 +23,15 @@ export function OrderApp({
   open,
   hoursCopy,
   maxQty,
+  allowWalkin,
   source,
 }: {
   menu: MenuItem[];
   open: boolean;
   hoursCopy: string;
   maxQty: number;
+  /** Whether the kiosk may take an order without a phone number. */
+  allowWalkin: boolean;
   source: OrderSource;
 }) {
   const { kiosk, attract, resetToken, endSession } = useKiosk();
@@ -181,6 +184,7 @@ export function OrderApp({
         <CheckoutSheet
           lines={cart}
           source={effectiveSource}
+          allowWalkin={kiosk && allowWalkin}
           onClose={() => setView("cart")}
         />
       ) : null}

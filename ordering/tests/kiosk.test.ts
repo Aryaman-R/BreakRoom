@@ -1,5 +1,17 @@
-import { describe, expect, it } from "vitest";
-import { applyBackspace, applyInsert, parseKioskValue } from "../lib/kiosk";
+import { afterEach, describe, expect, it } from "vitest";
+import {
+  applyBackspace,
+  applyInsert,
+  countdownSeconds,
+  DEFAULT_KIOSK_EXIT_PIN,
+  KIOSK_EXIT_TAP_GAP_MS,
+  KIOSK_EXIT_TAPS,
+  kioskExitPin,
+  NO_TAPS,
+  parseKioskValue,
+  registerTap,
+  tapsUnlock,
+} from "../lib/kiosk";
 
 describe("parseKioskValue", () => {
   it("recognizes the on switch", () => {
@@ -20,6 +32,72 @@ describe("parseKioskValue", () => {
     expect(parseKioskValue("")).toBeNull();
     expect(parseKioskValue("yes")).toBeNull();
     expect(parseKioskValue("kiosk")).toBeNull();
+  });
+});
+
+describe("countdownSeconds", () => {
+  it("rounds up so a countdown never shows 0 while time remains", () => {
+    expect(countdownSeconds(15_000)).toBe(15);
+    expect(countdownSeconds(14_001)).toBe(15);
+    expect(countdownSeconds(1)).toBe(1);
+    expect(countdownSeconds(0)).toBe(0);
+  });
+
+  it("clamps overshoot from a late timer tick", () => {
+    expect(countdownSeconds(-250)).toBe(0);
+  });
+});
+
+describe("registerTap", () => {
+  it("counts taps that arrive within the gap", () => {
+    let s = NO_TAPS;
+    for (let i = 1; i <= KIOSK_EXIT_TAPS; i++) {
+      s = registerTap(s, i * 200);
+      expect(s.count).toBe(i);
+    }
+    expect(tapsUnlock(s)).toBe(true);
+  });
+
+  it("starts over when the customer just brushed the corner minutes apart", () => {
+    let s = registerTap(NO_TAPS, 1_000);
+    s = registerTap(s, 1_200);
+    expect(s.count).toBe(2);
+    s = registerTap(s, 1_200 + KIOSK_EXIT_TAP_GAP_MS + 1);
+    expect(s.count).toBe(1);
+    expect(tapsUnlock(s)).toBe(false);
+  });
+
+  it("treats a tap exactly on the gap boundary as continuing", () => {
+    const s = registerTap({ count: 2, last: 5_000 }, 5_000 + KIOSK_EXIT_TAP_GAP_MS);
+    expect(s.count).toBe(3);
+  });
+
+  it("does not unlock below the tap threshold", () => {
+    expect(tapsUnlock({ count: KIOSK_EXIT_TAPS - 1, last: 0 })).toBe(false);
+    expect(tapsUnlock(NO_TAPS)).toBe(false);
+  });
+});
+
+describe("kioskExitPin", () => {
+  const original = process.env.NEXT_PUBLIC_KIOSK_EXIT_PIN;
+  afterEach(() => {
+    if (original === undefined) delete process.env.NEXT_PUBLIC_KIOSK_EXIT_PIN;
+    else process.env.NEXT_PUBLIC_KIOSK_EXIT_PIN = original;
+  });
+
+  it("falls back to the documented default so a kiosk is never stranded", () => {
+    delete process.env.NEXT_PUBLIC_KIOSK_EXIT_PIN;
+    expect(kioskExitPin()).toBe(DEFAULT_KIOSK_EXIT_PIN);
+  });
+
+  it("treats a blank or whitespace-only value as unset", () => {
+    process.env.NEXT_PUBLIC_KIOSK_EXIT_PIN = "   ";
+    expect(kioskExitPin()).toBe(DEFAULT_KIOSK_EXIT_PIN);
+  });
+
+  it("uses the configured PIN, of any length", () => {
+    process.env.NEXT_PUBLIC_KIOSK_EXIT_PIN = "907341";
+    expect(kioskExitPin()).toBe("907341");
   });
 });
 

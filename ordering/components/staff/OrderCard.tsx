@@ -69,7 +69,15 @@ export function OrderCard({
         <span className="rounded-full border border-qh-line px-2 py-0.5 font-mono text-xs uppercase">
           {order.source}
         </span>
-        {order.status === "call_to_confirm" ? (
+        {/* A walk-in gets no "order ready" text, so the screen has to say
+            so — otherwise staff mark it ready and wait for someone who was
+            never told. */}
+        {!order.phone ? (
+          <span className="rounded-full bg-qh-sage px-2 py-0.5 text-xs font-medium text-white">
+            🔔 Walk-in — call the name
+          </span>
+        ) : null}
+        {order.status === "call_to_confirm" && order.phone ? (
           <span className="rounded-full bg-qh-accent px-2 py-0.5 text-xs font-medium text-white">
             📞 Call first — {order.phone}
           </span>
@@ -102,7 +110,18 @@ export function OrderCard({
             <button
               key={a.to}
               disabled={busy}
-              onClick={() => onTransition(order, a.to, a.confirm)}
+              onClick={() =>
+                onTransition(
+                  order,
+                  a.to,
+                  // The two-strike rule blocks a phone number, and a walk-in
+                  // hasn't got one — don't threaten a consequence that can't
+                  // happen.
+                  a.to === "no_show" && !order.phone
+                    ? "Mark as no-show? Nobody picked this one up."
+                    : a.confirm
+                )
+              }
               className={clsx("btn btn-sm", {
                 "btn-primary": a.kind === "primary",
                 "btn-accent": a.kind === "accent",

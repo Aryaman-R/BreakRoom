@@ -15,6 +15,7 @@ Phase 1 takes no payment, so the worst case is never a chargeback — it's **foo
 | Overnight or after-close orders | Hours gate — ordering only 9:30 AM to 3:10 PM Pacific |
 | Serial no-shows | Two strikes → phone blocked |
 | Order spam from one person | One open order + three per day, per phone |
+| Forged "kiosk walk-in" orders with no phone at all | Cafe-wide walk-in caps + a lower size limit + the accept valve (see below) |
 | Anything that slips through | **The valve: nothing is made until staff tap Accept** |
 
 ## The six layers
@@ -38,6 +39,24 @@ Phase 1 takes no payment, so the worst case is never a chargeback — it's **foo
 **5 · Call-to-confirm path.** Large orders aren't rejected — they land flagged, staff call the verified number, then Accept. The Breakroom already handles event and catering inquiries by phone, so this needs no staff training.
 
 **6 · Two-strike blocklist.** `no_show` is a first-class order status. The second no-show for a phone auto-inserts it into `blocked_phones`; blocked phones can't even receive a verification code. Admin can view and unblock — the logic lives in the API route rather than a DB trigger precisely so it stays visible and reversible.
+
+## The kiosk walk-in exception
+
+The counter kiosk can take an order with **no phone number at all**: the customer types a name, and staff call it across the counter. That is the kiosk's entire reason to exist over the QR code — phoneless walk-ins — and it deliberately steps outside layers 2, 3 (the per-phone rows), 5 and 6, because all four are keyed on a number that isn't there.
+
+**Be clear about what can't be enforced.** The request says `source: "kiosk"`, and nothing about a browser on the public internet can prove that. Anyone who reads the JavaScript can post the same payload from anywhere. So the walk-in path is not defended by the claim — it's defended by making the claim worth very little:
+
+| Control | Default | Why |
+|---|---|---|
+| `allow_walkin_orders` | 1 | Kill switch. Set to 0 from `/admin` and every order needs a verified number again, kiosk included. |
+| `max_open_walkin_orders` | 5 | Phoneless orders in flight at once, **cafe-wide**. A flood stops at five tickets, and each one staff cancel frees a slot. |
+| `max_walkin_per_hour` | 20 | Phoneless orders accepted per rolling hour, cafe-wide. Bounds a slow drip. |
+| Size limit | `call_to_confirm_threshold_cents` ($50) | Walk-ins can't route to `call_to_confirm` — there's nobody to call — so the threshold becomes a wall. Over it, the kiosk asks for a number (restoring the $150 hard cap) or sends them to the counter. |
+| Accept valve | always | Unchanged and decisive: no food is made until staff tap Accept, and every walk-in is badged **"Walk-in — call the name"** on the staff screen. |
+
+The worst realistic outcome is therefore a handful of junk tickets on the staff screen that nobody accepts — annoying, self-limiting, and **zero food cost**. Compare that to the upside: the customers this serves are standing at the counter, which is the most accountable an order in this system ever gets.
+
+Two things make this safe to ship rather than merely defensible. First, phoneless orders are trivially auditable — `select * from orders where phone is null` is the whole report. Second, if the pilot shows abuse, the fix is one toggle in `/admin`, not a deploy.
 
 ## Deliberate non-goals
 

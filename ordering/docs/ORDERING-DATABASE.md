@@ -2,6 +2,8 @@
 
 > Scope reminder: this is the **pickup-ordering system's** database only. Run this SQL in the Supabase SQL editor (or save it as a migration). It is the complete Phase 1 schema.
 
+The same SQL is checked in under `supabase/migrations/`, split by when it landed. **A database created before the kiosk walk-in work also needs `0004_kiosk_walkin.sql`** — the schema below already includes it.
+
 ## Tables
 
 ```sql
@@ -28,12 +30,16 @@ create table menu_items (
 );
 
 -- ORDERS ----------------------------------------------------------
+-- phone: E.164, and null ONLY for a kiosk walk-in — the one surface where
+--        the customer is standing in front of us, so staff call the name
+--        instead of texting it. The check constraint is what keeps a forged
+--        source field from turning into an anonymous web order.
 create table orders (
   id            uuid primary key default gen_random_uuid(),
   order_number  integer not null,             -- resets daily, shown as "#47"
   order_date    date not null default current_date,
   customer_name text not null,
-  phone         text not null,                -- E.164
+  phone         text,                         -- E.164; null = kiosk walk-in
   status        text not null default 'new'
                 check (status in ('new','call_to_confirm','accepted',
                                   'ready','picked_up','no_show','cancelled')),
@@ -43,7 +49,9 @@ create table orders (
   created_at    timestamptz not null default now(),
   accepted_at   timestamptz,
   ready_at      timestamptz,
-  unique (order_date, order_number)
+  unique (order_date, order_number),
+  constraint orders_phone_required_off_kiosk
+    check (phone is not null or source = 'kiosk')
 );
 
 -- ORDER ITEMS (everything snapshotted at purchase) ----------------
@@ -92,7 +100,12 @@ insert into settings (key, value) values
   -- Minutes from midnight, America/Los_Angeles.
   ('ordering_open_minutes',            570),   -- 9:30 AM
   ('ordering_close_minutes',           930),   -- 3:30 PM
-  ('last_order_buffer_minutes',         20);   -- online orders stop 3:10 PM
+  ('last_order_buffer_minutes',         20),   -- online orders stop 3:10 PM
+  -- Kiosk walk-ins (no phone number). The per-phone caps above cannot see
+  -- these orders, so they get cafe-wide caps of their own.
+  ('allow_walkin_orders',                1),   -- 0 = kiosk must have a number too
+  ('max_open_walkin_orders',             5),   -- in flight at once, cafe-wide
+  ('max_walkin_per_hour',               20);   -- accepted per rolling hour
 
 -- DAILY ORDER NUMBERS ---------------------------------------------
 create table daily_counters (
@@ -152,6 +165,7 @@ The staff screen (authenticated) receives insert/update events, filtered by its 
 ```sql
 create index orders_status_idx      on orders (status);
 create index orders_phone_idx       on orders (phone, created_at);
+create index orders_walkin_idx      on orders (created_at) where phone is null;
 create index orders_date_idx        on orders (order_date);
 create index codes_phone_idx        on verification_codes (phone, created_at);
 create index order_items_order_idx  on order_items (order_id);
@@ -248,3 +262,4 @@ insert into menu_items (name, price_cents, category, sort_order) values
 - **`next_order_number()`** is an atomic upsert — safe under concurrent orders.
 - **Hours settings** are minutes-from-midnight in `America/Los_Angeles`. With the 20-minute buffer, the last online order lands 3:10 PM so the kitchen isn't handed a ticket at close.
 - Two `no_show` orders for the same phone triggers an insert into `blocked_phones` (logic lives in the PATCH route, not a trigger, so the admin can see and reverse it).
+- **`orders.phone` is nullable, but only for `source = 'kiosk'`**, enforced by a check constraint rather than by trust in the API. A null phone means a walk-in standing at the counter screen: no verification code was sent, no "order ready" text will go out, and no per-phone cap or blocklist entry can apply to it. The staff screen labels these orders so nobody waits on a text that isn't coming, and `GET /api/orders/[id]` exposes the fact as a `walk_in` boolean — never the number itself. Caps that do apply are cafe-wide and listed in ORDERING-FRAUD-PREVENTION.md.

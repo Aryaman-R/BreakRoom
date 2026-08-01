@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import clsx from "clsx";
 import { Sheet } from "./Sheet";
+import { useKiosk } from "@/components/kiosk/KioskProvider";
 import { cartSubtotal, clearCart, type CartLine } from "@/lib/cart";
 import { formatCents } from "@/lib/money";
 import type { OrderSource } from "@/lib/types";
@@ -10,18 +12,29 @@ import type { OrderSource } from "@/lib/types";
 const RESEND_COOLDOWN_S = 30;
 
 type Phase = "details" | "code" | "placing";
+/** How the customer wants to be reached: a text, or their name called out. */
+type Contact = "phone" | "walkin";
 
 export function CheckoutSheet({
   lines,
   source,
+  allowWalkin,
   onClose,
 }: {
   lines: CartLine[];
   source: OrderSource;
+  /**
+   * Offer "no phone — call my name". True only at the kiosk, and only while
+   * the owner leaves the setting on: the customer is standing at the counter,
+   * which is the whole reason we can reach them without a number.
+   */
+  allowWalkin: boolean;
   onClose: () => void;
 }) {
   const router = useRouter();
+  const { kiosk } = useKiosk();
   const [phase, setPhase] = useState<Phase>("details");
+  const [contact, setContact] = useState<Contact>("phone");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
@@ -33,6 +46,8 @@ export function CheckoutSheet({
 
   useEffect(() => () => clearInterval(timer.current), []);
 
+  const walkIn = allowWalkin && contact === "walkin";
+
   const startCooldown = () => {
     setCooldown(RESEND_COOLDOWN_S);
     clearInterval(timer.current);
@@ -42,12 +57,15 @@ export function CheckoutSheet({
     );
   };
 
+  const requireName = () => {
+    if (name.trim()) return true;
+    setError("Please tell us your name — it's how we call your order.");
+    return false;
+  };
+
   const sendCode = async () => {
     setError(null);
-    if (!name.trim()) {
-      setError("Please tell us your name — it's how we call your order.");
-      return;
-    }
+    if (!requireName()) return;
     setSending(true);
     try {
       const res = await fetch("/api/verify/start", {
@@ -72,6 +90,10 @@ export function CheckoutSheet({
 
   const placeOrder = async () => {
     setError(null);
+    if (!requireName()) return;
+    // Where a rejected order should leave the customer: a walk-in never had a
+    // code step to fall back to.
+    const fallback: Phase = walkIn ? "details" : "code";
     setPhase("placing");
     try {
       const res = await fetch("/api/orders", {
@@ -79,8 +101,9 @@ export function CheckoutSheet({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           customer_name: name.trim(),
-          phone,
-          code,
+          // Omitted entirely for a walk-in — the server reads their absence
+          // as the walk-in path and applies its own caps.
+          ...(walkIn ? {} : { phone, code }),
           source,
           items: lines.map((l) => ({
             menu_item_id: l.menu_item_id,
@@ -96,15 +119,20 @@ export function CheckoutSheet({
         setError(body?.error ?? "Couldn't place the order — please try again.");
         // A spent/expired code can't be reused; stay on the code step so the
         // customer can request a fresh one.
-        setPhase("code");
-        setCode("");
+        setPhase(fallback);
+        if (!walkIn) setCode("");
         return;
       }
       clearCart();
-      router.push(`/order/${body.order_id}`);
+      // The kiosk shows the number and resets itself, so leave nothing behind
+      // for a back gesture to land on. `n` lets the confirmation paint the
+      // order number immediately instead of after a round trip.
+      const to = `/order/${body.order_id}?n=${body.order_number}`;
+      if (kiosk) router.replace(to);
+      else router.push(to);
     } catch {
       setError("Network hiccup — please try again.");
-      setPhase("code");
+      setPhase(fallback);
     }
   };
 
@@ -120,7 +148,7 @@ export function CheckoutSheet({
       <div className="mt-4 space-y-3">
         <div>
           <label htmlFor="co-name" className="text-sm font-medium">
-            Name for the order
+            {walkIn ? "Name we'll call out" : "Name for the order"}
           </label>
           <input
             id="co-name"
@@ -132,29 +160,79 @@ export function CheckoutSheet({
             disabled={phase !== "details"}
           />
         </div>
-        <div>
-          <label htmlFor="co-phone" className="text-sm font-medium">
-            Mobile number
-          </label>
-          <p className="text-xs text-qh-ink-soft">
-            We text you a code now, and &#8220;order ready&#8221; when it&#8217;s up.
-          </p>
-          <input
-            id="co-phone"
-            className="field mt-1"
-            type="tel"
-            inputMode="tel"
-            placeholder="(425) 555-0100"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            maxLength={30}
-            autoComplete="tel"
-            disabled={phase !== "details"}
-          />
-        </div>
+
+        {allowWalkin ? (
+          <fieldset>
+            <legend className="text-sm font-medium">
+              How should we let you know it&#8217;s ready?
+            </legend>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+              <ContactChoice
+                selected={contact === "phone"}
+                disabled={phase !== "details"}
+                onSelect={() => {
+                  setContact("phone");
+                  setError(null);
+                }}
+                title="Text me"
+                detail="We'll send a code now, then a text when it's up."
+              />
+              <ContactChoice
+                selected={contact === "walkin"}
+                disabled={phase !== "details"}
+                onSelect={() => {
+                  setContact("walkin");
+                  setError(null);
+                }}
+                title="Call my name"
+                detail="No phone needed — listen for your name at the counter."
+              />
+            </div>
+          </fieldset>
+        ) : null}
+
+        {walkIn ? null : (
+          <div>
+            <label htmlFor="co-phone" className="text-sm font-medium">
+              Mobile number
+            </label>
+            <p className="text-xs text-qh-ink-soft">
+              We text you a code now, and &#8220;order ready&#8221; when it&#8217;s up.
+            </p>
+            <input
+              id="co-phone"
+              className="field mt-1"
+              type="tel"
+              inputMode="tel"
+              placeholder="(425) 555-0100"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              maxLength={30}
+              autoComplete="tel"
+              disabled={phase !== "details"}
+            />
+          </div>
+        )}
       </div>
 
-      {phase === "details" ? (
+      {walkIn ? (
+        <>
+          <div className="mt-4 rounded-xl border border-qh-accent/30 bg-qh-accent-soft/30 px-4 py-3 text-sm">
+            🔔{" "}
+            <span className="font-medium">
+              Stay nearby — we&#8217;ll call your name and your order number.
+            </span>{" "}
+            Pay at the register when you pick it up.
+          </div>
+          <button
+            className="btn btn-accent btn-lg mt-4 w-full"
+            onClick={placeOrder}
+            disabled={!name.trim() || phase === "placing"}
+          >
+            {phase === "placing" ? "Placing your order…" : "Place order"}
+          </button>
+        </>
+      ) : phase === "details" ? (
         <button
           className="btn btn-primary btn-md mt-4 w-full"
           onClick={sendCode}
@@ -205,6 +283,7 @@ export function CheckoutSheet({
               onClick={() => {
                 setPhase("details");
                 setCode("");
+                setDevCode(null);
                 setError(null);
               }}
             >
@@ -220,5 +299,37 @@ export function CheckoutSheet({
         </p>
       ) : null}
     </Sheet>
+  );
+}
+
+function ContactChoice({
+  selected,
+  disabled,
+  onSelect,
+  title,
+  detail,
+}: {
+  selected: boolean;
+  disabled: boolean;
+  onSelect: () => void;
+  title: string;
+  detail: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      disabled={disabled}
+      aria-pressed={selected}
+      className={clsx(
+        "rounded-xl border px-4 py-3 text-left transition disabled:opacity-60",
+        selected
+          ? "border-qh-sage bg-qh-sage/10"
+          : "border-qh-line hover:border-qh-ink-soft"
+      )}
+    >
+      <span className="block font-medium">{title}</span>
+      <span className="mt-0.5 block text-sm text-qh-ink-soft">{detail}</span>
+    </button>
   );
 }
