@@ -111,3 +111,20 @@ Empty states, loading states, error toasts. Log Twilio failures: a failed *ready
 - [ ] Accept + Ready SMS arrive; status page reflects each within 5s
 - [ ] Two no-shows → third order attempt from that phone is blocked
 - [ ] Staff screen chimes until Accept is tapped
+
+## Kiosk keyboard — on-device checklist
+
+Not part of the Phase 1 definition of done above; the keyboard was built ahead
+of the kiosk hardware (see the roadmap). These need a **real touchscreen** —
+the jsdom component tests cover the logic, but every bug found so far has been
+in touch behaviour that jsdom can only simulate. Run with `?kiosk=on`.
+
+- [ ] Tapping a text box raises the keyboard; the device's own keyboard never appears
+- [ ] Item notes: type a note, tap hide → the sheet stays open, the note survives, and *Add to cart* still adds the item
+- [ ] Checkout: type name, hide, type phone, hide → still on checkout, both fields intact
+- [ ] Hiding the keyboard never closes the dialog it was typing in (the ghost-click regression)
+- [ ] Tapping the same field again after hiding brings the keyboard back
+- [ ] The `?123` / `ABC` layer switch is clearly visible under the cafe's actual lighting
+- [ ] Layouts match the field: phone pad on phone number, decimal pad on prices, `@`/`.com` on email
+- [ ] The focused field is never covered by the keyboard, including inside a scrolled sheet
+- [ ] `?kiosk=off` fully removes it; a customer's own phone is unaffected

@@ -128,6 +128,22 @@
 - `npm run build` — production build succeeds, all routes dynamic as intended
 - Main site: `npm run typecheck` still clean with `ordering/` excluded
 
+## Verification run (2026-08-01, after the kiosk keyboard)
+
+- `npm run lint` — clean
+- `npm run typecheck` — clean
+- `npm test` — 43/43 passing; adds `kiosk` (14, pure caret/value logic) and
+  `kiosk-keyboard` (7, jsdom component tests). The component suite was checked
+  against the *unfixed* code first: with the ghost-click swallow removed the
+  relevant test goes red, so it genuinely pins the bug rather than passing
+  either way.
+- `npm run build` — production build succeeds
+- **Not covered:** no real-device pass. jsdom does not synthesize touch
+  compatibility clicks, so the component suite *simulates* the click the way
+  Chrome is documented to dispatch it. The model matches the reported symptoms
+  but is still a model — the on-device items in the kiosk checklist
+  (`docs/ORDERING-IMPLEMENTATION.md`) are what actually closes this out.
+
 ## Deployment log (updated 2026-07-27)
 
 - **Repo topology:** `BreakRoom` `main` = live site only (Cloudflare Pages);

@@ -19,6 +19,7 @@ Project: **online pickup-ordering system only** for The Breakroom cafe (Bothell,
 - **Statuses are a closed enum:** `new`, `call_to_confirm`, `accepted`, `ready`, `picked_up`, `no_show`, `cancelled`. Enforce legal transitions server-side; reject anything else.
 - **Phones are E.164** — normalize before every store or comparison.
 - **Fraud caps and hours are read from the `settings` table at request time** — never hardcoded.
+- **Don't undo the kiosk keyboard's two constraints** (`components/kiosk/`, mounted globally in the root layout): numeric fields use `inputMode="numeric"`/`"decimal"`, **not `type="number"`** — native number inputs suppress the hint the on-screen keyboard reads to pick a layout, so "restoring" them silently breaks it (parse defensively client-side; the server is still the authority). And anything that hides or unmounts the keyboard must act on `pointerup`, never `pointerdown`, and swallow the compatibility click that follows — otherwise it falls through and presses whatever is underneath. Rationale in `docs/ORDERING-ARCHITECTURE.md`.
 
 ## Stack
 

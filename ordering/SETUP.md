@@ -170,6 +170,14 @@ not-yet-live subdomain — that's the NXDOMAIN error.)
   `https://order.breakroombothell.com/?source=qr` (staff see a QR badge).
 - Consider a Twilio auto-reply on the toll-free number ("This line is
   automated — call us at (425) 419-4231").
+- **Putting a tablet on the counter?** Open the ordering site on that device
+  once with `?kiosk=on` on the end of the URL — e.g.
+  `https://order.breakroombothell.com/?kiosk=on` — and it gains an on-screen
+  keyboard whenever someone taps a text box. Nothing visibly changes until a
+  text box is tapped, and the setting sticks on that device through reloads
+  and restarts. `?kiosk=off` removes it. This is per-device: it does nothing
+  to customers' own phones, so there is no way to leave it switched on for
+  the public by accident. Details in `README.md` → Kiosk mode.
 
 ## Troubleshooting quick table
 
@@ -183,6 +191,8 @@ not-yet-live subdomain — that's the NXDOMAIN error.)
 | `/admin` says "Not an admin" | Login email ≠ `ADMIN_EMAILS` entry (exact string match) |
 | No SMS arrives after Twilio setup | Number unverified (§1.3 pending), or env vars added without redeploy |
 | Env var change seems ignored | Always redeploy — values are baked at build time |
+| Tapped `?kiosk=on` but nothing happened | Expected — the keyboard only appears once a text box is tapped |
+| Kiosk keyboard gone after wiping the tablet / using private browsing | The flag lives in that browser's storage → visit `?kiosk=on` again |
 
 ## Local development
 
