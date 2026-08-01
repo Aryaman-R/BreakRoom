@@ -137,16 +137,18 @@ export function ItemSheet({
       <div className="mt-5 flex items-center justify-between">
         <div className="flex items-center gap-3" aria-label="Quantity">
           <button
-            className="btn btn-quiet h-10 w-10 !rounded-full !p-0 text-lg"
+            className="btn btn-quiet h-11 w-11 !rounded-full !p-0 text-lg"
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+            disabled={quantity <= 1}
             aria-label="Fewer"
           >
             −
           </button>
           <span className="w-6 text-center font-mono">{quantity}</span>
           <button
-            className="btn btn-quiet h-10 w-10 !rounded-full !p-0 text-lg"
+            className="btn btn-quiet h-11 w-11 !rounded-full !p-0 text-lg"
             onClick={() => setQuantity((q) => Math.min(maxQty, q + 1))}
+            disabled={quantity >= maxQty}
             aria-label="More"
           >
             +

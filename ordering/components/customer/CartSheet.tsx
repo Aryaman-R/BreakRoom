@@ -52,9 +52,11 @@ export function CartSheet({
                       &#8220;{line.notes}&#8221;
                     </p>
                   ) : null}
+                  {/* 44px targets: these are the most-tapped controls in the
+                      app, and they sit next to a Remove that can't be undone. */}
                   <div className="mt-2 flex items-center gap-3">
                     <button
-                      className="btn btn-quiet h-8 w-8 !rounded-full !p-0"
+                      className="btn btn-quiet h-11 w-11 !rounded-full !p-0 text-lg"
                       onClick={() => onChangeQty(key, line.quantity - 1)}
                       aria-label={`Fewer ${line.item_name}`}
                     >
@@ -64,8 +66,9 @@ export function CartSheet({
                       {line.quantity}
                     </span>
                     <button
-                      className="btn btn-quiet h-8 w-8 !rounded-full !p-0"
+                      className="btn btn-quiet h-11 w-11 !rounded-full !p-0 text-lg"
                       onClick={() => onChangeQty(key, Math.min(maxQty, line.quantity + 1))}
+                      disabled={line.quantity >= maxQty}
                       aria-label={`More ${line.item_name}`}
                     >
                       +
