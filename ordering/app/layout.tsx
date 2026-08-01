@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Squada_One, DM_Sans, JetBrains_Mono } from "next/font/google";
-import { KioskKeyboard } from "@/components/kiosk/KioskKeyboard";
+import { KioskProvider } from "@/components/kiosk/KioskProvider";
+import { KioskShell } from "@/components/kiosk/KioskShell";
 import "./globals.css";
 
 const squadaOne = Squada_One({
@@ -46,8 +47,10 @@ export default function RootLayout({
       className={`${squadaOne.variable} ${dmSans.variable} ${jetbrains.variable}`}
     >
       <body>
-        {children}
-        <KioskKeyboard />
+        <KioskProvider>
+          {children}
+          <KioskShell />
+        </KioskProvider>
       </body>
     </html>
   );

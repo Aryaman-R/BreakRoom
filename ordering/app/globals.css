@@ -152,6 +152,46 @@ h3 { font-size: clamp(1.2rem, 2vw, 1.5rem); }
   box-shadow: 0 1px 2px rgba(42, 37, 32, 0.04), 0 8px 24px -12px rgba(42, 37, 32, 0.12);
 }
 
+/* Kiosk mode (components/kiosk/KioskProvider adds .kiosk to <html>).
+   Same app, same markup — restyled for a fixed touchscreen a customer walks
+   up to rather than a phone held at reading distance: everything is bigger,
+   and the browser gestures that only ever cause trouble on a shared kiosk
+   (text selection, callout menus, double-tap zoom, rubber-band scroll) are
+   turned off. Nothing here loads on a normal visit. */
+html.kiosk,
+html.kiosk body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+html.kiosk body {
+  font-size: 19px;
+}
+/* …but a customer still needs to select and correct what they typed. */
+html.kiosk input,
+html.kiosk textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+html.kiosk .btn-sm { padding: 10px 18px; font-size: 0.95rem; }
+html.kiosk .btn-md { padding: 14px 26px; font-size: 1.05rem; }
+html.kiosk .btn-lg { padding: 20px 34px; font-size: 1.2rem; }
+html.kiosk .field { padding: 14px 16px; font-size: 1.1rem; }
+
+/* The attract screen's "tap to start" pill — a slow breath, so an idle
+   screen reads as awake without being a distraction in the room. Muted by
+   the reduced-motion block at the end of this file. */
+@keyframes kiosk-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.035); }
+}
+.animate-kiosk-pulse {
+  animation: kiosk-pulse 2.8s ease-in-out infinite;
+}
+
 /* Kiosk virtual keyboard (components/kiosk). While it's visible it sets
    --kiosk-kb-h to its measured height and adds .kiosk-kb-open to <html>,
    and everything below makes room so the keyboard never covers the focused

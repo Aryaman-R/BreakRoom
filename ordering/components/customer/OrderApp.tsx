@@ -5,6 +5,8 @@ import { CartSheet } from "./CartSheet";
 import { CheckoutSheet } from "./CheckoutSheet";
 import { ItemSheet } from "./ItemSheet";
 import { MenuList } from "./MenuList";
+import { KioskAttract } from "@/components/kiosk/KioskAttract";
+import { useKiosk } from "@/components/kiosk/KioskProvider";
 import {
   cartCount,
   cartSubtotal,
@@ -29,6 +31,7 @@ export function OrderApp({
   maxQty: number;
   source: OrderSource;
 }) {
+  const { kiosk, attract, resetToken, endSession } = useKiosk();
   const [cart, setCart] = useState<CartLine[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [activeItem, setActiveItem] = useState<MenuItem | null>(null);
@@ -42,6 +45,16 @@ export function OrderApp({
   useEffect(() => {
     if (hydrated) saveCart(cart);
   }, [cart, hydrated]);
+
+  // A kiosk session ended — idle timeout, "start over", or an order placed.
+  // The provider has already wiped stored state; drop the in-memory copy and
+  // every open sheet so the next customer starts from a blank screen.
+  useEffect(() => {
+    if (resetToken === 0) return;
+    setCart([]);
+    setActiveItem(null);
+    setView(null);
+  }, [resetToken]);
 
   const addLine = (line: CartLine) => {
     setCart((prev) => {
@@ -71,6 +84,8 @@ export function OrderApp({
     setCart((prev) => prev.filter((l) => lineKey(l) !== key));
 
   const count = cartCount(cart);
+  // The kiosk knows what it is; the server only ever sees web-vs-QR.
+  const effectiveSource: OrderSource = kiosk ? "kiosk" : source;
 
   return (
     <div className="min-h-dvh pb-28">
@@ -80,14 +95,29 @@ export function OrderApp({
             <p className="text-xs uppercase tracking-[0.18em] text-qh-accent">
               The Breakroom · Bothell
             </p>
-            <h1 className="text-2xl leading-none">Order ahead.</h1>
+            <h1 className="text-2xl leading-none">
+              {kiosk ? "Order here." : "Order ahead."}
+            </h1>
           </div>
-          <a
-            href="https://breakroombothell.com"
-            className="text-sm text-qh-ink-soft underline underline-offset-2 hover:text-qh-accent"
-          >
-            Main site
-          </a>
+          {kiosk ? (
+            // Never link a kiosk off to another site — there's no back button
+            // on locked-down hardware. Offer the escape hatch that a shared
+            // screen actually needs instead.
+            <button
+              className="btn btn-quiet btn-sm"
+              onClick={endSession}
+              aria-label="Clear this order and start over"
+            >
+              Start over
+            </button>
+          ) : (
+            <a
+              href="https://breakroombothell.com"
+              className="text-sm text-qh-ink-soft underline underline-offset-2 hover:text-qh-accent"
+            >
+              Main site
+            </a>
+          )}
         </div>
       </header>
 
@@ -148,8 +178,14 @@ export function OrderApp({
       ) : null}
 
       {view === "checkout" ? (
-        <CheckoutSheet lines={cart} source={source} onClose={() => setView("cart")} />
+        <CheckoutSheet
+          lines={cart}
+          source={effectiveSource}
+          onClose={() => setView("cart")}
+        />
       ) : null}
+
+      {kiosk && attract ? <KioskAttract open={open} hoursCopy={hoursCopy} /> : null}
     </div>
   );
 }

@@ -1,13 +1,8 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import {
-  applyBackspace,
-  applyInsert,
-  KIOSK_STORAGE_KEY,
-  parseKioskValue,
-} from "@/lib/kiosk";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { applyBackspace, applyInsert } from "@/lib/kiosk";
+import { useKiosk } from "./KioskProvider";
 import {
   VirtualKeyboard,
   type KeyAction,
@@ -16,10 +11,9 @@ import {
 
 // Kiosk-only on-screen keyboard, mounted once in app/layout.tsx.
 //
-// Activation is owner-only and invisible to regular visitors: opening
-// ?kiosk=on once on the kiosk device stores a localStorage flag that keeps it
-// on across reloads; ?kiosk=off clears it. While a text field is focused the
-// keyboard docks to the bottom, publishes its height as --kiosk-kb-h and adds
+// It runs whenever the device is in kiosk mode (see KioskProvider) and is
+// invisible to everyone else. While a text field is focused the keyboard
+// docks to the bottom, publishes its height as --kiosk-kb-h and adds
 // .kiosk-kb-open to <html> (see globals.css), so page content and Sheet
 // dialogs make room instead of being covered; anything still overlapped is
 // scrolled into view.
@@ -125,9 +119,10 @@ function revealAboveKeyboard(el: HTMLElement, keyboardTop: number) {
   if (overflow > 1) window.scrollBy(0, overflow);
 }
 
-function KioskKeyboardManager() {
-  const searchParams = useSearchParams();
-  const [enabled, setEnabled] = useState(false);
+export function KioskKeyboard() {
+  const { kiosk, attract } = useKiosk();
+  // No typing happens behind the "tap to order" screen.
+  const enabled = kiosk && !attract;
   const [target, setTarget] = useState<Editable | null>(null);
   // Bumped per focused field so the keyboard remounts with fresh shift/layer.
   const [targetGen, setTargetGen] = useState(0);
@@ -138,21 +133,6 @@ function KioskKeyboardManager() {
   const kbRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef(0);
   const unswallowRef = useRef<(() => void) | null>(null);
-
-  // ?kiosk=on|off updates the sticky flag; everyone else never sees any of
-  // this because the flag simply isn't set on their device.
-  useEffect(() => {
-    let on = false;
-    try {
-      const change = parseKioskValue(searchParams.get("kiosk"));
-      if (change === "on") localStorage.setItem(KIOSK_STORAGE_KEY, "1");
-      if (change === "off") localStorage.removeItem(KIOSK_STORAGE_KEY);
-      on = localStorage.getItem(KIOSK_STORAGE_KEY) === "1";
-    } catch {
-      // Storage unavailable (privacy mode) — kiosk mode stays off.
-    }
-    setEnabled(on);
-  }, [searchParams]);
 
   const retarget = useCallback((el: Editable | null) => {
     if (targetRef.current === el) return;
@@ -325,15 +305,5 @@ function KioskKeyboardManager() {
       onKey={handleKey}
       containerRef={kbRef}
     />
-  );
-}
-
-export function KioskKeyboard() {
-  // useSearchParams needs a Suspense boundary to keep pages statically
-  // renderable; the keyboard is client-only either way.
-  return (
-    <Suspense fallback={null}>
-      <KioskKeyboardManager />
-    </Suspense>
   );
 }
