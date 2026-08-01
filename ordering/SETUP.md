@@ -172,12 +172,31 @@ not-yet-live subdomain — that's the NXDOMAIN error.)
   automated — call us at (425) 419-4231").
 - **Putting a tablet on the counter?** Open the ordering site on that device
   once with `?kiosk=on` on the end of the URL — e.g.
-  `https://order.breakroombothell.com/?kiosk=on` — and it gains an on-screen
-  keyboard whenever someone taps a text box. Nothing visibly changes until a
-  text box is tapped, and the setting sticks on that device through reloads
-  and restarts. `?kiosk=off` removes it. This is per-device: it does nothing
-  to customers' own phones, so there is no way to leave it switched on for
-  the public by accident. Details in `README.md` → Kiosk mode.
+  `https://order.breakroombothell.com/?kiosk=on` — and it becomes a kiosk: a
+  "tap to order" screen when idle, bigger touch targets, an on-screen
+  keyboard, a big order number after checkout that clears itself, and a
+  60-second idle reset so nobody inherits the last customer's cart. The
+  setting sticks on that device through reloads and restarts, and is
+  per-device: it does nothing to customers' own phones, so there is no way to
+  leave it switched on for the public by accident. Full behaviour in
+  `README.md` → Kiosk mode.
+
+  Three things to decide before it goes out on the floor:
+
+  1. **Set `NEXT_PUBLIC_KIOSK_EXIT_PIN` in Vercel and redeploy.** Five taps in
+     the top-left corner of the kiosk screen open a PIN pad that turns kiosk
+     mode off — that's how staff get to `/staff`, `/admin`, or out of a locked
+     browser. **It defaults to `2468`, which is written in this repo, so pick
+     your own.**
+  2. **Decide about "Call my name."** By default the kiosk lets a customer
+     order without a phone number — they give a name and staff call it at the
+     counter. That's the point of a kiosk over the counter QR code, and those
+     orders show up on `/staff` badged *"Walk-in — call the name."* If you'd
+     rather every order have a number, turn it off in `/admin` → Kiosk
+     walk-ins. The same panel caps how many phoneless orders can be open at
+     once and per hour.
+  3. **Run migration `0004_kiosk_walkin.sql`** if you set the database up
+     before this feature existed. Without it, "Call my name" orders fail.
 
 ## Troubleshooting quick table
 
@@ -191,8 +210,12 @@ not-yet-live subdomain — that's the NXDOMAIN error.)
 | `/admin` says "Not an admin" | Login email ≠ `ADMIN_EMAILS` entry (exact string match) |
 | No SMS arrives after Twilio setup | Number unverified (§1.3 pending), or env vars added without redeploy |
 | Env var change seems ignored | Always redeploy — values are baked at build time |
-| Tapped `?kiosk=on` but nothing happened | Expected — the keyboard only appears once a text box is tapped |
-| Kiosk keyboard gone after wiping the tablet / using private browsing | The flag lives in that browser's storage → visit `?kiosk=on` again |
+| Kiosk mode gone after wiping the tablet / using private browsing | The flag lives in that browser's storage → visit `?kiosk=on` again |
+| Kiosk stuck on "Please order at the counter" | It can't reach the server → check wifi; the screen retries every 20s and clears itself |
+| Kiosk keeps clearing while a customer is still deciding | Idle reset is working as designed (60s + a 15s warning). If the menu genuinely takes longer, that's a menu problem worth hearing about |
+| "Call my name" button missing at the kiosk | `/admin` → Kiosk walk-ins is off, or migration `0004` hasn't been run |
+| "We're catching up on counter orders" at the kiosk | Walk-in cap hit — clear the open walk-ins on `/staff`, or raise the cap in `/admin` |
+| Can't get out of kiosk mode on the tablet | Five taps in the **top-left corner**, then the PIN (`NEXT_PUBLIC_KIOSK_EXIT_PIN`, default `2468`) |
 
 ## Local development
 

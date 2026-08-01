@@ -16,14 +16,17 @@ The rule: every phase adds **surfaces** to the same app and database. If a phase
 
 **Modifier upgrade path, only if needed.** Variants + add-ons + guided notes should cover the real menu. If notes-based choices (bread, sauce, sweetness, side picks) prove error-prone in re-keying, graduate them to proper `modifier_groups` / `modifier_options` tables. That's an additive migration — existing orders' snapshots are untouched.
 
-**Kiosk hardware — still shelved.** Until online payment exists, a kiosk customer still pays at the register, so its only unique audience over the QR code is phoneless walk-ins. When revived, it's a *deployment target*, not a new app:
+**Kiosk hardware — the only part still shelved.** Everything on the software side of the old kiosk plan is now built and shipping in the app; what's left to buy is a screen and a stand:
 
 - Raspberry Pi 4/5 + 10–15" HDMI/USB touchscreen + secured stand (~$250 total)
-- Chromium in `--kiosk` mode pointed at the normal customer page: bigger touch targets, no site nav, checkout by order number only
-- 60-second idle timer wipes the cart; nightly reboot; systemd restarts the browser on crash; "please order at the counter" fallback if offline; hidden 5-tap-corner + PIN staff exit
-- The moment Phase 3 payments ship, this exact hardware becomes true self-checkout with zero changes
+- Chromium in `--kiosk` mode pointed at `https://order.breakroombothell.com/?kiosk=on`
+- Nightly reboot; systemd restarts the browser on crash
 
-**Kiosk keyboard — built ahead of the hardware.** The on-screen keyboard was historically the jankiest part of any Pi kiosk, so it's done and in the app already: see [Kiosk mode](../README.md#kiosk-mode) for how to switch it on. It needs no dedicated route and no hardware — it's a per-device flag that layers a touch keyboard over the existing pages, so a touchscreen without a physical keyboard is already a usable ordering surface. Nothing about it waits on Phase 3.
+That's the whole remaining list. The software half of the original bullet — bigger touch targets, no site nav, a 60-second idle timer that wipes the cart, an out-of-service fallback when offline, a hidden 5-tap-corner + PIN staff exit — is done, along with an attract screen, a self-clearing order-number confirmation, and the phoneless walk-in checkout that was the kiosk's only unique audience in the first place. See [Kiosk mode](../README.md#kiosk-mode).
+
+Two consequences worth stating. First, a **kiosk no longer waits on Phase 3**: it was shelved because "a kiosk customer still pays at the register, so its only unique audience is phoneless walk-ins" — and serving phoneless walk-ins is now a feature, not a gap. Second, none of it needed hardware to build or to use: any tablet in a stand is a kiosk today, which is also the cheapest possible way to find out whether the cafe wants one before spending $250.
+
+The moment Phase 3 payments ship, the same screen becomes true self-checkout with no kiosk-side changes.
 
 ## Phase 3 — only if the owners ask
 

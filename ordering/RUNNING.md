@@ -55,13 +55,29 @@ Leave the Twilio lines empty — that's what turns on dev mode.
 Hours & caps and set Opens `00:00`, Closes `23:59`, Buffer `0` (put it back
 later — the defaults are the cafe's real hours).
 
-4. **Kiosk keyboard** (optional) — load
-   `http://localhost:3100/?kiosk=on` and tap any text field: an on-screen
-   keyboard docks to the bottom and the page makes room for it. The layout
-   changes per field (QWERTY, phone pad, number pad, decimal pad). Turn it
-   back off with `?kiosk=off` — the flag is per-device, in `localStorage`.
+4. **Kiosk mode** (optional) — load `http://localhost:3100/?kiosk=on`. The
+   page becomes a kiosk: a "tap to order" attract screen, bigger targets, and
+   an on-screen keyboard on any text field whose layout follows the field
+   (QWERTY, phone pad, number pad, decimal pad). Worth trying in a browser
+   window rather than a phone emulator, since that's the shape of the real
+   hardware. Things to poke at:
 
-`npm test` runs the 43 unit tests; no database needed.
+   - Add something to the cart and leave the tab alone for a minute — the
+     "Still ordering?" warning appears, then wipes the session.
+   - Check out and pick **"Call my name"** — no phone, no code. You land on
+     the big-number confirmation, which clears itself after 25 seconds.
+   - That order shows on `/staff` badged *"Walk-in — call the name."*
+   - Tap the very top-left corner five times → PIN pad. The dev PIN is `2468`
+     unless you set `NEXT_PUBLIC_KIOSK_EXIT_PIN` in `.env.local`.
+   - Kill your network and wait ~40 seconds → "Please order at the counter."
+
+   Turn it back off with `?kiosk=off` — the flag is per-device, in
+   `localStorage`.
+
+   **"Call my name" 400s?** Run `supabase/migrations/0004_kiosk_walkin.sql`
+   against your local database; it's what makes `orders.phone` nullable.
+
+`npm test` runs the 62 unit tests; no database needed.
 
 ## Current limitations
 

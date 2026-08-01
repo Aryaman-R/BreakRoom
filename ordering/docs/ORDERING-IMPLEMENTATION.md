@@ -112,12 +112,14 @@ Empty states, loading states, error toasts. Log Twilio failures: a failed *ready
 - [ ] Two no-shows → third order attempt from that phone is blocked
 - [ ] Staff screen chimes until Accept is tapped
 
-## Kiosk keyboard — on-device checklist
+## Kiosk mode — on-device checklist
 
-Not part of the Phase 1 definition of done above; the keyboard was built ahead
-of the kiosk hardware (see the roadmap). These need a **real touchscreen** —
-the jsdom component tests cover the logic, but every bug found so far has been
-in touch behaviour that jsdom can only simulate. Run with `?kiosk=on`.
+Not part of the Phase 1 definition of done above; kiosk mode was built ahead of
+the kiosk hardware (see the roadmap). These need a **real touchscreen** — the
+jsdom component tests cover the logic, but every bug found so far has been in
+touch behaviour that jsdom can only simulate. Run with `?kiosk=on`.
+
+**Keyboard**
 
 - [ ] Tapping a text box raises the keyboard; the device's own keyboard never appears
 - [ ] Item notes: type a note, tap hide → the sheet stays open, the note survives, and *Add to cart* still adds the item
@@ -127,4 +129,29 @@ in touch behaviour that jsdom can only simulate. Run with `?kiosk=on`.
 - [ ] The `?123` / `ABC` layer switch is clearly visible under the cafe's actual lighting
 - [ ] Layouts match the field: phone pad on phone number, decimal pad on prices, `@`/`.com` on email
 - [ ] The focused field is never covered by the keyboard, including inside a scrolled sheet
-- [ ] `?kiosk=off` fully removes it; a customer's own phone is unaffected
+
+**Session**
+
+- [ ] Attract screen appears on load and after every reset; one tap starts ordering
+- [ ] Outside ordering hours the attract screen says so, and the menu is still browsable
+- [ ] Half-build an order and walk away: warning at ~60s, wipe at ~75s, back to attract
+- [ ] The idle warning survives a passer-by brushing the screen — only its button dismisses it
+- [ ] "Start over" in the header wipes the cart from any point in the flow
+- [ ] After an order, the number is legible from **the far side of the counter**
+- [ ] The confirmation clears itself; tapping the countdown buys more time but can't stop it
+- [ ] The next customer's menu is fresh — nothing left in the cart, no scroll position kept
+
+**Walk-in**
+
+- [ ] "Call my name" places an order with no phone and no code
+- [ ] It appears on `/staff` badged *"Walk-in — call the name"*
+- [ ] Marking it no-show doesn't threaten to block a phone number
+- [ ] An order over the call-to-confirm amount is refused with a "add a number or order at the counter" message
+- [ ] Turning the toggle off in `/admin` removes the button from the kiosk on the next page load
+
+**Resilience and exit**
+
+- [ ] Pull the network: the kiosk goes out of service within ~40s and recovers on its own
+- [ ] Five taps top-left → PIN pad; the right PIN exits kiosk mode, a wrong one locks out after 5 tries
+- [ ] `?kiosk=off` still works from a device that has a URL bar
+- [ ] A customer's own phone is unaffected by any of it
