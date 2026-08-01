@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
 import {
   countdownSeconds,
   KIOSK_IDLE_MS,
@@ -25,11 +24,19 @@ const ACTIVITY_EVENTS = ["pointerdown", "keydown", "wheel", "touchstart"] as con
 
 export function KioskIdle() {
   const { kiosk, attract, endSession } = useKiosk();
-  const pathname = usePathname();
 
-  // The confirmation screen runs its own, longer countdown — two timers
-  // fighting over the same screen would cut a customer's order number short.
-  const armed = kiosk && !attract && !pathname.startsWith("/order/");
+  // Armed on every route, with no exceptions — this is the backstop, and a
+  // backstop with a hole in it isn't one. An earlier version stood down on
+  // /order/* because the confirmation screen runs its own countdown, which
+  // left exactly one way to strand a kiosk forever: reach /order/<bad-id>,
+  // get the "order not found" screen, and have nothing left that could ever
+  // reset it.
+  //
+  // The two timers don't fight, because the confirmation's is much shorter
+  // (25s vs 60s) and every tap that extends it also resets this one. So this
+  // only ever fires on that screen if the screen is already stuck — which is
+  // precisely when it should.
+  const armed = kiosk && !attract;
 
   const [warning, setWarning] = useState(false);
   const [remaining, setRemaining] = useState(KIOSK_IDLE_WARN_MS);
