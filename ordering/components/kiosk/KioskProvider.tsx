@@ -40,6 +40,16 @@ export type KioskContextValue = {
   resetToken: number;
   /** True while the "tap to order" screen is covering the app. */
   attract: boolean;
+  /**
+   * True only while the attract screen is actually mounted and painting.
+   *
+   * Distinct from `attract`, which is merely the intent to show it. Only
+   * OrderApp renders KioskAttract, so on any other route `attract` could be
+   * true with nothing on screen — see KioskIdle for why that mattered.
+   */
+  attractVisible: boolean;
+  /** Called by KioskAttract on mount/unmount. Nothing else should call it. */
+  setAttractVisible: (visible: boolean) => void;
   /** End the current customer's session: wipe the cart, return to the menu. */
   endSession: () => void;
   /** Clear the attract screen — the next customer has walked up. */
@@ -53,6 +63,8 @@ const KioskContext = createContext<KioskContextValue>({
   ready: false,
   resetToken: 0,
   attract: false,
+  attractVisible: false,
+  setAttractVisible: () => {},
   endSession: () => {},
   beginSession: () => {},
   exitKiosk: () => {},
@@ -70,6 +82,7 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [resetToken, setResetToken] = useState(0);
   const [attract, setAttract] = useState(false);
+  const [attractVisible, setAttractVisible] = useState(false);
 
   // endSession is called from timers; keep it stable by reading the path
   // through a ref instead of taking it as a dependency.
@@ -94,10 +107,26 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
     }
     setKiosk(on);
     setReady(true);
-    // A kiosk that boots into the menu should greet the next customer with
-    // the attract screen, not with wherever the browser last left off. A
-    // deep link (an order confirmation after a crash-restart) is left alone.
-    if (on && pathRef.current === "/") setAttract(true);
+
+    if (on) {
+      // A page load on a kiosk is always the start of a new session, so the
+      // cart cannot be allowed to survive it. Reloads happen for reasons the
+      // previous customer had nothing to do with — Chromium restarting after
+      // an update, staff power-cycling the screen, a crash — and the stored
+      // cart outlived all of them. The attract screen went up looking like a
+      // clean slate, and the next person to tap "start" inherited a stranger's
+      // half-built order and paid for it at the register.
+      //
+      // This is the same invariant endSession() enforces; it just also has to
+      // hold across a process restart.
+      clearCart();
+      setResetToken((t) => t + 1);
+
+      // Greet the next customer with the attract screen rather than wherever
+      // the browser last left off. A deep link (an order confirmation after a
+      // crash-restart) is left alone — it has its own countdown.
+      if (pathRef.current === "/") setAttract(true);
+    }
   }, []);
 
   // Lets CSS restyle the whole app for arm's-length touch use.
@@ -133,8 +162,27 @@ export function KioskProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ kiosk, ready, resetToken, attract, endSession, beginSession, exitKiosk }),
-    [kiosk, ready, resetToken, attract, endSession, beginSession, exitKiosk]
+    () => ({
+      kiosk,
+      ready,
+      resetToken,
+      attract,
+      attractVisible,
+      setAttractVisible,
+      endSession,
+      beginSession,
+      exitKiosk,
+    }),
+    [
+      kiosk,
+      ready,
+      resetToken,
+      attract,
+      attractVisible,
+      endSession,
+      beginSession,
+      exitKiosk,
+    ]
   );
 
   return <KioskContext.Provider value={value}>{children}</KioskContext.Provider>;

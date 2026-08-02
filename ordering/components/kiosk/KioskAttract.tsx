@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useKiosk } from "./KioskProvider";
 
 // The screen a kiosk shows when nobody is using it.
@@ -20,7 +21,15 @@ export function KioskAttract({
   open: boolean;
   hoursCopy: string;
 }) {
-  const { beginSession } = useKiosk();
+  const { beginSession, setAttractVisible } = useKiosk();
+
+  // Tell the provider this screen is genuinely on top. KioskIdle stands down
+  // only while that is true — see the comment there for what went wrong when
+  // it trusted the `attract` intent flag instead.
+  useEffect(() => {
+    setAttractVisible(true);
+    return () => setAttractVisible(false);
+  }, [setAttractVisible]);
 
   return (
     <div className="fixed inset-0 z-[80] bg-qh-bg">

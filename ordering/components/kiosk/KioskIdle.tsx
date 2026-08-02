@@ -23,7 +23,7 @@ import { useKiosk } from "./KioskProvider";
 const ACTIVITY_EVENTS = ["pointerdown", "keydown", "wheel", "touchstart"] as const;
 
 export function KioskIdle() {
-  const { kiosk, attract, endSession } = useKiosk();
+  const { kiosk, attractVisible, endSession } = useKiosk();
 
   // Armed on every route, with no exceptions — this is the backstop, and a
   // backstop with a hole in it isn't one. An earlier version stood down on
@@ -36,7 +36,16 @@ export function KioskIdle() {
   // (25s vs 60s) and every tap that extends it also resets this one. So this
   // only ever fires on that screen if the screen is already stuck — which is
   // precisely when it should.
-  const armed = kiosk && !attract;
+  //
+  // It stands down for the attract screen only while that screen is actually
+  // *mounted*, not merely intended. `attract` is a bare intent flag, but only
+  // OrderApp renders KioskAttract — so on any other route `attract` could be
+  // true with nothing covering the screen, and this disarmed itself against a
+  // fully interactive page. endSession() sets attract before navigating home,
+  // so a navigation that was slow, interrupted, or failed outright left the
+  // kiosk on a live page with no idle timer and no attract screen: stuck
+  // until someone power-cycled it. Keying on what is painted closes that.
+  const armed = kiosk && !attractVisible;
 
   const [warning, setWarning] = useState(false);
   const [remaining, setRemaining] = useState(KIOSK_IDLE_WARN_MS);

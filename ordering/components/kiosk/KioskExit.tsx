@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   KIOSK_EXIT_MAX_ATTEMPTS,
-  KIOSK_EXIT_TAPS,
+  KIOSK_EXIT_PAD_IDLE_MS,
   kioskExitPin,
   NO_TAPS,
   registerTap,
@@ -29,7 +29,7 @@ import { useKiosk } from "./KioskProvider";
 const PAD_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 export function KioskExit() {
-  const { kiosk, exitKiosk } = useKiosk();
+  const { kiosk, resetToken, exitKiosk } = useKiosk();
   const taps = useRef<TapState>(NO_TAPS);
 
   const [pad, setPad] = useState(false);
@@ -43,6 +43,31 @@ export function KioskExit() {
     setWrong(0);
     taps.current = NO_TAPS;
   }, []);
+
+  // Two ways the pad now gets out of a customer's way on its own.
+  //
+  // It sits at z-95, above the idle warning at z-75, so before this the idle
+  // path could not rescue anyone from it: the "still ordering?" dialog
+  // rendered *behind* the pad, and the wipe that followed left the pad still
+  // covering the screen. A customer who found the corner hotspot by accident
+  // — five taps is not many on a touchscreen a child is poking at — was left
+  // facing a "Staff exit" prompt with a Cancel button they had no reason to
+  // trust, and the kiosk stayed that way until staff noticed.
+
+  // 1 · Untouched for a while: fold it away.
+  useEffect(() => {
+    if (!pad) return;
+    const timer = window.setTimeout(closePad, KIOSK_EXIT_PAD_IDLE_MS);
+    return () => window.clearTimeout(timer);
+    // `entry` and `wrong` are dependencies on purpose: every key press
+    // restarts the countdown, so staff mid-entry are never cut off.
+  }, [pad, entry, wrong, closePad]);
+
+  // 2 · The session ended underneath it (idle wipe, "start over", order
+  //     placed). Whatever the customer was doing is over; the pad goes too.
+  useEffect(() => {
+    closePad();
+  }, [resetToken, closePad]);
 
   const onHotspot = useCallback(() => {
     taps.current = registerTap(taps.current, Date.now());
@@ -78,10 +103,16 @@ export function KioskExit() {
 
   const pressDigit = useCallback(
     (digit: string) => {
-      const next = (entry + digit).slice(0, 12);
+      const pin = kioskExitPin();
+      // Truncate to the PIN's own length, not a fixed 12. At 12 a longer
+      // configured PIN could never reach its own length, so the pad accepted
+      // digits forever and auto-submit never fired — staff permanently locked
+      // out of the device with no way back. kioskExitPin() also refuses to
+      // return anything over KIOSK_EXIT_PIN_MAX, so this cannot exceed it.
+      const next = (entry + digit).slice(0, pin.length);
       // Auto-submit once the entry is as long as the configured PIN, so
       // there's no "OK" key to hunt for on a pad you use twice a year.
-      if (next.length >= kioskExitPin().length) submit(next);
+      if (next.length >= pin.length) submit(next);
       else setEntry(next);
     },
     [entry, submit]

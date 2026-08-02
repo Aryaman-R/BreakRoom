@@ -54,6 +54,26 @@ export const KIOSK_EXIT_TAP_GAP_MS = 3_000;
 /** Wrong PINs before the pad locks out. */
 export const KIOSK_EXIT_MAX_ATTEMPTS = 5;
 export const DEFAULT_KIOSK_EXIT_PIN = "2468";
+/**
+ * The staff PIN pad folds itself away after this long untouched.
+ *
+ * A customer who finds the corner hotspot by accident lands on a "Staff exit"
+ * dialog they have no reason to understand. The pad sits at z-95, above the
+ * idle warning at z-75, so the idle path could not rescue them: the warning
+ * rendered *behind* the pad and the wipe left the pad still covering the
+ * screen. Without this the kiosk needed a member of staff to clear it.
+ */
+export const KIOSK_EXIT_PAD_IDLE_MS = 20_000;
+/**
+ * Hard ceiling on PIN entry length, and therefore on a usable exit PIN.
+ *
+ * The pad auto-submits once the entry is as long as the configured PIN. Entry
+ * used to be truncated at a fixed 12 characters, so a PIN of 13 or more could
+ * never reach its own length: the pad would accept digits forever and submit
+ * nothing, locking staff out of their own device permanently.
+ * `kioskExitPin` refuses to return anything longer than this.
+ */
+export const KIOSK_EXIT_PIN_MAX = 12;
 
 export type TapState = { count: number; last: number };
 export const NO_TAPS: TapState = { count: 0, last: 0 };
@@ -71,10 +91,25 @@ export function tapsUnlock(state: TapState): boolean {
 /**
  * The configured exit PIN. Falls back to a documented default so a kiosk is
  * never stranded by a missing env var — SETUP.md tells owners to change it.
+ *
+ * A PIN longer than KIOSK_EXIT_PIN_MAX is unenterable on the pad, so rather
+ * than let a well-meaning long PIN brick the device we refuse it and fall
+ * back to the default. Misconfiguration should cost you a weak PIN, not the
+ * only way out of kiosk mode.
  */
 export function kioskExitPin(): string {
   const configured = (process.env.NEXT_PUBLIC_KIOSK_EXIT_PIN ?? "").trim();
-  return configured || DEFAULT_KIOSK_EXIT_PIN;
+  if (!configured) return DEFAULT_KIOSK_EXIT_PIN;
+  if (configured.length > KIOSK_EXIT_PIN_MAX) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(
+        `[kiosk] NEXT_PUBLIC_KIOSK_EXIT_PIN is ${configured.length} characters; ` +
+          `the pad can hold at most ${KIOSK_EXIT_PIN_MAX}. Falling back to the default PIN.`
+      );
+    }
+    return DEFAULT_KIOSK_EXIT_PIN;
+  }
+  return configured;
 }
 
 export type EditResult = { value: string; caret: number };

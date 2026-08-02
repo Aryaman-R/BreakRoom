@@ -32,7 +32,11 @@ export function CheckoutSheet({
   onClose: () => void;
 }) {
   const router = useRouter();
-  const { kiosk } = useKiosk();
+  const { kiosk, resetToken } = useKiosk();
+  // Read through a ref so an in-flight request can compare against the live
+  // value rather than the one captured when it started.
+  const sessionRef = useRef(resetToken);
+  sessionRef.current = resetToken;
   const [phase, setPhase] = useState<Phase>("details");
   const [contact, setContact] = useState<Contact>("phone");
   const [name, setName] = useState("");
@@ -95,6 +99,14 @@ export function CheckoutSheet({
     // code step to fall back to.
     const fallback: Phase = walkIn ? "details" : "code";
     setPhase("placing");
+    // Which session this order belongs to. A POST can outlive it: the request
+    // hangs, the idle timer wipes the kiosk back to the attract screen, and a
+    // new customer starts ordering — then the old response lands and navigates
+    // *them* to a stranger's confirmation, complete with that person's name
+    // and order number. Anything below that touches shared state checks this
+    // first. The order itself is still placed; it just stops steering a kiosk
+    // that has moved on.
+    const session = sessionRef.current;
     try {
       const res = await fetch("/api/orders", {
         method: "POST",
@@ -115,6 +127,7 @@ export function CheckoutSheet({
         }),
       });
       const body = await res.json().catch(() => null);
+      if (session !== sessionRef.current) return;
       if (!res.ok) {
         setError(body?.error ?? "Couldn't place the order — please try again.");
         // A spent/expired code can't be reused; stay on the code step so the
@@ -131,6 +144,7 @@ export function CheckoutSheet({
       if (kiosk) router.replace(to);
       else router.push(to);
     } catch {
+      if (session !== sessionRef.current) return;
       setError("Network hiccup — please try again.");
       setPhase(fallback);
     }

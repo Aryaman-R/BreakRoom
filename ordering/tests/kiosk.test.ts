@@ -4,6 +4,7 @@ import {
   applyInsert,
   countdownSeconds,
   DEFAULT_KIOSK_EXIT_PIN,
+  KIOSK_EXIT_PIN_MAX,
   KIOSK_EXIT_TAP_GAP_MS,
   KIOSK_EXIT_TAPS,
   kioskExitPin,
@@ -95,9 +96,24 @@ describe("kioskExitPin", () => {
     expect(kioskExitPin()).toBe(DEFAULT_KIOSK_EXIT_PIN);
   });
 
-  it("uses the configured PIN, of any length", () => {
+  it("uses the configured PIN", () => {
     process.env.NEXT_PUBLIC_KIOSK_EXIT_PIN = "907341";
     expect(kioskExitPin()).toBe("907341");
+  });
+
+  it("accepts a PIN exactly at the pad's capacity", () => {
+    const atLimit = "1".repeat(KIOSK_EXIT_PIN_MAX);
+    process.env.NEXT_PUBLIC_KIOSK_EXIT_PIN = atLimit;
+    expect(kioskExitPin()).toBe(atLimit);
+  });
+
+  // The pad auto-submits when the entry reaches the PIN's length. A PIN longer
+  // than the pad can hold could never reach it, so the pad accepted digits
+  // forever and submitted nothing — staff permanently locked out of the
+  // device. A misconfigured PIN should cost a weak PIN, not the only exit.
+  it("refuses a PIN too long to ever be entered", () => {
+    process.env.NEXT_PUBLIC_KIOSK_EXIT_PIN = "1".repeat(KIOSK_EXIT_PIN_MAX + 1);
+    expect(kioskExitPin()).toBe(DEFAULT_KIOSK_EXIT_PIN);
   });
 });
 

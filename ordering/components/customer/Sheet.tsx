@@ -26,6 +26,20 @@ export function Sheet({
 }) {
   const panel = useRef<HTMLDivElement>(null);
 
+  // onClose is read through a ref so it is not an effect dependency.
+  //
+  // Every caller passes an inline arrow, which is a new function on each of
+  // the parent's renders — and the parent re-renders on every keystroke in
+  // checkout, every quantity change in the cart, every option tapped on an
+  // item. With `[onClose]` as the dependency the whole effect tore down and
+  // re-ran each time: the cleanup pushed focus back to the opener behind the
+  // sheet, and the setup then yanked it onto the panel. So focus jumped off
+  // whatever control the customer had just pressed, mid-interaction, over and
+  // over. On the kiosk's on-screen keyboard that meant the caret leaving the
+  // field between characters.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
@@ -38,7 +52,7 @@ export function Sheet({
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (e.key !== "Tab" || !panel.current) return;
@@ -75,7 +89,8 @@ export function Sheet({
       // effect, so the incoming panel still wins the focus.
       if (opener?.isConnected) opener.focus({ preventScroll: true });
     };
-  }, [onClose]);
+    // Mount-only. See the onCloseRef comment above.
+  }, []);
 
   return (
     <div
