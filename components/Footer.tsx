@@ -2,11 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-
-const HOURS = [
-  ["Every day", "9:30 AM – 3:30 PM"],
-];
+import { BUSINESS, HOURS_TABLE, formatDayHours } from "@/lib/business";
+import { useCurrentYear } from "@/components/ui/useLiveClock";
 
 export function Footer() {
   return (
@@ -22,46 +19,68 @@ export function Footer() {
             </p>
           </div>
           <p className="mt-3 max-w-sm text-qh-ink-soft">
-            Coffee and boba by day, comfort food and gatherings by night.
-            Come hungry.
+            {BUSINESS.tagline} Come hungry.
           </p>
-          <Newsletter />
+          <p className="mt-6 text-sm text-qh-ink-soft">
+            Follow along for specials and new drinks:
+          </p>
+          <div className="mt-2 flex gap-3 text-sm">
+            <a
+              className="text-qh-ink underline underline-offset-4 hover:text-qh-accent"
+              href={BUSINESS.social.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram
+            </a>
+            <a
+              className="text-qh-ink underline underline-offset-4 hover:text-qh-accent"
+              href={BUSINESS.social.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Facebook
+            </a>
+          </div>
         </div>
 
+        {/* h2, not h4 — the footer sits on pages whose last heading is an h2,
+            and jumping straight to h4 broke the outline on five of seven. */}
         <div>
-          <h4 className="font-display text-lg mb-3">Hours</h4>
+          <h2 className="font-display text-lg mb-3">Hours</h2>
           <dl className="text-sm font-mono">
-            {HOURS.map(([day, time]) => (
-              <div key={day} className="flex justify-between py-1">
-                <dt className="text-qh-ink-soft">{day}</dt>
-                <dd className="text-qh-ink">{time}</dd>
+            {HOURS_TABLE.map((d) => (
+              <div key={d.label} className="flex justify-between gap-4 py-1">
+                <dt className="text-qh-ink-soft">{d.label.slice(0, 3)}</dt>
+                <dd className={d.open === null ? "text-qh-ink-soft" : "text-qh-ink"}>
+                  {formatDayHours(d)}
+                </dd>
               </div>
             ))}
           </dl>
         </div>
 
         <div>
-          <h4 className="font-display text-lg mb-3">Find us</h4>
+          <h2 className="font-display text-lg mb-3">Find us</h2>
           <address className="not-italic text-sm text-qh-ink-soft leading-7">
-            18916 N Creek Pkwy #101<br />
-            Bothell, WA 98011<br />
-            <a href="tel:+14254194231" className="hover:text-qh-ink">
-              (425) 395&#8209;9316
+            {BUSINESS.address.street}<br />
+            {BUSINESS.address.locality}, {BUSINESS.address.region}{" "}
+            {BUSINESS.address.postalCode}<br />
+            <a href={`tel:${BUSINESS.phone.e164}`} className="hover:text-qh-ink">
+              {BUSINESS.phone.display}
             </a><br />
-            <a href="mailto:thebreakroombothell@gmail.com" className="hover:text-qh-ink">
-              thebreakroombothell@gmail.com
+            <a href={`mailto:${BUSINESS.email}`} className="hover:text-qh-ink">
+              {BUSINESS.email}
             </a>
           </address>
-          <div className="mt-4 flex gap-3 text-qh-ink-soft text-sm">
-            <a className="hover:text-qh-ink" href="https://www.instagram.com/thebreakroombothell" aria-label="Instagram">Instagram</a>
-            <a className="hover:text-qh-ink" href="https://www.facebook.com/people/The-Breakroom/61560259126301/" aria-label="Facebook">Facebook</a>
-          </div>
         </div>
       </div>
 
       <div className="border-t border-qh-line">
         <div className="container-page py-6 flex flex-col md:flex-row justify-between gap-2 text-xs text-qh-ink-soft">
-          <p>© {new Date().getFullYear()} The Breakroom. All rights reserved.</p>
+          <p>
+            © <YearRange /> {BUSINESS.name}. All rights reserved.
+          </p>
           <p>
             <Link href="/visit" className="hover:text-qh-ink">Contact</Link>
             <span className="mx-2">·</span>
@@ -73,40 +92,17 @@ export function Footer() {
   );
 }
 
-function Newsletter() {
-  const [email, setEmail] = useState("");
-  const [done, setDone] = useState(false);
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        // TODO(backend): POST to /api/newsletter
-        setDone(true);
-        setEmail("");
-      }}
-      className="mt-6 max-w-md"
-    >
-      <label htmlFor="newsletter-email" className="text-sm text-qh-ink-soft block mb-2">
-        Slow newsletter — once a month, no noise.
-      </label>
-      <div className="flex flex-col sm:flex-row gap-2">
-        <input
-          id="newsletter-email"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@inbox.com"
-          className="flex-1 min-w-0 rounded-full border border-qh-line bg-qh-bg px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-qh-accent"
-        />
-        <button
-          type="submit"
-          className="w-full sm:w-auto shrink-0 rounded-full bg-qh-ink text-qh-bg px-5 py-2.5 text-sm font-medium hover:bg-qh-accent transition-colors"
-        >
-          {done ? "Thanks ✓" : "Subscribe"}
-        </button>
-      </div>
-    </form>
-  );
+/**
+ * The build year is baked into the HTML; the live year is filled in after
+ * mount. Rendering the frozen year first keeps the server and client markup
+ * identical, so there is no hydration mismatch — and the visible text is only
+ * ever wrong for the few milliseconds before the effect runs, instead of for
+ * the whole of January.
+ */
+function YearRange() {
+  const live = useCurrentYear();
+  // The static HTML carries the build year and the first client render carries
+  // the real one; on Jan 1 those differ, hence suppressHydrationWarning. The
+  // effect then settles it to the true current year on the very next paint.
+  return <span suppressHydrationWarning>{live ?? new Date().getFullYear()}</span>;
 }

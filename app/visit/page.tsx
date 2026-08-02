@@ -3,26 +3,16 @@ import Image from "next/image";
 import { GoogleFormEmbed } from "@/components/booking/GoogleFormEmbed";
 import { MapEmbed } from "@/components/visit/MapEmbed";
 import { Reveal } from "@/components/ui/Reveal";
+import { HoursTable } from "@/components/visit/HoursTable";
+import { BUSINESS, FULL_ADDRESS, hoursSummary } from "@/lib/business";
 
 export const metadata: Metadata = {
   title: "Visit",
-  description: "Hours, address, and directions to The Breakroom in Bothell, WA.",
+  description: `Hours, address, and directions to ${BUSINESS.name} — ${FULL_ADDRESS}. Open ${hoursSummary()}.`,
+  alternates: { canonical: "/visit" },
 };
 
-const HOURS = [
-  { day: "Monday",    hours: "9:30 AM – 3:30 PM" },
-  { day: "Tuesday",   hours: "9:30 AM – 3:30 PM" },
-  { day: "Wednesday", hours: "9:30 AM – 3:30 PM" },
-  { day: "Thursday",  hours: "9:30 AM – 3:30 PM" },
-  { day: "Friday",    hours: "9:30 AM – 3:30 PM" },
-  { day: "Saturday",  hours: "Closed" },
-  { day: "Sunday",    hours: "Closed" },
-];
-
 export default function VisitPage() {
-  // Note: in browser this resolves to a real day; SSR uses server tz.
-  const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
-
   return (
     <div className="container-page py-16 max-w-5xl">
       <header className="max-w-2xl">
@@ -40,36 +30,28 @@ export default function VisitPage() {
 
       <section className="mt-12 grid lg:grid-cols-2 gap-12">
         <Reveal>
-          <h2 className="font-display text-2xl">Hours</h2>
-          <table className="mt-4 w-full text-sm">
-            <tbody>
-              {HOURS.map((h) => {
-                const isToday = h.day === today;
-                return (
-                  <tr
-                    key={h.day}
-                    className={isToday ? "bg-qh-accent-soft/30" : ""}
-                  >
-                    <td className="py-2 px-3 font-medium">{h.day}</td>
-                    <td className="py-2 px-3 font-mono text-right">{h.hours}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <h2 className="font-display text-2xl" id="hours">Hours</h2>
+          <HoursTable />
 
           <h2 className="font-display text-2xl mt-10">Address</h2>
           <address className="not-italic mt-2 text-qh-ink-soft leading-7">
-            18916 N Creek Pkwy #101<br />
-            Bothell, WA 98011
+            {BUSINESS.address.street}<br />
+            {BUSINESS.address.locality}, {BUSINESS.address.region}{" "}
+            {BUSINESS.address.postalCode}
           </address>
           <p className="mt-3 text-sm">
-            <a href="tel:+14254194231" className="text-qh-accent underline underline-offset-2">
-              (425) 395&#8209;9316
+            <a
+              href={`tel:${BUSINESS.phone.e164}`}
+              className="text-qh-accent underline underline-offset-2"
+            >
+              {BUSINESS.phone.display}
             </a>
             <span className="mx-2 text-qh-line">·</span>
-            <a href="mailto:thebreakroombothell@gmail.com" className="text-qh-accent underline underline-offset-2">
-              thebreakroombothell@gmail.com
+            <a
+              href={`mailto:${BUSINESS.email}`}
+              className="text-qh-accent underline underline-offset-2"
+            >
+              {BUSINESS.email}
             </a>
           </p>
 

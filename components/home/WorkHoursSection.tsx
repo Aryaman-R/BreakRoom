@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/ui/Reveal";
+import { hoursSummary } from "@/lib/business";
+import { useOpenState } from "@/components/ui/useLiveClock";
 
 export function WorkHoursSection() {
   return (
@@ -22,7 +24,7 @@ export function WorkHoursSection() {
           <li>· Free Wi-Fi</li>
           <li>· Comfy lounge seating</li>
           <li>· Coffee, boba &amp; shakes</li>
-          <li>· Open every day til 3:30 PM</li>
+          <li>· {hoursSummary()}</li>
         </ul>
       </Reveal>
 
@@ -42,26 +44,50 @@ export function WorkHoursSection() {
   );
 }
 
+/**
+ * The card used to be a hard-coded "Open now" with a pulsing green dot and a
+ * "Kitchen: open" row — displayed at 3 AM on a Sunday just as confidently as
+ * at noon on a Tuesday. It now reflects the real clock in the cafe's timezone,
+ * and renders nothing at all until it knows, so a static build never ships a
+ * claim it cannot back up.
+ */
 function LiveStatusCard() {
+  const status = useOpenState();
+  const reduceMotion = useReducedMotion();
+
+  if (!status) return null;
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ delay: 0.4, duration: 0.6 }}
       className="absolute -bottom-6 left-3 right-3 sm:left-6 sm:right-auto bg-qh-bg-elevated border border-qh-line rounded-2xl shadow-lifted p-4 sm:max-w-[280px]"
     >
       <div className="flex items-center gap-2 text-sm">
-        <span className="h-2.5 w-2.5 rounded-full bg-qh-sage animate-pulse" aria-hidden />
-        <span className="font-medium text-qh-ink">Open now</span>
+        <span
+          className={`h-2.5 w-2.5 rounded-full ${
+            status.isOpen
+              ? "bg-qh-sage motion-safe:animate-pulse"
+              : "bg-qh-ink-soft"
+          }`}
+          aria-hidden
+        />
+        <span className="font-medium text-qh-ink">
+          {status.isOpen ? "Open now" : "Closed"}
+        </span>
       </div>
+      <p className="mt-1 text-xs text-qh-ink-soft">{status.label}</p>
       <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
         <dt className="text-qh-ink-soft">Coffee</dt>
-        <dd className="font-mono text-qh-ink">on</dd>
+        <dd className="font-mono text-qh-ink">{status.isOpen ? "on" : "—"}</dd>
         <dt className="text-qh-ink-soft">Boba</dt>
-        <dd className="font-mono text-qh-ink">yes</dd>
+        <dd className="font-mono text-qh-ink">{status.isOpen ? "yes" : "—"}</dd>
         <dt className="text-qh-ink-soft">Kitchen</dt>
-        <dd className="font-mono text-qh-ink">open</dd>
+        <dd className="font-mono text-qh-ink">
+          {status.isOpen ? "open" : "closed"}
+        </dd>
       </dl>
     </motion.div>
   );

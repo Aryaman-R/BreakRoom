@@ -12,6 +12,16 @@
  */
 
 import { defaultRepo } from "@/lib/db";
+import {
+  BUSINESS,
+  DOORDASH_URL,
+  FULL_ADDRESS,
+  HOURS,
+  MAP_URL,
+  ORDER_AHEAD_URL,
+  formatDayHours,
+  hoursSummary,
+} from "@/lib/business";
 import type { BeansToolName } from "./tools";
 
 export interface AssistantToolCall {
@@ -47,15 +57,12 @@ export async function runToolCall(
     case "get_specials":
       return defaultRepo.getSpecials();
     case "get_hours":
-      return {
-        mon: "9:30 AM – 3:30 PM",
-        tue: "9:30 AM – 3:30 PM",
-        wed: "9:30 AM – 3:30 PM",
-        thu: "9:30 AM – 3:30 PM",
-        fri: "9:30 AM – 3:30 PM",
-        sat: "9:30 AM – 3:30 PM",
-        sun: "9:30 AM – 3:30 PM",
-      };
+      // Read from lib/business so Beans cannot contradict the footer and the
+      // /visit table — it used to answer "open Saturday and Sunday" while both
+      // of those said the weekend was closed.
+      return Object.fromEntries(
+        HOURS.map((d) => [d.label.slice(0, 3).toLowerCase(), formatDayHours(d)])
+      );
     case "check_availability": {
       const date = String(input.date);
       const slots = await defaultRepo.getAvailability(date);
@@ -73,11 +80,7 @@ export async function runToolCall(
       return defaultRepo.getEvent(id);
     }
     case "get_directions":
-      return {
-        address: "18916 N Creek Pkwy #101, Bothell, WA 98011",
-        mapUrl:
-          "https://www.openstreetmap.org/?mlat=47.7763&mlon=-122.2017&zoom=17",
-      };
+      return { address: FULL_ADDRESS, mapUrl: MAP_URL };
     case "escalate_to_human": {
       // TODO(backend): forward to staff Slack/email.
       return { ok: true };
@@ -96,44 +99,55 @@ export async function runAssistantTurn(
   const text = (lastUser?.content ?? "").toLowerCase();
 
   // Naive intent detection — only here so the UI is exercised end-to-end.
+  //
+  // Replies are plain text with real Unicode punctuation. They used to carry
+  // HTML entities (&#8217;), which is why the panel rendered them through
+  // dangerouslySetInnerHTML; that has been removed, so anything returned here
+  // is displayed literally.
   if (text.includes("special")) {
     const result = (await runToolCall("get_specials", {})) as Array<{
       name: string;
       price: number;
     }>;
     return {
-      reply: "Here&#8217;s what we&#8217;re running today:",
+      reply: "Here’s what we’re running today:",
       toolCalls: [{ name: "get_specials", input: {}, result }],
     };
   }
 
   if (text.includes("order")) {
-  return {
-    reply:
-      "There's two ways you can order. Either give us a call at 425-419-4231 or order online through DoorDash by clicking the pink ORDER button on our website. If you don't want the delivery charges on Doordash, click the 'PICKUP' option. ",
-    toolCalls: [],
-  };
-}
+    return {
+      reply:
+        `Two easy ways to order ahead. Our own pickup app is the cheapest — no ` +
+        `delivery fees and no commission: ${ORDER_AHEAD_URL}. You can also use ` +
+        `DoorDash (${DOORDASH_URL.split("?")[0]}) — that link opens on Pickup so ` +
+        `you are not charged for delivery. Or just call us at ${BUSINESS.phone.display}.`,
+      toolCalls: [],
+    };
+  }
 
- if (text.includes("menu") || text.includes("coffee") || text.includes("food")) {
-  const category =
-    text.includes("coffee")
+  if (text.includes("menu") || text.includes("coffee") || text.includes("food")) {
+    // "lunch" was not a category id, so asking about food returned an empty
+    // card. The real ids are in content/menu.json; food maps to the savoury
+    // categories, and with no id at all we show the whole menu.
+    const category = text.includes("coffee")
       ? "coffee"
-      : text.includes("food") || text.includes("lunch")
-      ? "lunch"
+      : text.includes("boba") || text.includes("tea")
+      ? "bubble-tea"
       : undefined;
 
-  const result = await runToolCall("get_menu", { category });
+    const result = await runToolCall("get_menu", { category });
 
-  return {
-    reply: "Here's our menu!",
-    toolCalls: [{ name: "get_menu", input: { category }, result }],
-  };
-}
+    return {
+      reply: category ? "Here’s that part of the menu:" : "Here’s our menu:",
+      toolCalls: [{ name: "get_menu", input: { category }, result }],
+    };
+  }
+
   if (text.includes("hour") || text.includes("open")) {
     const result = await runToolCall("get_hours", {});
     return {
-      reply: "We&#8217;re open all weekdays, 9:30 AM &#8211; 3:30 PM.",
+      reply: `We’re open ${hoursSummary()}. Closed Saturday and Sunday.`,
       toolCalls: [{ name: "get_hours", input: {}, result }],
     };
   }
@@ -145,7 +159,7 @@ export async function runAssistantTurn(
   ) {
     return {
       reply:
-        "Happy to help. What date are you thinking, roughly how many people, and what kind of event? I&#8217;ll check what&#8217;s open.",
+        "Happy to help. What date are you thinking, roughly how many people, and what kind of event? I’ll check what’s open.",
       toolCalls: [],
     };
   }
@@ -153,7 +167,7 @@ export async function runAssistantTurn(
   if (text.includes("where") || text.includes("address") || text.includes("direction")) {
     const result = await runToolCall("get_directions", {});
     return {
-      reply: "We&#8217;re at 18916 N Creek Pkwy #101 in Bothell. Map link below.",
+      reply: `We’re at ${FULL_ADDRESS}. Map link below.`,
       toolCalls: [{ name: "get_directions", input: {}, result }],
     };
   }
