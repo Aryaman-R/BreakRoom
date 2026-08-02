@@ -34,7 +34,7 @@ export function OrderApp({
   allowWalkin: boolean;
   source: OrderSource;
 }) {
-  const { kiosk, attract, resetToken, endSession } = useKiosk();
+  const { kiosk, ready, attract, resetToken, endSession } = useKiosk();
   const [cart, setCart] = useState<CartLine[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [activeItem, setActiveItem] = useState<MenuItem | null>(null);
@@ -102,7 +102,15 @@ export function OrderApp({
               {kiosk ? "Order here." : "Order ahead."}
             </h1>
           </div>
-          {kiosk ? (
+          {/* Nothing here until we know which device this is.
+              `kiosk` is false on the server and on the first client render,
+              because the flag lives in localStorage and cannot be read until
+              after mount — so a kiosk painted the public build first, offering
+              a one-way link off to the marketing site on hardware with no back
+              button. That is precisely what "the kiosk never navigates
+              off-app" exists to prevent. An empty slot for one frame is the
+              honest answer; the header keeps its height either way. */}
+          {!ready ? null : kiosk ? (
             // Never link a kiosk off to another site — there's no back button
             // on locked-down hardware. Offer the escape hatch that a shared
             // screen actually needs instead.

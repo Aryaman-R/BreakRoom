@@ -8,6 +8,10 @@
  * The name is historical — kiosk mode started life as just the on-screen
  * keyboard — and is deliberately unchanged so devices already switched on
  * in the cafe stay switched on across deploys.
+ *
+ * Also hard-coded in the inline script in app/layout.tsx, which applies the
+ * kiosk class before first paint and cannot import this module. Change both
+ * together — though the paragraph above is the reason not to change it.
  */
 export const KIOSK_STORAGE_KEY = "br-kiosk-keyboard";
 
