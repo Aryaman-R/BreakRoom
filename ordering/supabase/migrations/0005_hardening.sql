@@ -145,3 +145,9 @@ revoke execute on function
 create index if not exists orders_walkin_open_idx
   on orders (status)
   where phone is null;
+
+-- PostgREST caches the function signatures it will expose. Supabase normally
+-- reloads on DDL, but ask explicitly so the new 8-argument place_order is
+-- callable the moment this migration finishes rather than whenever the cache
+-- next turns over.
+notify pgrst, 'reload schema';

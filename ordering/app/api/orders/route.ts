@@ -14,6 +14,19 @@ export const dynamic = "force-dynamic";
 // Statuses that count against the one-open-order-per-phone cap.
 const OPEN_STATUSES = ["new", "call_to_confirm", "accepted", "ready"];
 
+/**
+ * Whether an RPC failure means "no function with that signature".
+ *
+ * PGRST202 is PostgREST's code for it; the message check covers older
+ * versions that only report it in prose.
+ */
+function isMissingFunction(err: { code?: string; message?: string }): boolean {
+  return (
+    err.code === "PGRST202" ||
+    /could not find the function|does not exist/i.test(err.message ?? "")
+  );
+}
+
 // The gauntlet, in the order specified by docs/ORDERING-IMPLEMENTATION.md §3:
 // hours → code → blocklist → open-order cap → daily cap → item/variant/addon
 // validity + quantity caps → server-side price recomputation → hard cap /
@@ -305,7 +318,7 @@ export const POST = handleErrors(async (req: NextRequest) => {
   //      under an advisory lock, because the pre-checks above are two separate
   //      reads followed by a write and a concurrent burst sails straight
   //      through them (0005_hardening.sql).
-  const { data: placed, error: placeErr } = await db.rpc("place_order", {
+  let { data: placed, error: placeErr } = await db.rpc("place_order", {
     p_customer_name: body.customer_name,
     p_phone: phone,
     p_status: status,
@@ -315,6 +328,38 @@ export const POST = handleErrors(async (req: NextRequest) => {
     p_max_open_walkins: walkIn ? settings.max_open_walkin_orders : null,
     p_max_walkins_per_hour: walkIn ? settings.max_walkin_per_hour : null,
   });
+
+  // Deploying this code against a database that has not had 0005 applied
+  // would otherwise take ordering down completely: the two cap arguments do
+  // not exist on the old function, and PostgREST answers "function not found"
+  // rather than picking the 6-argument version.
+  //
+  // So fall back to the old shape — but only for orders that have a phone
+  // number. A walk-in on the old function would be inserted with *no* cap
+  // enforcement at all, and quietly weakening a fraud control is worse than
+  // refusing the order, so walk-ins wait until the migration is applied.
+  if (placeErr && isMissingFunction(placeErr)) {
+    console.error(
+      "[orders] place_order is missing its walk-in cap arguments — " +
+        "apply supabase/migrations/0005_hardening.sql. Falling back."
+    );
+    if (walkIn) {
+      return apiError(
+        503,
+        "walkin_unavailable",
+        "We can't take counter orders without a number right now — please order at the register."
+      );
+    }
+    ({ data: placed, error: placeErr } = await db.rpc("place_order", {
+      p_customer_name: body.customer_name,
+      p_phone: phone,
+      p_status: status,
+      p_total_cents: priced.total_cents,
+      p_source: body.source,
+      p_items: priced.lines,
+    }));
+  }
+
   if (placeErr) {
     // The transaction refused it. Give back the code so the customer is not
     // punished for losing a race they could not see.
