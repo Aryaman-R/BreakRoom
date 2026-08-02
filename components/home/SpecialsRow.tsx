@@ -18,7 +18,7 @@ export function SpecialsRow({ specials }: { specials: Special[] }) {
             </h2>
           </div>
           <p className="text-qh-ink-soft max-w-md">
-            Recipes we've recently added to the menu. 
+            Recipes we’ve recently added to the menu.
           </p>
         </div>
         <div className="hand-divider mt-8" />

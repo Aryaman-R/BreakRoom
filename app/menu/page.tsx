@@ -48,7 +48,7 @@ export default async function MenuPage() {
   </div>
 
   <p className="mt-2 text-qh-ink-soft max-w-xl">
-    Fresh favorites we've recently added to the menu.
+    Fresh favorites we’ve recently added to the menu.
   </p>
 
   <div className="mt-8 grid gap-8 md:grid-cols-2">

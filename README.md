@@ -172,11 +172,25 @@ export async function send(message: EmailMessage): Promise<{ ok: true }> {
 }
 ```
 
-Booking confirmation + staff notification messages are pre-built in `lib/email.ts` and dispatched by the bookings route. Plug in a real transport and they go live.
+Bookings go through an embedded Google Form (`components/booking/GoogleFormEmbed.tsx`),
+which is what a static site can do without a backend. The earlier `lib/email.ts`
+and `lib/validation.ts` — a Resend/Postmark stub and a zod schema for a
+server-rendered booking form — were removed: nothing imported them, and there is
+no runtime that could have executed them. They are in git history if that
+changes.
 
 ### Anthropic Claude (Beans)
 
-The assistant endpoint at `app/api/assistant/route.ts` currently calls `runAssistantTurn`, a deterministic mock. The live wiring is sketched in the route's docblock — instantiate `Anthropic`, pass the system prompt from `lib/assistant/system-prompt.ts` and tool definitions from `lib/assistant/tools.ts`, loop on `tool_use` blocks calling `runToolCall` from `lib/assistant/handlers.ts`, and stream tokens over SSE.
+Beans runs **entirely in the browser**. `runAssistantTurn` in
+`lib/assistant/handlers.ts` is a deterministic mock that pattern-matches intents
+and calls `runToolCall` locally; there is no `app/api/assistant/route.ts`, and a
+static export could not host one.
+
+Going live means either adding a real backend somewhere else and pointing the
+panel at it, or moving off `output: "export"` entirely. Do not call the
+Anthropic API from the browser — that would ship the API key to every visitor.
+The system prompt and tool definitions are ready in
+`lib/assistant/system-prompt.ts` and `lib/assistant/tools.ts`.
 
 ### Map
 
@@ -225,14 +239,38 @@ First Load JS shared by all   ~87 KB   (budget: 150 KB)
 
 ## Deployment
 
-Standard Next.js — designed for Vercel:
+**This site is a static export.** `next.config.mjs` sets `output: "export"`, so
+`next build` produces a folder of plain HTML/CSS/JS in `out/` and there is no
+server at runtime. That rules out API routes, server actions, middleware,
+dynamic rendering, ISR, and next/image optimization — if you add any of them the
+build will fail, or worse, silently not run.
+
+It deploys to **Cloudflare Pages**:
 
 1. Push to GitHub
-2. Import the project on [Vercel](https://vercel.com)
-3. Set environment variables in the dashboard
-4. Deploy
+2. Build command `npm run build`, output directory `out`
+3. Set the environment variables below — they are inlined **at build time**, so
+   changing one means rebuilding, not just restarting
 
-Database can be hosted separately (Supabase, Neon, RDS). The API route handlers run on the Node.js runtime — set `export const runtime = "nodejs"` is already in place where needed.
+### Required environment variables
+
+| Variable | Why it matters |
+| --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin. Feeds `metadataBase`, so every `og:image`, canonical URL, and the JSON-LD `@id` derive from it. If it is unset the build falls back to `https://breakroombothell.com`. Getting this wrong breaks every link preview. |
+| `NEXT_PUBLIC_ORDER_URL` | Overrides the order-ahead app URL used by the nav, the hero CTA, and `/online-order`. Defaults to `https://order.breakroombothell.com` in production and `http://localhost:3100` in `next dev`. Point it at a preview deploy when testing. |
+| `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY` | Optional. The `/visit` map falls back to a keyless embed without it. Restrict by HTTP referrer before shipping. |
+
+The ordering app in [`ordering/`](./ordering) is a **separate application** with
+its own deployment (Vercel), its own environment, and its own database. It is
+not built or deployed by this project. See [`ordering/README.md`](./ordering/README.md).
+
+### Business facts live in one file
+
+Hours, phone number, address, and social links are defined once in
+[`lib/business.ts`](./lib/business.ts) and read from there by the footer, the
+`/visit` page, the homepage status card, the Beans assistant, and the JSON-LD.
+Change them there — not in a component. `app/robots.ts` and `app/sitemap.ts`
+render to static files at build time.
 
 ---
 
