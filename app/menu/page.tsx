@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { defaultRepo } from "@/lib/db";
 import { MenuView } from "@/components/menu/MenuView";
 import { PhotoGallery } from "@/components/ui/PhotoGallery";
 
 const PRINTED_MENU = [
-  { src: "/menu/printed-2.png", alt: "Printed menu — rice bowls, breakfast, bubble tea, and beverages.", w: 2000, h: 1545 },
-  { src: "/menu/printed-1.png", alt: "Printed menu — sandwiches, sides, and specials.", w: 2000, h: 1545 }
+  { src: "/menu/printed-2.jpg", alt: "Printed menu — rice bowls, breakfast, bubble tea, and beverages.", w: 2000, h: 1545 },
+  { src: "/menu/printed-1.jpg", alt: "Printed menu — sandwiches, sides, and specials.", w: 2000, h: 1545 }
   //{ src: "/photos/menu-board-1.jpg", alt: "In-store menu board — sandwiches, sides, beverages.", w: 640, h: 480 },
   //{ src: "/photos/menu-board-2.jpg", alt: "In-store menu board — specials, burgers, rice bowls.", w: 640, h: 480 },
   //{ src: "/photos/bubble-tea.jpg", alt: "Bubble tea flavors and toppings sign.", w: 480, h: 640, fit: "contain" as const },
@@ -14,7 +15,8 @@ const PRINTED_MENU = [
 export const metadata: Metadata = {
   title: "Menu",
   description:
-    "Sandwiches, rice bowls, wings & yakisoba, burgers, bubble tea, shakes, and coffee from The Breakroom.",
+    "Sandwiches, rice bowls, wings & yakisoba, burgers, bubble tea, shakes, and coffee from The Breakroom in Bothell, WA.",
+  alternates: { canonical: "/menu" },
 };
 
 export default async function MenuPage() {
@@ -52,9 +54,16 @@ export default async function MenuPage() {
   <div className="mt-8 grid gap-8 md:grid-cols-2">
     {/* Item 1 */}
     <article className="rounded-2xl border border-qh-line overflow-hidden bg-white">
-      <img
-        src="menu/butter_chicken.jpeg"
-        alt="Butter Chicken Rice Bowl"
+      {/* Absolute src. These were relative ("menu/…"), which resolves against
+          the current directory — fine at /menu, a 404 at /menu/ (the form the
+          static export actually serves, and the form Next's own trailing-slash
+          handling produces). */}
+      <Image
+        src="/menu/butter_chicken.jpeg"
+        alt="Butter chicken rice bowl — tomato curry with chicken, rice, and sides."
+        width={1200}
+        height={900}
+        sizes="(max-width: 768px) 100vw, 50vw"
         className="aspect-[4/3] w-full object-cover"
       />
 
@@ -70,10 +79,16 @@ export default async function MenuPage() {
 
     {/* Item 2 */}
     <article className="rounded-2xl border border-qh-line overflow-hidden bg-white">
-      <img
-        src="menu/chicken_wings.jpg"
-        alt="Chicken Wings"
-        className="aspect-[4/3] w-full object-cover object-top-left"
+      {/* `object-top-left` is not a Tailwind class — it silently generated
+          nothing, so the intended crop never applied. The real utility for the
+          top-left origin is `object-left-top`. */}
+      <Image
+        src="/menu/chicken_wings.jpg"
+        alt="Crispy chicken wings tossed in sauce."
+        width={962}
+        height={1525}
+        sizes="(max-width: 768px) 100vw, 50vw"
+        className="aspect-[4/3] w-full object-cover object-left-top"
       />
 
       <div className="p-5">
