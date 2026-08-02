@@ -3,11 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { BookPartyButton } from "./BookPartyButton";
 import { AssistantTrigger } from "./assistant/AssistantTrigger";
 import { useNavBackdrop } from "./useNavBackdrop";
+import { DOORDASH_URL, ORDER_AHEAD_URL } from "@/lib/business";
+import { useFocusTrap } from "./ui/useFocusTrap";
 import clsx from "clsx";
 
 const TABS = [
@@ -18,19 +20,10 @@ const TABS = [
   { href: "/events", label: "Events" },
 ];
 
-// DoorDash storefront — shared between the desktop nav button and the mobile drawer.
-const ORDER_URL =
-  "https://www.doordash.com/store/the-breakroom-bothell-45695059/111526546/?cursor=eyJzZWFyY2hfaXRlbV9jYXJvdXNlbF9jdXJzb3IiOnsicXVlcnkiOiJUaGUgQnJlYWtyb29tIiwiaXRlbV9pZHMiOltdLCJzZWFyY2hfdGVybSI6InRoZSBicmVha3Jvb20iLCJ2ZXJ0aWNhbF9pZCI6LTk5OSwidmVydGljYWxfbmFtZSI6ImFsbCIsInF1ZXJ5X2ludGVudCI6IlNUT1JFX1JYIn0sInN0b3JlX3ByaW1hcnlfdmVydGljYWxfaWRzIjpbMSwxMTAwMzcsMTEwMDQ1LDExMDA1MiwxMTAwNTUsMTEwMDYyLDRdfQ==&pickup=false";
-
-// Order-ahead app (this repo's own ordering system) — a separate origin from
-// the marketing site. Production builds default to the ordering subdomain;
-// `next dev` defaults to the local dev server. NEXT_PUBLIC_ORDER_URL
-// overrides both (e.g. point a preview build at a *.vercel.app URL).
-const ORDER_AHEAD_URL =
-  process.env.NEXT_PUBLIC_ORDER_URL ||
-  (process.env.NODE_ENV === "development"
-    ? "http://localhost:3100"
-    : "https://order.breakroombothell.com");
+// Both order links now live in lib/business.ts. The DoorDash URL there ends in
+// pickup=true — it used to force pickup=false, which dropped every customer
+// arriving from the cafe's own site into delivery mode and showed them
+// delivery fees for a store they were about to walk into.
 
 export function Navigation() {
   const pathname = usePathname() ?? "/";
@@ -96,6 +89,9 @@ export function Navigation() {
                 <Link
                   key={tab.href}
                   href={tab.href}
+                  // The active tab was signalled only by an animated underline,
+                  // which assistive tech cannot see.
+                  aria-current={active ? "page" : undefined}
                   className={clsx(
                     "relative px-3 py-2 text-sm transition-colors",
                     dark
@@ -138,17 +134,17 @@ export function Navigation() {
           </Link>
 
           <Link
-            href={ORDER_URL}
+            href={DOORDASH_URL}
             target="_blank"
             rel="noopener noreferrer"
             className={clsx(
-              "hidden sm:inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-medium transition-colors",
+              "hidden lg:inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-medium transition-colors border",
               dark
-                ? "bg-ah-electric text-black hover:bg-ah-electric/90"
-                : "bg-qh-accent text-white hover:bg-qh-accent/90"
+                ? "border-ah-cream/30 text-ah-cream hover:bg-ah-cream/10"
+                : "border-qh-line text-qh-ink hover:bg-qh-line/40"
             )}
           >
-            Order
+            DoorDash
           </Link>
 
           <div className="hidden sm:block">
@@ -241,6 +237,12 @@ function MobileDrawer({
   dark: boolean;
   onClose: () => void;
 }) {
+  const drawerRef = useRef<HTMLElement>(null);
+  // Keeps Tab inside the drawer while it is open and hands focus back to the
+  // hamburger when it closes; previously it landed on <body>, so the next Tab
+  // started again from the top of the document.
+  useFocusTrap(drawerRef, open, onClose);
+
   return (
     <AnimatePresence>
       {open && [
@@ -258,6 +260,7 @@ function MobileDrawer({
         // Slide-in sidebar from the right.
         <motion.aside
           key="drawer"
+          ref={drawerRef}
           initial={{ x: "100%" }}
           animate={{ x: 0 }}
           exit={{ x: "100%" }}
@@ -304,6 +307,7 @@ function MobileDrawer({
                   <Link
                     href={tab.href}
                     onClick={onClose}
+                    aria-current={active ? "page" : undefined}
                     className={clsx(
                       "block py-4 font-display text-2xl tracking-tightish border-b",
                       dark ? "border-ah-cream/12" : "border-qh-line",
@@ -340,15 +344,15 @@ function MobileDrawer({
               Order Ahead ↗
             </Link>
             <Link
-              href={ORDER_URL}
+              href={DOORDASH_URL}
               target="_blank"
               rel="noopener noreferrer"
               onClick={onClose}
               className={clsx(
-                "inline-flex items-center justify-center px-5 py-3.5 rounded-full text-sm font-medium transition-colors",
+                "inline-flex items-center justify-center px-5 py-3.5 rounded-full text-sm font-medium transition-colors border",
                 dark
-                  ? "bg-ah-electric text-black hover:bg-ah-electric/90"
-                  : "bg-qh-accent text-white hover:bg-qh-accent/90"
+                  ? "border-ah-cream/30 text-ah-cream hover:bg-ah-cream/10"
+                  : "border-qh-line text-qh-ink hover:bg-qh-line/40"
               )}
             >
               Order on DoorDash ↗

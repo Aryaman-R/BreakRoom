@@ -3,9 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import { BookPartyButton } from "@/components/BookPartyButton";
-import clsx from "clsx";
+import { ORDER_AHEAD_URL } from "@/lib/business";
 
 
 const HEADLINE = "Coffee, boba, and good food — all day.";
@@ -25,32 +25,38 @@ export function Hero() {
     <section ref={ref} className="relative pt-10 sm:pt-16 pb-24">
       <div className="container-page grid lg:grid-cols-12 gap-8 lg:gap-14 items-start">
         <div className="lg:col-span-6 relative z-[2]">
+          {/* The words are separated by real space text nodes rather than by an
+              `mr-` gap, and there is no sr-only duplicate. Previously the h1's
+              text content read "Coffee, boba, and good food — all day." followed
+              immediately by "Coffee,boba,andgoodfood—allday." — the sr-only copy
+              plus the visible words, which carried no whitespace between them.
+              That concatenation is what a crawler indexed as the page's H1. */}
           <h1 className="font-display tracking-tighter2 text-qh-ink">
-            <span className="sr-only">{HEADLINE}</span>
             {words.map((w, i) => {
               const italic = i === 3;
               return (
-                <span
-                  key={i}
-                  aria-hidden="true"
-                  // padding + negative margin gives the overflow-hidden box
-                  // breathing room on both sides so italic letterforms don't
-                  // clip on the left edge, without changing visible spacing.
-                  className="inline-block overflow-hidden align-bottom mr-[0.18em] px-[0.12em] -mx-[0.12em] pb-[0.05em]"
-                >
-                  <motion.span
-                    initial={{ y: "110%" }}
-                    animate={{ y: "0%" }}
-                    transition={{
-                      delay: 0.05 * i,
-                      duration: 0.7,
-                      ease: [0.2, 0.7, 0.2, 1],
-                    }}
-                    className={`inline-block ${italic ? "italic text-qh-accent" : ""}`}
+                <Fragment key={i}>
+                  <span
+                    // padding + negative margin gives the overflow-hidden box
+                    // breathing room on both sides so italic letterforms don't
+                    // clip on the left edge, without changing visible spacing.
+                    className="inline-block overflow-hidden align-bottom px-[0.12em] -mx-[0.12em] pb-[0.05em]"
                   >
-                    {w}
-                  </motion.span>
-                </span>
+                    <motion.span
+                      initial={{ y: "110%" }}
+                      animate={{ y: "0%" }}
+                      transition={{
+                        delay: 0.05 * i,
+                        duration: 0.7,
+                        ease: [0.2, 0.7, 0.2, 1],
+                      }}
+                      className={`inline-block ${italic ? "italic text-qh-accent" : ""}`}
+                    >
+                      {w}
+                    </motion.span>
+                  </span>
+                  {i < words.length - 1 ? " " : null}
+                </Fragment>
               );
             })}
           </h1>
@@ -61,7 +67,7 @@ export function Hero() {
             transition={{ delay: 0.7, duration: 0.6 }}
             className="mt-6 max-w-md text-qh-ink-soft text-lg"
           >
-            By day it&#8217;s coffee, bubble tea, and Asian-American comfort food.
+            By day it’s coffee, bubble tea, and Asian-American comfort food.
             In the evening the room opens up for dinners, gatherings, and private events.
           </motion.p>
 
@@ -81,17 +87,20 @@ export function Hero() {
               </svg>
             </Link>
 
+            {/* The homepage's only ordering CTA used to be `hidden sm:inline-flex`
+                — invisible on phones, which is most of the traffic for a cafe —
+                and it pointed at DoorDash rather than the cafe's own app, so
+                every order it won paid a commission. Now it is visible at every
+                width and goes to the order-ahead app first. */}
             <Link
-            href="https://www.doordash.com/store/the-breakroom-bothell-45695059/111526546/?cursor=eyJzZWFyY2hfaXRlbV9jYXJvdXNlbF9jdXJzb3IiOnsicXVlcnkiOiJUaGUgQnJlYWtyb29tIiwiaXRlbV9pZHMiOltdLCJzZWFyY2hfdGVybSI6InRoZSBicmVha3Jvb20iLCJ2ZXJ0aWNhbF9pZCI6LTk5OSwidmVydGljYWxfbmFtZSI6ImFsbCIsInF1ZXJ5X2ludGVudCI6IlNUT1JFX1JYIn0sInN0b3JlX3ByaW1hcnlfdmVydGljYWxfaWRzIjpbMSwxMTAwMzcsMTEwMDQ1LDExMDA1MiwxMTAwNTUsMTEwMDYyLDRdfQ==&pickup=false"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={clsx(
-                "hidden sm:inline-flex items-center justify-center px-5 py-3.5 rounded-full text-sm font-medium transition-colors", "bg-ah-electric text-black hover:bg-ah-electric/90", "bg-qh-accent text-white hover:bg-qh-accent/90"
-              )}
-          >
-          Order
-          </Link>
-            
+              href={ORDER_AHEAD_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-5 py-3.5 rounded-full text-sm font-medium transition-colors bg-qh-accent text-white hover:bg-qh-accent/90"
+            >
+              Order ahead ↗
+            </Link>
+
             <BookPartyButton size="md" />
           </motion.div>
         </div>
