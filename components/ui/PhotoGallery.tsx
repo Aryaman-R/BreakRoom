@@ -46,8 +46,12 @@ export function PhotoGallery({
     [photos.length]
   );
 
+  // Whether the lightbox is open at all — as opposed to *which* photo it is
+  // showing. The effect below must not re-run when only the index changes.
+  const isOpen = active !== null;
+
   useEffect(() => {
-    if (active === null) return;
+    if (!isOpen) return;
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -84,7 +88,13 @@ export function PhotoGallery({
       // Restore focus to the tile that opened the lightbox.
       openerRef.current?.focus();
     };
-  }, [active, close, step]);
+    // Depends on `isOpen`, not on `active`. Keyed on `active`, every arrow-key
+    // press changed the index, which tore the effect down (restoring focus to
+    // the tile behind the lightbox) and immediately set it up again (pulling
+    // focus onto the Close button). Stepping through photos therefore yanked
+    // focus to Close on every single step, and the next Arrow press was
+    // delivered to a button that had just moved out from under the user.
+  }, [isOpen, close, step]);
 
   return (
     <>

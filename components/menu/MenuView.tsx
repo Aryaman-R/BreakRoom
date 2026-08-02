@@ -32,6 +32,11 @@ export function MenuView({ categories }: { categories: MenuCategory[] }) {
       .filter((cat) => cat.items.length > 0);
   }, [filter, categories]);
 
+  const itemCount = useMemo(
+    () => filtered.reduce((n, cat) => n + cat.items.length, 0),
+    [filtered]
+  );
+
   return (
     <div className="mt-10 grid lg:grid-cols-12 gap-10">
       <aside className="lg:col-span-3">
@@ -43,6 +48,16 @@ export function MenuView({ categories }: { categories: MenuCategory[] }) {
       </aside>
 
       <div className="lg:col-span-9">
+        {/* Changing a filter silently rewrote the list. This announces the new
+            result count so a screen-reader user gets confirmation that their
+            press did something, and how much is left. */}
+        <p aria-live="polite" className="sr-only">
+          {filter === "all"
+            ? `Showing the whole menu: ${itemCount} items.`
+            : `Filtered to ${FILTERS.find((f) => f.id === filter)?.label}: ${itemCount} ${
+                itemCount === 1 ? "item" : "items"
+              } in ${filtered.length} ${filtered.length === 1 ? "category" : "categories"}.`}
+        </p>
         <LayoutGroup id="menu-items">
           <AnimatePresence mode="popLayout" initial={false}>
             {filtered.map((cat) => (
@@ -149,9 +164,16 @@ function FilterToggle({
   value: Filter;
   onChange: (v: Filter) => void;
 }) {
+  // Exactly one filter is ever applied, so this is a radio group, not a row of
+  // unrelated buttons. Before, the selected filter was conveyed only by a
+  // colour swap: assistive tech was told nothing about which one was active,
+  // or even that the buttons were alternatives to each other.
   return (
-    <div>
-      <p className="text-xs uppercase tracking-[0.18em] text-qh-ink-soft mb-3">
+    <div role="radiogroup" aria-labelledby="menu-filter-label">
+      <p
+        id="menu-filter-label"
+        className="text-xs uppercase tracking-[0.18em] text-qh-ink-soft mb-3"
+      >
         Show me only
       </p>
       <div className="flex flex-wrap gap-1.5">
@@ -161,9 +183,12 @@ function FilterToggle({
             <button
               key={f.id}
               type="button"
+              role="radio"
+              aria-checked={active}
               onClick={() => onChange(f.id)}
               className={clsx(
                 "px-3 py-1 text-xs rounded-full border transition-colors",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-qh-accent focus-visible:ring-offset-2",
                 active
                   ? "bg-qh-ink text-qh-bg border-qh-ink"
                   : "border-qh-line text-qh-ink-soft hover:text-qh-ink"

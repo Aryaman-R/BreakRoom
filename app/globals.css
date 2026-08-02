@@ -198,9 +198,50 @@ body[data-mode="after-hours"] h3 {
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'><text y='20' font-size='20'>%E2%9C%A8</text></svg>") 6 6, pointer;
 }
 
+/*
+ * Keeps the label readable while the conic gradient is showing.
+ *
+ * .book-btn__bg sits at inset:-2px with z-index:-1. Because .book-btn sets
+ * `isolation: isolate` it forms a stacking context, so that layer paints ON
+ * TOP of the button's own dark background rather than behind it — meaning on
+ * hover the cream label sat directly on the gradient's lime and mint stops at
+ * about 1.13:1. Unreadable, on the site's primary call to action, in exactly
+ * the two states a person is most likely to be in when about to click it.
+ *
+ * This ::after is also z-index:-1 but comes later in paint order, so it covers
+ * the gradient across the button's own box while leaving the 2px bleed to show
+ * as a glowing ring. The label ends up on solid --ah-bg: about 13:1.
+ */
+.book-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--ah-bg);
+  opacity: 0;
+  transition: opacity 320ms ease;
+  pointer-events: none;
+}
+
+.book-btn:hover::after,
+.book-btn:focus-visible::after {
+  opacity: 1;
+}
+
+/*
+ * Electric lime on the cream page background is 1.08:1 — the focus ring was
+ * effectively invisible for keyboard users on every light page. Ink on light,
+ * lime on the dark after-hours surface; both clear the 3:1 non-text minimum.
+ */
 .book-btn:focus-visible {
-  outline: 3px solid var(--ah-electric);
-  outline-offset: 2px;
+  outline: 3px solid var(--qh-ink);
+  outline-offset: 3px;
+}
+
+body[data-mode="after-hours"] .book-btn:focus-visible,
+[data-dark] .book-btn:focus-visible {
+  outline-color: var(--ah-electric);
 }
 
 .book-btn:active { transform: scale(0.96); }

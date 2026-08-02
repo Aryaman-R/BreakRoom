@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ToolResultCard } from "./ToolResultCard";
 import { runAssistantTurn } from "@/lib/assistant/handlers";
+import { useFocusTrap } from "@/components/ui/useFocusTrap";
 
 interface Message {
   role: "user" | "assistant";
@@ -15,7 +16,8 @@ interface Props {
   onClose: () => void;
 }
 
-const STARTER = "Hi — I&#8217;m Beans. Ask me about the menu, hours, or hosting a party. I&#8217;ll look things up rather than guess.";
+const STARTER =
+  "Hi — I’m Beans. Ask me about the menu, hours, or hosting a party. I’ll look things up rather than guess.";
 
 export function AssistantPanel({ onClose }: Props) {
   const [messages, setMessages] = useState<Message[]>([
@@ -27,9 +29,11 @@ export function AssistantPanel({ onClose }: Props) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Trap focus + Escape to close
+  // Really trap focus now — the comment used to claim this and only bound
+  // Escape. Escape stays on window so it works even if focus has drifted out.
+  useFocusTrap(panelRef, true, onClose);
+
   useEffect(() => {
-    inputRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
@@ -69,7 +73,7 @@ export function AssistantPanel({ onClose }: Props) {
         {
           role: "assistant",
           content:
-            "Hm — I couldn&#8217;t reach the kitchen just now. Try again in a moment?",
+            "Hm — I couldn’t reach the kitchen just now. Try again in a moment?",
         },
       ]);
     } finally {
@@ -112,7 +116,17 @@ export function AssistantPanel({ onClose }: Props) {
         </button>
       </header>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      {/* aria-live so a screen-reader user hears Beans reply instead of having
+          to go hunting for new text that appeared silently. "polite" waits for
+          a pause rather than interrupting whatever is being read. */}
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto px-4 py-4 space-y-4"
+        role="log"
+        aria-live="polite"
+        aria-relevant="additions text"
+        aria-label="Conversation with Beans"
+      >
         {messages.map((m, i) => (
           <MessageBubble key={i} message={m} />
         ))}
@@ -128,8 +142,13 @@ export function AssistantPanel({ onClose }: Props) {
         onSubmit={send}
         className="border-t border-qh-line p-3 flex items-end gap-2"
       >
+        <label htmlFor="beans-input" className="sr-only">
+          Message Beans
+        </label>
         <textarea
+          id="beans-input"
           ref={inputRef}
+          data-autofocus
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
@@ -165,10 +184,12 @@ function MessageBubble({ message }: { message: Message }) {
             : "bg-qh-bg rounded-2xl rounded-bl-sm px-3.5 py-2 max-w-[90%] text-sm border border-qh-line"
         }
       >
-        <p
-          className="whitespace-pre-wrap"
-          dangerouslySetInnerHTML={{ __html: message.content }}
-        />
+        {/* Plain text. This was dangerouslySetInnerHTML — including for the
+            user's own messages, so anything typed into the box was parsed as
+            markup and echoed back into the page. The only reason it existed
+            was HTML entities in the canned replies; those are real Unicode
+            characters now, so React can render them directly. */}
+        <p className="whitespace-pre-wrap">{message.content}</p>
         {message.toolCalls?.map((tc, i) => (
           <ToolResultCard key={i} name={tc.name} result={tc.result} />
         ))}
