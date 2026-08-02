@@ -35,7 +35,8 @@ SUPABASE_SERVICE_ROLE_KEY      # server only; legacy service_role JWT or new sb_
 TWILIO_ACCOUNT_SID
 TWILIO_AUTH_TOKEN
 TWILIO_FROM_NUMBER
-ADMIN_EMAILS                   # comma-separated allow-list for /admin
+STAFF_EMAILS                   # comma-separated allow-list for /staff
+ADMIN_EMAILS                   # comma-separated allow-list for /admin (also grants /staff)
 ALLOW_DEV_VERIFICATION         # optional: 1 = deployed builds return codes on-screen (pre-launch only)
 NEXT_PUBLIC_KIOSK_EXIT_PIN     # optional: staff exit PIN for kiosk devices (defaults to 2468)
 ```

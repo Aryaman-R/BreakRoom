@@ -5,7 +5,7 @@ import { formatCents } from "@/lib/money";
 import { normalizePhone } from "@/lib/phone";
 import { priceOrder } from "@/lib/pricing";
 import { createOrderSchema } from "@/lib/schemas";
-import { loadSettings } from "@/lib/settings";
+import { loadSettingsDetailed } from "@/lib/settings";
 import { serviceClient } from "@/lib/supabase/service";
 import type { MenuItem } from "@/lib/types";
 
@@ -31,7 +31,7 @@ export const POST = handleErrors(async (req: NextRequest) => {
   const body = parsed.data;
 
   const db = serviceClient();
-  const settings = await loadSettings(db);
+  const { settings, present } = await loadSettingsDetailed(db);
 
   // 1 · Hours gate — Pacific wall clock, never the server's own timezone.
   if (!isOrderingOpen(settings)) {
@@ -45,6 +45,8 @@ export const POST = handleErrors(async (req: NextRequest) => {
 
   const walkIn = !body.phone?.trim();
   let phone: string | null = null;
+  // The verification code row to spend once every other gate has passed.
+  let codeId: string | null = null;
 
   if (walkIn) {
     // 2a · Walk-in: kiosk only, and only while the owner leaves it on.
@@ -54,6 +56,14 @@ export const POST = handleErrors(async (req: NextRequest) => {
       return apiError(400, "phone_required", "Please enter a mobile number to order.");
     }
     if (!settings.allow_walkin_orders) {
+      // Distinguish "the owner switched it off" from "0004 was never applied",
+      // which look identical to the customer but need very different fixes.
+      if (!present.has("allow_walkin_orders")) {
+        console.error(
+          "[orders] walk-in rejected: the allow_walkin_orders setting is missing. " +
+            "Apply supabase/migrations/0004_kiosk_walkin.sql — see SETUP.md."
+        );
+      }
       return apiError(
         403,
         "walkin_disabled",
@@ -105,27 +115,67 @@ export const POST = handleErrors(async (req: NextRequest) => {
       return apiError(400, "phone_invalid", "That phone number doesn't look right.");
     }
 
-    // 2 · Verification code: matches phone, unused, unexpired → mark used.
-    // A single conditional UPDATE so two concurrent submits can't share a code.
-    const { data: spent, error: codeErr } = await db
+    // 2 · Verification code — checked here, but NOT spent here.
+    //
+    // It used to be a single conditional UPDATE that set used = true the
+    // moment the code matched, before the blocklist, the caps, and pricing had
+    // run. Any rejection after that point destroyed a perfectly good code: the
+    // customer was told to request a new one, which cost another SMS, and if
+    // they had already used their three sends for the hour they were locked
+    // out of ordering entirely by a mistake that was not theirs.
+    //
+    // So: verify now, spend at the very end (step 9), in one conditional
+    // UPDATE that still can't be won twice.
+    const { data: live, error: codeErr } = await db
       .from("verification_codes")
-      .update({ used: true })
+      .select("id, code, attempts")
       .eq("phone", phone)
-      .eq("code", body.code!)
       .eq("used", false)
       .gt("expires_at", new Date().toISOString())
-      .select("id");
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
     if (codeErr) {
       console.error("[orders] code check failed:", codeErr);
       return apiError(500, "server_error", "Something went wrong. Please try again.");
     }
-    if (!spent || spent.length === 0) {
+    if (!live) {
       return apiError(
         401,
         "code_invalid",
         "That code didn't match or has expired — request a new one and try again."
       );
     }
+
+    // Nothing counted wrong guesses before this. A 6-digit code inside a
+    // 5-minute window is brute-forceable at a few hundred requests a second,
+    // and /api/verify/start left up to three codes live at once, so any single
+    // guess had three chances to land.
+    if (live.attempts >= settings.max_code_attempts) {
+      await db
+        .from("verification_codes")
+        .update({ used: true })
+        .eq("id", live.id);
+      return apiError(
+        429,
+        "code_attempts",
+        "Too many incorrect codes — request a new one and try again."
+      );
+    }
+
+    if (live.code !== body.code) {
+      await db
+        .from("verification_codes")
+        .update({ attempts: live.attempts + 1 })
+        .eq("id", live.id);
+      return apiError(
+        401,
+        "code_invalid",
+        "That code didn't match or has expired — request a new one and try again."
+      );
+    }
+
+    codeId = live.id;
 
     // 3 · Blocklist.
     const { data: blocked, error: blockedErr } = await db
@@ -226,7 +276,35 @@ export const POST = handleErrors(async (req: NextRequest) => {
       ? "call_to_confirm"
       : "new";
 
-  // 9 · Atomic insert: order + snapshotted items + daily number, one transaction.
+  // 9 · Spend the verification code, now that nothing else can reject the
+  //     order. Still a single conditional UPDATE, so two submissions racing on
+  //     the same code cannot both win it.
+  if (codeId) {
+    const { data: spent, error: spendErr } = await db
+      .from("verification_codes")
+      .update({ used: true })
+      .eq("id", codeId)
+      .eq("used", false)
+      .gt("expires_at", new Date().toISOString())
+      .select("id");
+    if (spendErr) {
+      console.error("[orders] code spend failed:", spendErr);
+      return apiError(500, "server_error", "Something went wrong. Please try again.");
+    }
+    if (!spent || spent.length === 0) {
+      return apiError(
+        401,
+        "code_invalid",
+        "That code didn't match or has expired — request a new one and try again."
+      );
+    }
+  }
+
+  // 10 · Atomic insert: order + snapshotted items + daily number, one
+  //      transaction. The walk-in caps are re-checked inside the function,
+  //      under an advisory lock, because the pre-checks above are two separate
+  //      reads followed by a write and a concurrent burst sails straight
+  //      through them (0005_hardening.sql).
   const { data: placed, error: placeErr } = await db.rpc("place_order", {
     p_customer_name: body.customer_name,
     p_phone: phone,
@@ -234,9 +312,30 @@ export const POST = handleErrors(async (req: NextRequest) => {
     p_total_cents: priced.total_cents,
     p_source: body.source,
     p_items: priced.lines,
+    p_max_open_walkins: walkIn ? settings.max_open_walkin_orders : null,
+    p_max_walkins_per_hour: walkIn ? settings.max_walkin_per_hour : null,
   });
-  if (placeErr || !placed || placed.length === 0) {
+  if (placeErr) {
+    // The transaction refused it. Give back the code so the customer is not
+    // punished for losing a race they could not see.
+    const capped =
+      placeErr.message?.includes("walkin_cap_open") ||
+      placeErr.message?.includes("walkin_cap_rate");
+    if (capped) {
+      if (codeId) {
+        await db.from("verification_codes").update({ used: false }).eq("id", codeId);
+      }
+      return apiError(
+        429,
+        "walkin_busy",
+        "We're catching up on counter orders — please order at the register."
+      );
+    }
     console.error("[orders] place_order failed:", placeErr);
+    return apiError(500, "server_error", "Something went wrong placing your order.");
+  }
+  if (!placed || placed.length === 0) {
+    console.error("[orders] place_order returned no row");
     return apiError(500, "server_error", "Something went wrong placing your order.");
   }
 

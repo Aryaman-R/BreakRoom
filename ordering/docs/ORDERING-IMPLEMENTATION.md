@@ -21,7 +21,7 @@ Build in this order. Each step ends with acceptance criteria — don't move on u
 
 ## 2 · Schema
 
-Run the SQL from `docs/ORDERING-DATABASE.md` in the Supabase SQL editor — tables, RLS, realtime, indexes, and the real Breakroom seed menu. Create staff and owner users in the Auth dashboard. Set `ADMIN_EMAILS`.
+Run the SQL from `docs/ORDERING-DATABASE.md` in the Supabase SQL editor — tables, RLS, realtime, indexes, and the real Breakroom seed menu. **Turn email sign-ups off** (Authentication → Providers → Email), then create staff and owner users by hand in the Auth dashboard. Set `STAFF_EMAILS` and `ADMIN_EMAILS`.
 
 ✅ Tables visible; `select next_order_number();` returns 1, then 2; menu rows show variants/add-ons jsonb.
 

@@ -2,7 +2,12 @@
 
 > Scope reminder: this is the **pickup-ordering system's** database only. Run this SQL in the Supabase SQL editor (or save it as a migration). It is the complete Phase 1 schema.
 
-The same SQL is checked in under `supabase/migrations/`, split by when it landed. **A database created before the kiosk walk-in work also needs `0004_kiosk_walkin.sql`** — the schema below already includes it.
+The same SQL is checked in under `supabase/migrations/`, split by when it landed. **Run all five in order.** Two are easy to miss on an older database:
+
+- `0004_kiosk_walkin.sql` — makes `orders.phone` nullable for kiosk orders and inserts the walk-in caps. Without it the kiosk's "no phone" path refuses every order (and says so in the server log), because `allow_walkin_orders` defaults to **off** when the row is absent.
+- `0005_hardening.sql` — adds `verification_codes.attempts` and `request_ip`, the SMS-budget settings, and replaces `place_order` with a version that enforces the walk-in caps **inside the transaction** under an advisory lock. It also drops the old 6-argument `place_order` so nothing can call the unguarded version. The app runs without this migration, but two of its fraud limits do not actually hold.
+
+The schema below already includes all of it.
 
 ## Tables
 

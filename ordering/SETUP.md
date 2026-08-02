@@ -67,16 +67,34 @@ Cost: ~$2/mo + ~1¢ per message; ~3 messages per order.
 ## 2 · Supabase — database + logins
 
 1. Create a project at supabase.com (free tier, region West US).
-2. **SQL Editor** → run the three files from `supabase/migrations/` in order:
-   `0001_schema.sql`, `0002_seed_menu.sql`, `0003_place_order.sql`.
-   Check: `select count(*) from menu_items;` → **29**.
-3. **Authentication → Users → Add user** (Auto confirm ON). Create two:
-   - your owner account — this email also goes in `ADMIN_EMAILS`
-   - a shared staff account for the counter (not in `ADMIN_EMAILS`)
+2. **SQL Editor** → run **all five** files from `supabase/migrations/` in
+   order: `0001_schema.sql`, `0002_seed_menu.sql`, `0003_place_order.sql`,
+   `0004_kiosk_walkin.sql`, `0005_hardening.sql`.
+   Check: `select count(*) from menu_items;` → **29**, and
+   `select count(*) from settings;` → **15**.
 
-   **There is no separate "admin password" setting.** `ADMIN_EMAILS` is only
-   an allow-list; the password is whatever you set on the Auth user here.
-   Any Auth user can use `/staff`; only allow-listed emails also get `/admin`.
+   Do not stop at 0003. **0004** is what lets the kiosk take an order from
+   someone with no phone; without it that button refuses every order, and the
+   server log says so. **0005** closes the walk-in cap race and the code
+   brute-force hole — the app runs without it, but two of its fraud limits do
+   not actually hold.
+3. **Authentication → Providers → Email → turn "Enable sign-ups" OFF.**
+
+   This matters. Supabase allows public sign-ups by default, and `/staff`
+   shows every open order with the customer's name and phone number. Leaving
+   sign-ups on means anyone who finds the URL can register themselves an
+   account. Create staff accounts by hand instead (next step).
+4. **Authentication → Users → Add user** (Auto confirm ON). Create two:
+   - your owner account — this email goes in `ADMIN_EMAILS`
+   - a shared staff account for the counter — this one goes in `STAFF_EMAILS`
+
+   **There is no separate "admin password" setting.** The lists are only
+   allow-lists; the password is whatever you set on the Auth user here.
+
+   `/staff` requires an email on `STAFF_EMAILS` **or** `ADMIN_EMAILS`.
+   `/admin` requires `ADMIN_EMAILS`. If neither variable is set, nobody gets
+   in — that is deliberate, so a missing setting fails closed rather than
+   admitting everyone. A one-person cafe can set `ADMIN_EMAILS` alone.
 4. Collect three values:
    - **Project URL** — `https://<ref>.supabase.co`. Find it via the
      **Connect** button, under **Project Settings → Data API**, or just read
@@ -106,9 +124,14 @@ Cost: ~$2/mo + ~1¢ per message; ~3 messages per order.
    | `NEXT_PUBLIC_SUPABASE_URL` | the `https://<ref>.supabase.co` URL |
    | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | the **publishable** `sb_publishable_…` key |
    | `SUPABASE_SERVICE_ROLE_KEY` | the **secret** `sb_secret_…` key |
-   | `ADMIN_EMAILS` | your owner email(s), comma-separated |
+   | `ADMIN_EMAILS` | your owner email(s), comma-separated — gets `/admin` **and** `/staff` |
+   | `STAFF_EMAILS` | counter account(s), comma-separated — gets `/staff` only |
    | `ALLOW_DEV_VERIFICATION` | `1` — pilot only; **delete at launch** |
+   | `NEXT_PUBLIC_KIOSK_EXIT_PIN` | optional; staff exit PIN, max 12 characters (defaults to `2468` — change it) |
    | `TWILIO_*` (three vars) | omit until §6 |
+
+   If you set neither `ADMIN_EMAILS` nor `STAFF_EMAILS`, `/staff` and
+   `/admin` lock everyone out and the server log says so. That is on purpose.
 
 4. Deploy, then note the **stable** URL (Settings → Domains, e.g.
    `something.vercel.app` — not the long per-deployment hash URL).

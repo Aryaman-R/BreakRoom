@@ -15,14 +15,31 @@ Phase 1 takes no payment, so the worst case is never a chargeback — it's **foo
 | Overnight or after-close orders | Hours gate — ordering only 9:30 AM to 3:10 PM Pacific |
 | Serial no-shows | Two strikes → phone blocked |
 | Order spam from one person | One open order + three per day, per phone |
-| Forged "kiosk walk-in" orders with no phone at all | Cafe-wide walk-in caps + a lower size limit + the accept valve (see below) |
+| Forged "kiosk walk-in" orders with no phone at all | Cafe-wide walk-in caps **enforced in the insert transaction** + a lower size limit + the accept valve (see below) |
+| **SMS pumping — farming the cafe's Twilio account for premium-rate revenue** | **NANP-only destinations, plus per-phone, per-IP, and global hourly send budgets** |
+| **Brute-forcing a verification code** | **Attempt counter per code, one live code per phone** |
 | Anything that slips through | **The valve: nothing is made until staff tap Accept** |
 
 ## The six layers
 
 **1 · Human accept valve.** The ultimate backstop. Every order sits inert until a staff member looks at it and taps Accept. Weird order? Don't accept it. This single control means every other layer only has to reduce noise, not be perfect.
 
-**2 · SMS verification.** 6-digit code, 5-minute expiry, max 3 sends per phone per hour. Built directly on Twilio (~1¢ per message) — no third-party auth product needed. Kills anonymous prank orders and gives every order an accountable phone number.
+**2 · SMS verification.** 6-digit code, 5-minute expiry. Built directly on Twilio (~1¢ per message) — no third-party auth product needed. Kills anonymous prank orders and gives every order an accountable phone number.
+
+Two things about this layer cost real money if they are wrong, so they get their own controls:
+
+*Sending.* Every code is a message the cafe pays for. A per-phone limit alone is no limit at all — an attacker sends one code each to a million different numbers and never trips it. That is **SMS pumping**: the attacker controls (or is paid by) the destination range and earns a share of the termination fee, and the cafe gets the bill. So:
+
+| Control | Default | Why |
+|---|---|---|
+| NANP-only destinations | `+1` | `lib/phone.ts` refuses anything outside the North American Numbering Plan. This is a **pickup** cafe — every real customer walks in to collect, so a code has no reason to go overseas, and the premium international ranges that make pumping profitable are simply unreachable. Widening this is a business decision, not a cleanup. |
+| `max_sms_per_hour_global` | 60 | The backstop that actually bounds the bill, whatever the attacker rotates. Hitting it logs loudly — it means either the busiest hour the cafe has ever had, or an attack. |
+| `max_sms_per_hour_per_ip` | 6 | Catches the naive version. Spoofable behind an arbitrary proxy, which is why it is not the one doing the real work. |
+| per phone | 3/hour | The original limit. Still useful against one annoyed customer; useless against the threat above. |
+
+*Guessing.* A 6-digit code is a million possibilities, which is plenty only if wrong guesses are counted. They were not: a miss returned "that didn't match" and cost the attacker nothing, and up to three codes were live per phone at once, so any single guess had three chances to land. Now `verification_codes.attempts` is incremented on every miss and checked before the next (`max_code_attempts`, default 5), and issuing a new code marks the previous ones spent.
+
+*Spending.* The code is marked used only once every other gate has passed. It used to be spent the moment it matched — before the blocklist, the caps, and pricing — so any later rejection destroyed a valid code and forced another SMS, which could push a blameless customer over their own hourly send limit.
 
 **3 · Server-side caps.** Enforced inside `POST /api/orders` — never the UI — and read live from the `settings` table so the owners control the risk dial from `/admin`:
 
@@ -48,9 +65,11 @@ The counter kiosk can take an order with **no phone number at all**: the custome
 
 | Control | Default | Why |
 |---|---|---|
-| `allow_walkin_orders` | 1 | Kill switch. Set to 0 from `/admin` and every order needs a verified number again, kiosk included. |
+| `allow_walkin_orders` | **0 if unset** | Kill switch. Set to 0 from `/admin` and every order needs a verified number again, kiosk included. The in-code default is **off**: a kill switch that defaults to on fails in the wrong direction, and a deployment that never ran `0004_kiosk_walkin.sql` has no row at all — which used to silently enable phoneless ordering on an installation whose owner had never been told the feature existed. Applying 0004 inserts the row with `1`. |
 | `max_open_walkin_orders` | 5 | Phoneless orders in flight at once, **cafe-wide**. A flood stops at five tickets, and each one staff cancel frees a slot. |
 | `max_walkin_per_hour` | 20 | Phoneless orders accepted per rolling hour, cafe-wide. Bounds a slow drip. |
+
+**Both walk-in caps are enforced inside the insert transaction** (`place_order`, under a transaction-scoped advisory lock — see `0005_hardening.sql`), not by reading counts in the API route beforehand. The route still pre-checks, because it produces a friendlier message and saves a round trip, but that check is not what holds the line: two reads followed by a write bound a *sequential* attacker and nothing else, and forging walk-ins is trivially parallel. N concurrent requests all saw the same pre-insert counts, all decided they were under the cap, and all inserted.
 | Size limit | `call_to_confirm_threshold_cents` ($50) | Walk-ins can't route to `call_to_confirm` — there's nobody to call — so the threshold becomes a wall. Over it, the kiosk asks for a number (restoring the $150 hard cap) or sends them to the counter. |
 | Accept valve | always | Unchanged and decisive: no food is made until staff tap Accept, and every walk-in is badged **"Walk-in — call the name"** on the staff screen. |
 
@@ -58,6 +77,14 @@ The worst realistic outcome is therefore a handful of junk tickets on the staff 
 
 Two things make this safe to ship rather than merely defensible. First, phoneless orders are trivially auditable — `select * from orders where phone is null` is the whole report. Second, if the pilot shows abuse, the fix is one toggle in `/admin`, not a deploy.
 
+## Staff access
+
+`/staff` shows every open order with the customer's **name and phone number**, and the buttons that advance order status. Access is an allow-list: an email on `STAFF_EMAILS` or `ADMIN_EMAILS`, checked in `middleware.ts` (so the page never renders) and again in `lib/guards.ts` (so the API never answers). `/admin` additionally requires `ADMIN_EMAILS`.
+
+"Staff = any signed-in Supabase Auth user" was the earlier rule, and it was only ever safe on the assumption that accounts are created by hand in the dashboard — which nothing enforced. **Supabase enables email sign-ups by default**, so on a project where that had not been turned off, anyone could self-register and read the customer list. Two independent fixes, both required: turn sign-ups off (SETUP.md §2.3), and configure the allow-list. With neither variable set the app refuses everyone rather than admitting everyone.
+
 ## Deliberate non-goals
 
 No CAPTCHAs, no customer accounts, no card-on-file, no ID checks. Each adds friction that costs more real lattes than it saves in fraud. Revisit only if pilot data shows an actual problem the six layers miss.
+
+**Still not solved: the kiosk cannot prove it is a kiosk.** The walk-in path is gated on `source: "kiosk"` in a request body, and nothing about a browser on the public internet can prove that claim — anyone who reads the JavaScript can post the same payload. The caps above bound the damage to junk tickets, and the accept valve means zero food cost, but a determined attacker can still consume the cafe-wide walk-in allowance from off-site and make the real counter kiosk refuse phoneless orders until the hour rolls over. Closing that properly needs a per-device credential provisioned by staff (so the caps can be keyed per kiosk rather than cafe-wide) — worth doing if the pilot ever sees it happen, and deliberately not guessed at before then.
