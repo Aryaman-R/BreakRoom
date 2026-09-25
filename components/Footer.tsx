@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 const HOURS = [
-  ["Every day", "9:30 AM – 3:30 PM"],
+  ["Monday - Friday", "9:30 AM – 3:30 PM"],
 ];
 
 export function Footer() {
@@ -46,7 +46,7 @@ export function Footer() {
             18916 N Creek Pkwy #101<br />
             Bothell, WA 98011<br />
             <a href="tel:+14254194231" className="hover:text-qh-ink">
-              (425) 395&#8209;9316
+              (425) 419&#8209;4231 
             </a><br />
             <a href="mailto:thebreakroombothell@gmail.com" className="hover:text-qh-ink">
               thebreakroombothell@gmail.com

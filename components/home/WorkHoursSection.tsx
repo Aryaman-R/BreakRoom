@@ -22,7 +22,7 @@ export function WorkHoursSection() {
           <li>· Free Wi-Fi</li>
           <li>· Comfy lounge seating</li>
           <li>· Coffee, boba &amp; shakes</li>
-          <li>· Open every day til 3:30 PM</li>
+          <li>· Open Mon - Fri til 3:30 PM</li>
         </ul>
       </Reveal>
 

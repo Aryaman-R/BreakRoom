@@ -65,7 +65,7 @@ export default function VisitPage() {
           </address>
           <p className="mt-3 text-sm">
             <a href="tel:+14254194231" className="text-qh-accent underline underline-offset-2">
-              (425) 395&#8209;9316
+              (425) 419&#8209;4231
             </a>
             <span className="mx-2 text-qh-line">·</span>
             <a href="mailto:thebreakroombothell@gmail.com" className="text-qh-accent underline underline-offset-2">

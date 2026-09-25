@@ -88,7 +88,7 @@ insert into settings (key, value) values
   ('max_qty_per_item',                   5),
   ('max_open_orders_per_phone',          1),
   ('max_orders_per_phone_per_day',       3),
-  -- Breakroom hours: every day 9:30 AM – 3:30 PM Pacific.
+  -- Breakroom hours: Monday-Friday 9:30 AM – 3:30 PM Pacific.
   -- Minutes from midnight, America/Los_Angeles.
   ('ordering_open_minutes',            570),   -- 9:30 AM
   ('ordering_close_minutes',           930),   -- 3:30 PM
