@@ -54,7 +54,7 @@ export function Footer() {
           </address>
           <div className="mt-4 flex gap-3 text-qh-ink-soft text-sm">
             <a className="hover:text-qh-ink" href="https://www.instagram.com/thebreakroombothell" aria-label="Instagram">Instagram</a>
-            <a className="hover:text-qh-ink" href="https://www.facebook.com/people/The-Breakroom/61560259126301/" aria-label="Facebook">Facebook</a>
+            <a className="hover:text-qh-ink" href="https://www.facebook.com/thebreakroombothell" aria-label="Facebook">Facebook</a>
           </div>
         </div>
       </div>
